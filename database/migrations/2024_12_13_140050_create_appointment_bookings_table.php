@@ -23,6 +23,7 @@ return new class extends Migration
             $table->dateTime('slot_start_time')->nullable();
             $table->dateTime('slot_end_time')->nullable();
             $table->date('booking_date');
+            $table->enum('status', ['pending', 'complete', 'cancel'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
 

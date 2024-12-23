@@ -31,7 +31,7 @@
         </li> -->
 
         @if ($businessSettings->is_appointment_system)
-        <li class="nav-header">Appointment</li>
+        <li class="nav-header">APPOINTMENT</li>
           @if ($businessSettings->is_appointment_with_department)
             <li class="nav-item">
               <a href="{{ route('business.appointment.department.index') }}" class="nav-link {{ request()->routeIs('business.appointment.department*') ? 'active' : '' }}">
@@ -54,7 +54,7 @@
         </li>
         @endif
 
-        <li class="nav-header">Site setting</li>
+        <li class="nav-header">SITE SETTING</li>
         <li class="nav-item {{ request()->routeIs('business.setting*') ? 'menu-open' : '' }}">
           <a href="#" class="nav-link {{ request()->routeIs('business.setting*') ? 'active' : '' }}">
             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -82,6 +82,13 @@
               <a href="{{ route('business.setting.business.timing') }}" class="nav-link {{ request()->routeIs('business.setting.business.timing') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Timing</p>
+              </a>
+            </li>
+            
+            <li class="nav-item">
+              <a href="{{ route('business.setting.systemsetting') }}" class="nav-link {{ request()->routeIs('business.setting.systemsetting') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>System Setting</p>
               </a>
             </li>
 

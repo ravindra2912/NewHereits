@@ -134,7 +134,7 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control"  name="password" placeholder="Password" />
+                <input type="password" class="form-control"  name="password" placeholder="Password" autocomplete="FALSE" />
               </div>
             </div>
 

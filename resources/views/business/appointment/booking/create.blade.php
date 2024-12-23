@@ -174,7 +174,8 @@
       success: function(states) {
         $('#timeslote').html('<option value="">Select Timing</option>');
         $.each(states, function(index, item) {
-          $('#timeslote').append('<option value="' + item + '">' + item + '</option>');
+          var disable = item.is_booked?'disabled':'';
+          $('#timeslote').append('<option value="' + item.time + '" '+disable+'>' + item.time + '</option>');
         });
       },
       error: function(xhr, status, error) {

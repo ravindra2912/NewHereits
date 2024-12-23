@@ -41,6 +41,9 @@ class AppointmentBookingController extends Controller
             if (isset($request->appointmenter_id) && !empty($request->appointmenter_id)) {
                 $data = $data->where('appointmenter_id', $request->appointmenter_id);
             }
+            if (isset($request->status) && !empty($request->status)) {
+                $data = $data->where('status', $request->status);
+            }
 
             return Datatables::of($data)
                 ->addIndexColumn()
@@ -98,7 +101,11 @@ class AppointmentBookingController extends Controller
 
     public function getAppoinmenterTiming(Request $request)
     {
-        $slots = getAppoinmenterTiming($request->appointmenter_id, $request->date);
+        $appoinment_id = null;
+        if(isset($request->appoinment_id)){
+            $appoinment_id = $request->appoinment_id;
+        }
+        $slots = getAppoinmenterTiming($request->appointmenter_id, $request->date, $appoinment_id);
         return response()->json($slots);
     }
 
@@ -190,7 +197,7 @@ class AppointmentBookingController extends Controller
         }
 
         if ($businessSetting->is_appointment_book_with_time_slote) {
-            $timeSlots = getAppoinmenterTiming($appontment->appointmenter_id, $appontment->booking_date);
+            $timeSlots = getAppoinmenterTiming($appontment->appointmenter_id, $appontment->booking_date, $id);
         }
 
         $appontmenters = $appontmenters->get();
@@ -227,6 +234,7 @@ class AppointmentBookingController extends Controller
                 $insert->user_name = $request->user_name;
                 $insert->user_contact = $request->user_contact;
                 $insert->booking_date = $request->booking_date;
+                $insert->status = $request->status;
 
                 if ($businessSetting->is_appointment_book_with_time_slote) {
                     $timeslote = explode(' - ', $request->timeslote);

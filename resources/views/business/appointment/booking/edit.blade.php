@@ -41,6 +41,7 @@
           <input type="hidden" value="{{ $businessSetting->is_appointment_book_with_time_slote }}" id="with-timing">
           <form action="{{ route('business.appointment.bookings.update', $appontment->id) }}" data-action="redirect" class="row formaction">
             @csrf
+            <input type="hidden" id="appoinment_id" value="{{ $appontment->id }}">
             <input type="hidden" name="_method" value="PATCH">
 
             <div class="col-md-6">
@@ -90,7 +91,7 @@
                 <select class="form-control" name="timeslote" id="timeslote">
                   <option value="">Select Timing</option>
                   @foreach ($timeSlots as $time)
-                  <option value="{{ $time }}" {{ $appontment->bookdate == $time ? 'selected' : '' }}>{{ $time }}</option>
+                  <option value="{{ $time['time'] }}" {{ $appontment->bookdate == $time['time'] ? 'selected' : ' ' }} {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option>
                   @endforeach
                 </select>
               </div>
@@ -110,6 +111,18 @@
                 <input type="text" class="form-control" value="{{ $appontment->user_contact }}" name="user_contact" placeholder="User Contact" />
               </div>
             </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Status <span class="error">*</span></label>
+                <select class="form-control" name="status">
+                @foreach ( config('const.appointment_status') as $status )
+                <option value="{{ $status }}" {{ $appontment->status == $status ? 'selected':'' }}>{{ ucfirst($status) }}</option>
+                @endforeach
+              </select>
+              </div>
+            </div>
+
             <div class="col-sm-12 text-right">
               <button class="btn btn-danger" type="button" onclick="history.back()">Back</button>
               <button class="btn btn-primary btn_action" type="submit">
@@ -171,7 +184,8 @@
       url: "{{ route('business.appointment.bookings.get.appointmrnter.timing') }}",
       data: {
         appointmenter_id: $('#appointmenter_id').val(),
-        date: $('#booking_date').val()
+        date: $('#booking_date').val(),
+        appoinment_id: $('#appoinment_id').val()
       },
       dataType: "json",
       headers: {
@@ -183,7 +197,8 @@
       success: function(states) {
         $('#timeslote').html('<option value="">Select Timing</option>');
         $.each(states, function(index, item) {
-          $('#timeslote').append('<option value="' + item + '">' + item + '</option>');
+          var disable = item.is_booked?'disabled':'';
+          $('#timeslote').append('<option value="' + item.time + '" '+disable+'>' + item.time + '</option>');
         });
       },
       error: function(xhr, status, error) {

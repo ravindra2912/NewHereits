@@ -47,6 +47,8 @@ Route::name('business.')->group(function () {
             Route::get('setting/business/timings', 'businessTiming')->name('setting.business.timing');
             Route::post('setting/business/timings/add', 'businessTimingStore')->name('setting.business.timing.add');
             Route::post('setting/business/timings/remove', 'businessTimingSestroy')->name('setting.business.timing.remove');
+            Route::get('setting/business/system-setting', 'systemSetting')->name('setting.systemsetting');
+            Route::post('setting/business/system-setting', 'systemSettingUpdate')->name('setting.systemsetting.update');
         });
 
         Route::controller(AuthController::class)->group(function () {

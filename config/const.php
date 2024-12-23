@@ -22,5 +22,7 @@ return [
 
 
     "week_day_name" => ["Monday", "Tuesday","Wednesday","Thursday","Friday","Saturday", 'Sunday'],
+    
+    "appointment_status" => ["pending", "complete","cancel"],
 
 ];

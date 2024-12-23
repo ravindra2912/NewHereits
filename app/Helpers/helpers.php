@@ -10,6 +10,7 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Str;
 use App\Models\BusinessTiming;
 use App\Models\BusinessSetting;
+use App\Models\AppointmentBooking;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -201,7 +202,7 @@ function getBusinessSettings()
 // =============== Appoinmenter functions start ================
 
 
-function generateTimeSlots($startTime, $endTime, $interval = 15)
+function generateTimeSlots($startTime, $endTime, $interval, $bookedArray)
 {
     $slots = [];
 
@@ -217,25 +218,42 @@ function generateTimeSlots($startTime, $endTime, $interval = 15)
 
         // Add the slot to the array
         if ($start->lte($end)) {
-            $slots[] = "$slotStart - $slotEnd";
+            $temp['time'] = "$slotStart - $slotEnd";
+            $temp['is_booked'] = in_array($temp['time'],$bookedArray) ? true:false;
+            $slots[] = $temp;
         }
     }
 
     return $slots;
 }
 
-function getAppoinmenterTiming($id, $date)
+function getAppoinmenterTiming($id, $date, $appoinment_id = null)
 {
     $day = Carbon::parse($date)->format('l');
+
+    $appontmentsData = AppointmentBooking::select('slot_start_time', 'slot_end_time')
+        ->where('business_id', getBusinessId())
+        ->whereDate('booking_date', Carbon::parse($date))
+        ->where('business_id', getBusinessId())
+        ->where('appointmenter_id', $id);
+        if($appoinment_id != null){
+            $appontmentsData = $appontmentsData->WhereNotIn('id', [$appoinment_id]);
+        }
+        $appontmentsData = $appontmentsData->get();
+    $bookedArray = array();
+    foreach ($appontmentsData as $appontmentrow) {
+        $bookedArray[] = Carbon::parse($appontmentrow->slot_start_time)->format('h:i a') . ' - ' . Carbon::parse($appontmentrow->slot_end_time)->format('h:i a');
+    }
+
     $appontmenterTiming = BusinessTiming::where('day', $day)->where('appointmenter_id', $id)->where('business_id', getBusinessId())->orderBy('start_time', 'asc')->get();
-    $slots = [];
+    $slots = array();
     foreach ($appontmenterTiming as $timing) {
         $startTime = Carbon::parse($timing->start_time)->format('H:i');
         $endTime = Carbon::parse($timing->end_time)->format('H:i');
-        $times = generateTimeSlots($startTime, $endTime);
-        $slots = array_merge($slots, $times);
+        $times = generateTimeSlots($startTime, $endTime, 15, $bookedArray);
+        $slots = array_merge($slots, $times,);
     }
-    
+    // dd($slots);
     return $slots;
 }
 

@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\BusinessSetting;
 use App\Models\BusinessTiming;
 
 class SettingController extends Controller
@@ -35,7 +36,7 @@ class SettingController extends Controller
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = Route('business.user.index');
+        $redirect = Route('business.setting.profile');
         $data = array();
 
         try {
@@ -83,7 +84,7 @@ class SettingController extends Controller
                 }
 
                 $success = true;
-                $message = 'User updated successfully.';
+                $message = 'Profile updated successfully.';
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();
@@ -226,6 +227,49 @@ class SettingController extends Controller
                 $success = true;
                 $message = 'Time deleted successfully.';
             
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function systemSetting(Request $request)
+    {
+        $setting = getBusinessSettings();
+        return view('business.setting.systemsetting', compact('setting'));
+    }
+
+    public function systemSettingUpdate(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = Route('business.setting.systemsetting');
+        $data = array();
+
+        try {
+            $rules = [
+                // 'business_image' => 'nullable|mimes:jpg,jpeg,png|',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else {
+
+                $update = BusinessSetting::where('business_id',getBusinessId())->first();
+                if(!$update){
+                    $update = new BusinessSetting();
+                    $update->business_id = getBusinessId();
+                }
+                $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on'?1:0;
+                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on'?1:0;
+                $update->save();
+
+                $success = true;
+                $message = 'Setting update successfully.';
+            }
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }

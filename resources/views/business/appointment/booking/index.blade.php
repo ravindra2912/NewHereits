@@ -50,7 +50,7 @@
             <div class="row filter mb-3">
               <input type="hidden" value="{{ $businessSetting->is_appointment_with_department }}" id="is_appointment_with_department">
               <input type="hidden" value="{{ $businessSetting->is_appointment_book_with_time_slote }}" id="is_appointment_book_with_time_slote">
-              
+
               <input type="date" class="form-control" id="filterdate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
               @if ($businessSetting->is_appointment_with_department)
               <select class="form-control" id="department_id">
@@ -67,6 +67,13 @@
                 <option value="{{ $appontmenter->id }}">{{ $appontmenter->appointmenter_name }}</option>
                 @endforeach
               </select>
+
+              <select class="form-control" id="status">
+                <option value="">Status</option>
+                @foreach ( config('const.appointment_status') as $status )
+                <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                @endforeach
+              </select>
             </div>
 
             <table class="table table-hover text-nowrap" id="data-table">
@@ -80,6 +87,7 @@
                   <th>Booking date</th>
                   <th>Start Time</th>
                   <th>End Time</th>
+                  <th>status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -117,6 +125,7 @@
           d.date = $('#filterdate').val();
           d.department_id = $('#department_id').val();
           d.appointmenter_id = $('#appointmenter_id').val();
+          d.status = $('#status').val();
         }
       },
       columns: [{
@@ -150,6 +159,9 @@
           name: 'slot_end_time',
           searchable: false,
           visible: $('#is_appointment_book_with_time_slote').val() == 1 ? true : false
+        },{
+          data: 'status',
+          name: 'status'
         },
         {
           data: 'action',
@@ -160,7 +172,7 @@
       ]
     });
 
-    $('#filterdate, #department_id, #appointmenter_id').on('change', function() {
+    $('#filterdate, #department_id, #appointmenter_id, #status').on('change', function() {
       table.ajax.reload()
     })
   });

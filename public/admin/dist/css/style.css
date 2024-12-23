@@ -43,6 +43,13 @@ table .avtar1 {
     -webkit-border-radius: 25px !important;
 }
 
+.nav-header{
+    border-bottom: 1px solid #dfdfdf;
+    margin: 5px;
+    padding: 5px !important;
+    border-top: 1px solid #dfdfdf;
+}
+
 .btn{
     -webkit-border-radius: 25px !important;
 }
@@ -54,3 +61,10 @@ table .avtar1 {
 .btn-danger{
     box-shadow: 0 2px 6px #d74e5b;
 }
+
+option:disabled {
+    color: #495057;
+    background: #e5e3e3;
+}
+
+
