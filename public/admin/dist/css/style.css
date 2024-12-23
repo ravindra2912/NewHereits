@@ -1,0 +1,56 @@
+.table_img {
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+table.dataTable tbody td {
+    align-content: center;
+}
+
+table.dataTable tr th.sorting_disabled::before,
+table.dataTable tr th.sorting_disabled::after {
+    opacity: 0 !important;
+}
+
+table.dataTable tr th,
+table.dataTable tr td {
+    text-align: center !important;
+}
+
+
+table .avtar1 {
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 10px 10px -8px #acacac;
+}
+
+/* ************ LTE Changes **************** */
+
+.sidebar a, .nav-header {
+    color: black !important;
+}
+
+[class*=sidebar-light-] .nav-sidebar>.nav-item:hover>.nav-link, .nav-sidebar>.nav-item>.nav-link.active, .nav-sidebar>.nav-item>.nav-link.active,
+.nav-treeview>.nav-item>.nav-link.active, .nav-treeview>.nav-item>.nav-link:hover
+{
+    background-color: #007bff !important;
+    color: white !important;
+    -webkit-border-radius: 25px !important;
+}
+
+.btn{
+    -webkit-border-radius: 25px !important;
+}
+
+.btn-primary{
+    box-shadow: 0 2px 6px #3392f7;
+}
+
+.btn-danger{
+    box-shadow: 0 2px 6px #d74e5b;
+}
