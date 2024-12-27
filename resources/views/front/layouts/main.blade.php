@@ -8,14 +8,14 @@
 	<link href="{{ asset('front/img/fevicon-icon.png') }}" rel="icon" />
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<title>@yield('title', '404') | Hereits</title>
 
-	@php
-	/*
+	@if (isset($seo) && !empty($seo))
 	<meta name="description" content="<?= $seo['description'] ?>">
 	<meta name="keywords" content="<?= $seo['keywords'] ?>">
-	<title><?= $seo['title'] ?></title>
+	
 
-	<link rel="canonical" href="<?= $seo['url'] ?>" />
+	<link rel="canonical" href="{{ url()->current() }}" />
 
 	<meta name="distribution" content="global">
 	<meta http-equiv="content-language" content="en-gb">
@@ -29,13 +29,13 @@
 	<!-- meta property="og:see_also" content="alternate url" -->
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta property="al:web:url" content="<?= $seo['url'] ?>">
+	<meta property="al:web:url" content="{{ url()->current() }}">
 
 	<meta name="copyright" content="Hereits">
 
 	<meta property="og:title" content="<?= $seo['title'] ?>">
 	<meta property="og:description" content="<?= $seo['description'] ?>">
-	<meta property="og:url" content="<?= $seo['url'] ?>">
+	<meta property="og:url" content="{{ url()->current() }}">
 	<meta property="og:type" content="website">
 	<meta property="og:site_name" content="Hereits - Local Business">
 	<meta property="og:locale" content="en_GB">
@@ -48,14 +48,13 @@
 	<meta property="twitter:title" content="<?= $seo['title'] ?>">
 	<meta property="twitter:description" content="<?= $seo['description'] ?>">
 	<meta property="twitter:image" content="<?= $seo['image'] ?>">
-	<meta property="twitter:url" content="<?= $seo['url'] ?>">
+	<meta property="twitter:url" content="{{ url()->current() }}">
 	<meta name="twitter:domain" content="Hereits">
 
 	<link rel="alternate" href="">
 	<meta itemprop="name" content="<?= $seo['title'] ?>">
 	<meta itemprop="description" content="">
-	*/
-	@endphp
+	@endif
 
 
 	<!-- Web Fonts

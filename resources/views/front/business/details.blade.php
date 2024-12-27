@@ -1,4 +1,13 @@
-@extends('front.layouts.main')
+@extends('front.layouts.main', ['seo' => [
+'title' => $business->name,' | Hereits',
+'description' => $business->name,
+'keywords' => $business->name ,
+'image' =>  getImage($business->business_image) ,
+'city' => '',
+'state' => '',
+'position' => ''
+]
+])
 @section('content')
 @section('title', $business->name)
 
