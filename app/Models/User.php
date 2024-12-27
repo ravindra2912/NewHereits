@@ -51,6 +51,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Business::class, 'business_id', 'id');
     }
+    
+    public function getBusinesses()
+    {
+        return $this->hasMany(Business::class, 'owner_id', 'id');
+    }
 
      //+++++++++++++++ For api responce ================
      public function apiObject(): array

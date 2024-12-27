@@ -26,6 +26,9 @@ class Business
                     return redirect()->route('business.login');
                 }
             }else{
+                // if(Auth::user()->getBusinessDetails->status == 'active'){
+                //     exit('Your business is not active, Please contact to Admin');
+                // }
                 return $next($request);
             }
         }else{

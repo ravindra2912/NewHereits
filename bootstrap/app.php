@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function(){
             Route::prefix('nimda')->group(base_path('routes/admin.php'));
-            Route::prefix('business')->group(base_path('routes/business.php'));
+            Route::prefix('business-manager')->group(base_path('routes/business.php'));
             // Route::namespace('admin')->prefix('admin')->name('admin.')->group(base_path('routes/admin.php'));
         }
     )

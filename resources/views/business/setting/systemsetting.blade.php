@@ -3,38 +3,7 @@
 @section('title', 'System Setting')
 
 @push('style')
-<!-- summernote -->
-<style>
-  .avtar_img {
-    height: 160px;
-    width: 160px;
-    object-fit: contain;
-    border-radius: 20px;
-  }
 
-  .avtar {
-    border: 1px solid #ced4da;
-    border-radius: 10px;
-    width: fit-content;
-    padding: 10px;
-    text-align: center;
-  }
-
-  .avtar label {
-    position: absolute;
-    top: 3px;
-    right: 29%;
-    background: gray;
-    color: white;
-    padding: 0px 3px 1px 5px;
-    border-radius: 100%;
-  }
-
-  .avtar_input {
-    opacity: 0;
-    height: 0px;
-  }
-</style>
 @endpush
 
 <!-- Content Header (Page header) -->

@@ -33,6 +33,9 @@ Route::name('admin.')->group(function () {
 
         Route::resource('user', UsersController::class);
         Route::resource('business', BusinessController::class);
+        Route::controller(BusinessController::class)->group(function () {
+            Route::post('business/setting/{id}', 'systemSettingUpdate')->name('business.systemsetting.update');
+        });
 
         Route::controller(LagelPagesController::class)->group(function () {
             Route::get('lagel-pages', 'index')->name('lagel-pages');
@@ -46,7 +49,7 @@ Route::name('admin.')->group(function () {
         });
 
         Route::controller(AuthController::class)->group(function () {
-            Route::get('logout', 'index')->name('logout');
+            Route::get('logout', 'destroy')->name('logout');
         });
     });
 });

@@ -181,9 +181,12 @@ function getBusinessId()
     return Auth::user()->business_id;
 }
 
-function getBusinessSettings()
+function getBusinessSettings($business_id = null)
 {
-    $setting = BusinessSetting::where('business_id', getBusinessId())->first();
+    if ($business_id == null) {
+        $business_id = getBusinessId();
+    }
+    $setting = BusinessSetting::where('business_id', $business_id)->first();
     if ($setting) {
         $data = $setting->getBusinessSettingObject();
     } else {
@@ -219,7 +222,7 @@ function generateTimeSlots($startTime, $endTime, $interval, $bookedArray)
         // Add the slot to the array
         if ($start->lte($end)) {
             $temp['time'] = "$slotStart - $slotEnd";
-            $temp['is_booked'] = in_array($temp['time'],$bookedArray) ? true:false;
+            $temp['is_booked'] = in_array($temp['time'], $bookedArray) ? true : false;
             $slots[] = $temp;
         }
     }
@@ -236,10 +239,10 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null)
         ->whereDate('booking_date', Carbon::parse($date))
         ->where('business_id', getBusinessId())
         ->where('appointmenter_id', $id);
-        if($appoinment_id != null){
-            $appontmentsData = $appontmentsData->WhereNotIn('id', [$appoinment_id]);
-        }
-        $appontmentsData = $appontmentsData->get();
+    if ($appoinment_id != null) {
+        $appontmentsData = $appontmentsData->WhereNotIn('id', [$appoinment_id]);
+    }
+    $appontmentsData = $appontmentsData->get();
     $bookedArray = array();
     foreach ($appontmentsData as $appontmentrow) {
         $bookedArray[] = Carbon::parse($appontmentrow->slot_start_time)->format('h:i a') . ' - ' . Carbon::parse($appontmentrow->slot_end_time)->format('h:i a');
@@ -258,6 +261,24 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null)
 }
 
 // =============== Appoinmenter functions end ================
+
+// =============== geo location info functions start ================
+
+function getIpDetails()
+{
+
+    $ip = request()->ip(); // This fetches the client's IP address
+    $ip = ($ip == '127.0.0.1') ? '123.201.3.127' : $ip;
+
+    $response = file_get_contents("http://ip-api.com/json/{$ip}");
+    $data = json_decode($response);
+    // dd($data->city, $data);
+    return $data;
+    // $location = geoip()->getLocation($ip);
+    // return $location;
+}
+
+// =============== geo location info functions end ================
 
 /**
  * @param $user
@@ -363,3 +384,17 @@ function sendNotification($user_id, $title, $body, $permission, $type, array $ex
         return true;
     }
 }
+
+
+
+// ==============================================
+//      Frontend functions Start 
+// ==============================================
+
+function getAvailableCities(){
+    return City::select('id', 'name')->where('state_id', 12)->get();
+}
+
+// ==============================================
+//      Frontend functions end 
+// ==============================================

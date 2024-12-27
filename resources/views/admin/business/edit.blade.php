@@ -56,7 +56,6 @@
 </div>
 <!-- /.content-header -->
 
-<!-- Main content -->
 <section class="content">
   <div class="row">
     <div class="col-md-12">
@@ -183,14 +182,68 @@
         </div>
       </div>
     </div>
-    <!-- /.col-->
+
+    <div class="col-md-12">
+      <div class="card card-outline card-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            System Setting
+          </h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <form action="{{ route('admin.business.systemsetting.update', $business->id) }}" data-action="reload" class="row formaction">
+            @csrf
+            <input type="hidden" name="_method" value="post">
+
+            <div class="col-12">
+                <h4>Appoinment Setting</h4>
+                <hr>
+            </div>
+            <div class="col-md-2 col-4 text-center">
+              <div class="form-group">
+                <label>Appointment System </label><br>
+                <input type="checkbox" name="is_appointment_system" {{ $setting->is_appointment_system ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
+              </div>
+            </div>
+
+            <div class="col-md-2 col-4 text-center">
+              <div class="form-group">
+                <label>Appointment with Departments </label><br>
+                <input type="checkbox" name="is_appointment_with_department" {{ $setting->is_appointment_with_department ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
+              </div>
+            </div>
+
+            <div class="col-md-2 col-4 text-center">
+              <div class="form-group">
+                <label>Appointment book with Time Slote</label><br>
+                <input type="checkbox" name="is_appointment_book_with_time_slote" {{ $setting->is_appointment_book_with_time_slote ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
+              </div>
+            </div>
+            <div class="col-sm-12 text-right">
+              <button class="btn btn-danger" type="button" onclick="history.back()">Back</button>
+              <button class="btn btn-primary btn_action" type="submit">
+                <span id="loader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <span id="buttonText">Submit</span>
+              </button>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
-<!-- /.content -->
 
 @push('js')
 
+<script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 <script>
+  $("input[data-bootstrap-switch]").each(function() {
+    $(this).bootstrapSwitch('state', $(this).prop('checked'));
+  })
+
   $('#state_id').on('change', function(event) {
     $.ajax({
       type: "POST",

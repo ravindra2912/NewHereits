@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Validator;
-
-use App\Http\Controllers\Controller;
-use App\Models\Business;
-use App\Models\BusinessCategory;
-use App\Models\LegalPage;
 use App\Models\User;
+use App\Models\Business;
 use App\Models\UserRole;
+use App\Models\LegalPage;
+use Illuminate\View\View;
+use Illuminate\Http\Request;
+use App\Models\BusinessSetting;
+use App\Models\BusinessCategory;
+
+use Yajra\DataTables\DataTables;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ProfileUpdateRequest;
 
 class BusinessController extends Controller
 {
@@ -141,7 +142,8 @@ class BusinessController extends Controller
     {
         $business = Business::find($id);
         $businessCat = BusinessCategory::get();
-        return view('admin.business.edit', compact('business', 'businessCat'));
+        $setting = getBusinessSettings($id);
+        return view('admin.business.edit', compact('business', 'businessCat', 'setting'));
     }
 
     public function update(Request $request, $id)
@@ -231,4 +233,43 @@ class BusinessController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
+
+    public function systemSettingUpdate(Request $request, $id)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = Route('business.setting.systemsetting');
+        $data = array();
+
+        try {
+            $rules = [
+                // 'business_image' => 'nullable|mimes:jpg,jpeg,png|',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else {
+
+                $update = BusinessSetting::where('business_id',$id)->first();
+                if(!$update){
+                    $update = new BusinessSetting();
+                    $update->business_id = $id;
+                }
+                $update->is_appointment_system = isset($request->is_appointment_system) && $request->is_appointment_system == 'on'?1:0;
+                $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on'?1:0;
+                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on'?1:0;
+                $update->save();
+
+                $success = true;
+                $message = 'Setting update successfully.';
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
 }

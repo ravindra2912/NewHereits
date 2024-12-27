@@ -37,6 +37,8 @@
   <!-- custome css -->
   <link rel="stylesheet" href="{{ asset('admin/dist/css/style.css') }}">
 
+  <meta name="robots" content="noindex, nofollow">
+
   @stack('style')
 </head>
 

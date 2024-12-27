@@ -49,10 +49,11 @@ Route::name('business.')->group(function () {
             Route::post('setting/business/timings/remove', 'businessTimingSestroy')->name('setting.business.timing.remove');
             Route::get('setting/business/system-setting', 'systemSetting')->name('setting.systemsetting');
             Route::post('setting/business/system-setting', 'systemSettingUpdate')->name('setting.systemsetting.update');
+            Route::get('switch-business/{id}', 'switchBusiness')->name('switchBusiness');
         });
 
         Route::controller(AuthController::class)->group(function () {
-            Route::get('logout', 'index')->name('logout');
+            Route::get('logout', 'destroy')->name('logout');
         });
     });
 });

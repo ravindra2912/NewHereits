@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Business;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -21,6 +22,15 @@ class AuthController extends Controller
      */
     public function index(Request $request): View
     {
+        if (Auth::check()){
+            if (Auth::user()->role_id == 1) {
+                return redirect()->route('admin.login');
+            }elseif (Auth::user()->role_id == 2) {
+                return redirect()->route('business.login');
+            }else{
+                return redirect()->route('/');
+            }
+        }
         return view('business.auth.login');
     }
 
@@ -44,6 +54,17 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->where('role_id', 2)->first();
         if ($user && Hash::check($request['password'], $user->password)) {
+
+            if($user->business_id == null){
+                $business = Business::select('id')->where('owner_id', $user->id)->first();
+                if($business){
+                    $user->business_id = $business->id;
+                    $user->save();
+                }else{
+                    return redirect()->back()->with('error', 'Business not found!');
+                }
+                
+            }
             $request->authenticate();
 
             $request->session()->regenerate();

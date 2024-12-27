@@ -27,7 +27,8 @@ class SettingController extends Controller
      * Display the user's profile form.
      */
     public function profile(Request $request)
-    {
+    {   
+        // dd(Auth::user()->getBusinesses);
         $user = User::find(Auth::user()->id);
         return view('business.setting.profile', compact('user'));
     }
@@ -134,7 +135,7 @@ class SettingController extends Controller
 
                 if ($request->hasFile('business_image')) {
                     $oldimage = $update->profile;
-                    $image_name = fileUploadStorage($request->file('business_image'), 'business_images', 500, 500);
+                    $image_name = fileUploadStorage($request->file('business_image'), 'business_images', 660, 450);
                     $update->business_image = $image_name;
                 }
 
@@ -274,6 +275,18 @@ class SettingController extends Controller
             $message = $e->getMessage();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+    
+    public function switchBusiness(Request $request, $business_id)
+    {
+        $user = User::find(Auth::user()->id);
+        if($user){
+            $user->business_id = $business_id;
+            $user->save();
+        }
+        Auth::logout();
+        Auth::login($user);
+        return redirect()->intended(route('business.dashboard', absolute: false));
     }
     
 }
