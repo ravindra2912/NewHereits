@@ -11,6 +11,85 @@
 @section('content')
 @section('title', $business->name)
 
+@push('style')
+
+<style>
+  .banner {
+    /* width: 350px; */
+    height: 300px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .banner-header {
+    background-color: #eef3f7;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    /* align-items: center; */
+    height: 50%;
+  }
+
+  .banner-header h1 {
+    font-size: 18px;
+    margin: 0;
+    color: #333;
+  }
+
+  .banner-header .appointment {
+    font-size: 14px;
+    color: #336699;
+    font-weight: bold;
+  }
+
+  .banner-image {
+    /* margin-top: 20px; */
+    position: relative;
+  }
+
+  .banner-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid #ffa500;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+  }
+
+  .banner-body {
+    background-color: #336699;
+    color: white;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 50%;
+  }
+
+  .banner-body h2 {
+    font-size: 18px;
+    /* margin: 10px 0; */
+    color: white;
+    margin-bottom: 0px;
+  }
+
+  .banner-body p {
+    font-size: 14px;
+    /* margin: 5px 0; */
+    margin-bottom: 0px;
+    color: #cce7ff;
+  }
+</style>
+
+
+@endpush
+
 <section>
   <div class="hero-wrap section pb-3" id="store_info">
     <div class="hero-bg" style="background-image:url({{ asset('front/img/store-bg.jpg') }});"></div>
@@ -76,11 +155,11 @@
           </div>
         </div><!-- Sort Filters end -->
         @endif
-        
+
         <div class="row" id="list-obj">
           {!! $appontmentersHtml !!}
         </div>
-        
+
         <div class="text-center h5 mt-4 d-none" id="data-loader">Loading ...</div>
 
       </div>
@@ -88,7 +167,7 @@
         <p class="text-center"> for advertisement </p>
       </div>
     </div>
-</div>
+  </div>
   @endif
 
 </section>

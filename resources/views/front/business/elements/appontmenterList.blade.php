@@ -1,4 +1,28 @@
 @foreach ($appontmenters as $appontmenter)
+
+<div class="col-md-4 col-12 mb-3">
+<div class="banner">
+  <div class="banner-header">
+    <h1>Dr. Cons<br><small style="font-size: 12px; color: #666;">Your personal doctor</small></h1>
+    <div class="appointment">Set Your<br>Appointment</div>
+  </div>
+  <div class="banner-image">
+    <img src="{{ getImage($appontmenter->appointmenter_image) }}" alt="Doctor">
+  </div>
+  <div class="banner-body">
+    <h2>Your Health is Our Concern</h2>
+    <p>Reallygreatsite.com</p>
+  </div>
+</div>
+</div>
+
+@endforeach
+
+
+
+@php
+/*
+@foreach ($appontmenters as $appontmenter)
 <div class="col-md-6 col-12 ">
   <div class="bg-white shadow-md rounded p-3 mb-2 list-store">
     <div class="row">
@@ -46,3 +70,6 @@
   </div>
 </div>
 @endforeach
+
+*/
+@endphp
