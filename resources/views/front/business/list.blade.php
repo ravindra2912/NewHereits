@@ -5,7 +5,7 @@
 
 <section class="container mt-2 mb-5">
   <!-- fore filters -->
-<input type="hidden" id="category" value="{{ $catSlug }}" />
+ <input type="hidden" id="category" value="{{ $catSlug }}" />
 
   <div class="row">
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">

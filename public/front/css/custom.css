@@ -61,6 +61,15 @@
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
+/*-------------------------  appoinments page----------------------------------------*/
+
+.appoinmenter-img {	 
+	height: 100px;
+    width: 100px;
+    object-fit: cover;
+    border-radius: 100% !important;
+ } 
+
 /*-------------------------  pagination page----------------------------------------*/
 
 	.pagination a{
