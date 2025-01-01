@@ -5,7 +5,7 @@
 'image' => getImage($business->business_image) ,
 'city' => '',
 'state' => '',
-'position' => ''
+'position' => $business->latitude.':'.$business->longitude
 ]
 ])
 @section('content')

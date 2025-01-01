@@ -1,9 +1,11 @@
 <?php
 
+use App\Models\Appointmenter;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\BusinessController;
+use App\Http\Controllers\Front\AppointmentController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
@@ -13,6 +15,11 @@ Route::controller(BusinessController::class)->group(function () {
     Route::get('businesses/{slug?}', 'index')->name('business');
     Route::get('business/{slug}', 'businessDetails')->name('business-details');
     Route::post('get-business', 'getBusiness')->name('get-business');
+});
+
+
+Route::controller(AppointmentController::class)->group(function () {
+    Route::get('expert/{slug?}', 'index')->name('expert');
 });
 
 // Route::get('/', function () {

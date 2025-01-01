@@ -55,11 +55,10 @@ class BusinessController extends Controller
         if ($business) {
             $setting = getBusinessSettings($business->id);
             $departments = array();
-            $appontmenters = array();
             if ($setting->is_appointment_with_department) {
                 $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', $business->id)->get();
             }
-            $appontmenters = Appointmenter::select('id', 'appointmenter_name', 'appointmenter_image', 'department_id')->with('department')->where('business_id', $business->id)->get();
+            $appontmenters = Appointmenter::select('id', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug')->with('department')->where('business_id', $business->id)->get();
 
             $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();
             return view('front.business.details', compact('business', 'setting', 'departments', 'appontmentersHtml'));

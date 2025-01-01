@@ -1,6 +1,6 @@
 @foreach ($appontmenters as $appontmenter)
 
-<div class="col-md-4 col-12 mb-3" data-departmentid="{{ (isset($appontmenter->department) && !empty($appontmenter->department->department_name)) ? $appontmenter->department->id: '' }}">
+<a href="{{ route('expert', $appontmenter->slug) }}" title="{{ $appontmenter->appointmenter_name }}" class="col-md-4 col-sm-6 col-12 mb-3" data-departmentid="{{ (isset($appontmenter->department) && !empty($appontmenter->department->department_name)) ? $appontmenter->department->id: '' }}">
   <div class="banner">
     <div class="banner-header">
       <!-- <h1>Dr. Cons<br><small style="font-size: 12px; color: #666;">Your personal doctor</small></h1> -->
@@ -27,7 +27,7 @@
 
     </div>
   </div>
-</div>
+</a>
 
 @endforeach
 
