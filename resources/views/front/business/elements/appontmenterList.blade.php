@@ -1,19 +1,32 @@
 @foreach ($appontmenters as $appontmenter)
 
-<div class="col-md-4 col-12 mb-3">
-<div class="banner">
-  <div class="banner-header">
-    <h1>Dr. Cons<br><small style="font-size: 12px; color: #666;">Your personal doctor</small></h1>
-    <div class="appointment">Set Your<br>Appointment</div>
+<div class="col-md-4 col-12 mb-3" data-departmentid="{{ (isset($appontmenter->department) && !empty($appontmenter->department->department_name)) ? $appontmenter->department->id: '' }}">
+  <div class="banner">
+    <div class="banner-header">
+      <!-- <h1>Dr. Cons<br><small style="font-size: 12px; color: #666;">Your personal doctor</small></h1> -->
+      <h1>
+        @if (isset($appontmenter->department) && !empty($appontmenter->department->department_name))
+        {{ $appontmenter->department->department_name }}
+        @endif
+      </h1>
+      <div class="appointment">Set Your<br>Appointment</div>
+    </div>
+    <div class="banner-image">
+      <img src="{{ getImage($appontmenter->appointmenter_image) }}" alt="Doctor">
+    </div>
+    <div class="banner-body">
+      <h2>{{ $appontmenter->appointmenter_name }}</h2>
+      <span class="mr-2">
+        <i class="fas fa-star text-warning"></i>
+        <i class="fas fa-star text-warning"></i>
+        <i class="fas fa-star text-warning"></i>
+        <i class="fas fa-star text-warning"></i>
+        <i class="fas fa-star text-gray"></i>
+        <!-- <i class="text-black-50" href="#">(245 reviews)</i> -->
+      </span>
+
+    </div>
   </div>
-  <div class="banner-image">
-    <img src="{{ getImage($appontmenter->appointmenter_image) }}" alt="Doctor">
-  </div>
-  <div class="banner-body">
-    <h2>Your Health is Our Concern</h2>
-    <p>Reallygreatsite.com</p>
-  </div>
-</div>
 </div>
 
 @endforeach

@@ -25,7 +25,8 @@
   }
 
   .banner-header {
-    background-color: #eef3f7;
+    background-color: #e1ebf3;
+    /* background-color: #eef3f7; */
     padding: 15px;
     display: flex;
     justify-content: space-between;
@@ -51,8 +52,8 @@
   }
 
   .banner-image img {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
     border: 2px solid #ffa500;
     position: absolute;
@@ -60,6 +61,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
+    object-fit: cover;
   }
 
   .banner-body {
@@ -85,6 +87,26 @@
     margin-bottom: 0px;
     color: #cce7ff;
   }
+
+
+  /* store Banner  */
+  .store-avtar {
+    height: 200px;
+    width: 200px;
+    object-fit: contain;
+  }
+
+  @media (max-width: 767px) {
+    .banner-info {
+      text-align: center;
+      justify-items: center;
+    }
+
+    .store-avtar {
+      height: 150px;
+      width: 150px;
+    }
+  }
 </style>
 
 
@@ -96,10 +118,10 @@
     <div class="hero-content">
       <div class="container">
         <div class="row">
-          <div class="col-lg-4 col-4 text-center " style="align-self: center;">
-            <img class="" alt="{{ $business->name }}" height="250" src="{{ getImage($business->business_image) }}" style="border-radius: 20px;">
+          <div class="col-lg-4 col-12 text-center " style="align-self: center;">
+            <img class="store-avtar" alt="{{ $business->name }}" src="{{ getImage($business->business_image) }}">
           </div>
-          <div class="col-lg-8 col-8 text-lg-left mt-4">
+          <div class="col-lg-8 col-12 banner-info">
             <h2 class=" font-weight-600 text-light store-name">{{ $business->name }} </h2>
             <p class="mb-2">
               <span class="mr-2">
@@ -130,7 +152,7 @@
   </div>
 
   @if (isset($setting->is_appointment_system) && $setting->is_appointment_system)
-  <div class="mt-5 mb-5">
+  <div class="mt-5 mb-5 mx-3">
     <div class="row">
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">
         <p class="text-center"> for advertisement </p>
@@ -144,7 +166,7 @@
             <div class="col-12 col-md-12">
               <div class="row no-gutters ml-auto">
                 <label class="col col-form-label-sm text-right mr-2 mb-0" for="input-sort">Departments:</label>
-                <select class="custom-select custom-select-sm col" id="sort_by" onchange="get_data(0)">
+                <select class="custom-select custom-select-sm col" id="sort_by">
                   <option value="" selected>All</option>
                   @foreach ($departments as $department)
                   <option value="{{ $department->id }}">{{ $department->department_name }}</option>
@@ -160,8 +182,6 @@
           {!! $appontmentersHtml !!}
         </div>
 
-        <div class="text-center h5 mt-4 d-none" id="data-loader">Loading ...</div>
-
       </div>
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">
         <p class="text-center"> for advertisement </p>
@@ -175,7 +195,23 @@
 
 @push('js')
 <script>
-
+  $(document).ready(function() {
+    $('#sort_by').change(function() {
+      var department_id = $(this).val();
+      const innerDivs = document.querySelectorAll('#list-obj > div');
+      innerDivs.forEach(div => {
+        if (department_id != '') {
+          if ($(div).data('departmentid') == department_id) {
+            $(div).removeClass('d-none');
+          } else {
+            $(div).addClass('d-none');
+          }
+        } else {
+          $(div).removeClass('d-none');
+        }
+      });
+    });
+  });
 </script>
 @endpush
 
