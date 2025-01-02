@@ -230,14 +230,17 @@ function generateTimeSlots($startTime, $endTime, $interval, $bookedArray)
     return $slots;
 }
 
-function getAppoinmenterTiming($id, $date, $appoinment_id = null)
+function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId = null)
 {
     $day = Carbon::parse($date)->format('l');
 
+    if($getBusinessId == null){
+        $getBusinessId = getBusinessId();
+    }
+
     $appontmentsData = AppointmentBooking::select('slot_start_time', 'slot_end_time')
-        ->where('business_id', getBusinessId())
         ->whereDate('booking_date', Carbon::parse($date))
-        ->where('business_id', getBusinessId())
+        ->where('business_id', $getBusinessId)
         ->where('appointmenter_id', $id);
     if ($appoinment_id != null) {
         $appontmentsData = $appontmentsData->WhereNotIn('id', [$appoinment_id]);
@@ -248,7 +251,7 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null)
         $bookedArray[] = Carbon::parse($appontmentrow->slot_start_time)->format('h:i a') . ' - ' . Carbon::parse($appontmentrow->slot_end_time)->format('h:i a');
     }
 
-    $appontmenterTiming = BusinessTiming::where('day', $day)->where('appointmenter_id', $id)->where('business_id', getBusinessId())->orderBy('start_time', 'asc')->get();
+    $appontmenterTiming = BusinessTiming::where('day', $day)->where('appointmenter_id', $id)->where('business_id', $getBusinessId)->orderBy('start_time', 'asc')->get();
     $slots = array();
     foreach ($appontmenterTiming as $timing) {
         $startTime = Carbon::parse($timing->start_time)->format('H:i');

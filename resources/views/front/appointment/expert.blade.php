@@ -69,6 +69,55 @@
     line-height: 24px;
     margin: 15px 0;
   }
+
+
+
+
+  .form-select:not(.form-select-sm) {
+    height: calc(3.05rem + 2px);
+    min-height: 100%;
+    padding-top: .700rem;
+    padding-bottom: .700rem;
+  }
+
+  .form-select:invalid {
+    color: #b1b4b6;
+  }
+
+  .form-control,
+  .form-select {
+    border-color: #d5d3d3;
+    color: #777;
+  }
+
+  .form-select {
+    display: block;
+    width: 100%;
+    padding: .375rem 2.25rem .375rem .75rem;
+    -moz-padding-start: calc(.75rem - 3px);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    /* background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e); */
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    appearance: none;
+  }
+
+  select {
+    word-wrap: normal;
+  }
+
+  button,
+  select {
+    text-transform: none;
+  }
 </style>
 
 
@@ -95,22 +144,59 @@
 
 
   <div class="section mx-3 row">
-    <div class="col-8 my-sm-5">
-      <h2 class="text-9 text-center">Book your appointment</h2>
-      <p class="lead text-center mb-5">Send a top-up experience people love to talk about</p>
-      <div class="row g-4">
-        <div class="col-md-12">
-          <div class="testimonial h-100 bg-white rounded shadow-sm text-center p-4">
-            <p class="text-3">“Easy to use, reasonably priced simply dummy text of the printing and typesetting industry. Quidam lisque persius interesset his et, in quot quidam possim iriure.”</p>
-            <span class="text-warning"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span> <span class="d-block fw-500">Jay Shah from India</span>
-          </div>
+    <div class="col-md-8 col-sm-8 col-12 my-sm-5">
+      <div class="resp-tabs-container bg-white shadow-md rounded p-3">
+        <div class="resp-tab-content resp-tab-content-active" style="display:block" aria-labelledby="tab_item-0">
+          <h2 class="text-6 mb-1">Book your appointment</h2>
+          <p>Book your appointment with {{ $expert->appointmenter_name }}. Please fill the form below to book your appointment.</p>
+          <form id="appointment-form" action="{{ route('business.appointment.bookings.store') }}" data-action="redirect" class="formaction">
+            @csrf
+
+            <input type="hidden" name="expert_id" value="{{ $expert->id }}">
+            <input type="hidden" name="business_id" value="{{ $expert->business_id }}">
+            <input type="hidden" name="department_id" value="{{ $expert->department_id }}">
+            
+
+            <div class="mb-3">
+              <label for="appointmentdate" class="form-label">Appointment date</label>
+              <input type="date" name="booking_date" class="form-control" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
+            </div>
+
+            @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
+            <div class="mb-3">
+              <label for="operator" class="form-label">Appointment Time</label>
+              <select class="form-select" id="appointmenttime" required="">
+                <option value="">Select Your Appointment Time</option>
+                @foreach ($timeSlots as $time)
+                <option value="{{ $time['time'] }}" {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option>
+                @endforeach
+              </select>
+            </div>
+            @endif
+
+            <div class="mb-3">
+              <label for="user_name" class="form-label">Your Name</label>
+              <div class="input-group">
+                <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" required="" type="text">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="user_contact" class="form-label">Mobile Number</label>
+              <input type="text" name="user_contact" class="form-control" id="user_contact" required="" placeholder="Enter Mobile Number">
+            </div>
+
+            <div class="d-grid mt-4"> 
+              <button class="btn btn-primary" href="recharge-order-summary.html">Book Appointment</button> 
+            </div>
+          </form>
         </div>
-
-
       </div>
+
+
       <div class="text-center mt-5"><a href="#" class="btn-link text-4">See more people review<i class="fas fa-chevron-right text-2 ms-2"></i></a></div>
     </div>
-    <div class="col-4 my-sm-5 text-center">
+    <div class="col-md-4 col-sm-4 col-12 my-sm-5 text-center">
       <p>for advertisement</p>
     </div>
   </div>
