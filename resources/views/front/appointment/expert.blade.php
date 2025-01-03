@@ -75,7 +75,7 @@
 
   .form-select:not(.form-select-sm) {
     height: calc(3.05rem + 2px);
-    min-height: 100%;
+    /* min-height: 100%; */
     padding-top: .700rem;
     padding-bottom: .700rem;
   }
@@ -121,7 +121,12 @@
 
   .fa-check-circle {
     font-size: 60px;
-}
+  }
+
+  .googleMap {
+    width: -webkit-fill-available;
+    height: 300px;
+  }
 </style>
 
 
@@ -138,8 +143,8 @@
           <div class="title-sub mb-md-4 mb-3">
             <h1 class="text-white">{{ $expert->appointmenter_name }}</h1>
           </div>
-          <h5 class="pb-0 mb-0">Business Development Manager</h5>
-          <p class="text-white mt-3">Jayveer Ker serves as the Business Development Manager at PSDtoHTMLNinja.com, specializing in assisting organizations with overcoming web development hurdles. His insightful and informative posts deliver practical solutions and valuable insights.</p>
+          <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
+          <p class="text-white mt-3">{{ $expert->description }}</p>
         </div>
       </div>
     </div>
@@ -148,12 +153,12 @@
 
 
   <div class="section mx-3 row">
-    <div class="col-md-8 col-sm-8 col-12 my-sm-5">
+    <div class="col-md-7 col-sm-7 col-12 my-sm-5">
       <div class="resp-tabs-container bg-white shadow-md rounded p-3">
         <div class="resp-tab-content resp-tab-content-active" style="display:block" aria-labelledby="tab_item-0">
           <h2 class="text-6 mb-1">Book your appointment</h2>
           <p>Book your appointment with {{ $expert->appointmenter_name }}. Please fill the form below to book your appointment.</p>
-          <form id="appointment-form" action="{{ route('book.appointment') }}" data-action="call" data-reset="true" class="formaction">
+          <form id="appointment-form" action="{{ route('book.appointment') }}" data-action="call" data-reset="true" class="row formaction">
             @csrf
 
             <input type="hidden" name="expert_id" id="expert_id" value="{{ $expert->id }}">
@@ -161,13 +166,13 @@
             <input type="hidden" name="department_id" value="{{ $expert->department_id }}">
             <input type="hidden" value="{{ $expert->businessSetting['is_appointment_book_with_time_slote'] }}" id="with-timing">
 
-            <div class="mb-3">
+            <div class="col-md-6 col-sm-6 col-12 mb-3">
               <label for="booking_date" class="form-label">Appointment date</label>
               <input type="date" name="booking_date" class="form-control" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
             </div>
 
             @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
-            <div class="mb-3">
+            <div class="col-md-6 col-sm-6 col-12 mb-3">
               <label for="operator" class="form-label">Appointment Time</label>
               <select class="form-select" name="timeslote" id="timeslote" required="">
                 <option value="">Select Your Appointment Time</option>
@@ -178,19 +183,19 @@
             </div>
             @endif
 
-            <div class="mb-3">
+            <div class="col-md-6 col-sm-6 col-12 mb-3">
               <label for="user_name" class="form-label">Your Name</label>
               <div class="input-group">
                 <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" required="" type="text">
               </div>
             </div>
 
-            <div class="mb-3">
+            <div class="col-md-6 col-sm-6 col-12 mb-3">
               <label for="user_contact" class="form-label">Mobile Number</label>
               <input type="text" name="user_contact" class="form-control" id="user_contact" required="" placeholder="Enter Mobile Number">
             </div>
 
-            <div class="d-grid mt-4">
+            <div class="col-12 mb-3">
               <button class="btn btn-primary btn_action" href="recharge-order-summary.html">
                 <span id="buttonText"> Appointment Book</span>
                 <span id="loader" class="d-none"> Booking ...</span>
@@ -199,18 +204,21 @@
           </form>
         </div>
       </div>
-
-
-      <div class="text-center mt-5"><a href="#" class="btn-link text-4">See more people review<i class="fas fa-chevron-right text-2 ms-2"></i></a></div>
     </div>
-    <div class="col-md-4 col-sm-4 col-12 my-sm-5 text-center">
+    <div class="col-md-5 col-sm-5 col-12 my-sm-5 text-center">
+
+      <iframe
+        src="https://www.google.com/maps?q={{ $expert->business->latitude.','.$expert->business->longitude }}&hl=es;z=14&output=embed"
+        allowfullscreen
+        loading="lazy" class="googleMap">
+      </iframe>
+
       <p>for advertisement</p>
     </div>
   </div>
 
 
-  <!-- thank you Modal
-=========================== -->
+  <!-- thank you Modal Start-->
   <div id="thank-you-modal" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content border-0">
@@ -237,7 +245,6 @@
 
 @push('js')
 <script>
-
   function responce(res) {
     $('#thank-you-modal').modal('show');
     console.log(res);

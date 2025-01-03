@@ -22,8 +22,10 @@ class AppointmentController extends Controller
 {
     public function index(Request $request, $slug): View
     {
-        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug')
-            ->with('businessSetting')
+        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
+            ->with(['business' => function($q){
+                return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
+            }, 'businessSetting'])
             ->where('status', 'active')
             ->where('slug', $slug)
             ->first();
