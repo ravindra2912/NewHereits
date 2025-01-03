@@ -20,6 +20,8 @@ Route::controller(BusinessController::class)->group(function () {
 
 Route::controller(AppointmentController::class)->group(function () {
     Route::get('expert/{slug?}', 'index')->name('expert');
+    Route::post('book-appointment', 'bookAppointment')->name('book.appointment');
+    Route::post('get-appoinmenter-timing', 'getAppoinmenterTiming')->name('get.appoinmenter.timing');
 });
 
 // Route::get('/', function () {

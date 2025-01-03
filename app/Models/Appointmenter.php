@@ -16,6 +16,6 @@ class Appointmenter extends Model
     
     public function businessSetting()
     {
-        return $this->belongsTo(BusinessSetting::class, 'business_id', 'id');
+        return $this->belongsTo(BusinessSetting::class, 'business_id', 'business_id');
     }
 }

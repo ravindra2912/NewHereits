@@ -70,6 +70,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/vendor/jquery-ui/jquery-ui.css') }}" />
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/vendor/daterangepicker/daterangepicker.css') }}" />
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/css/stylesheet.css') }}" />
+
+	<!--Toastr -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/css/custom.css') }}" />
 
 	@stack('style')
@@ -523,6 +527,11 @@
 	<!-- <script src="{{ asset('front/vendor/daterangepicker/moment.min.js') }}"></script> -->
 	<!-- <script src="{{ asset('front/vendor/daterangepicker/daterangepicker.js') }}"></script> -->
 	<script src="{{ asset('front/js/theme.js') }}"></script>
+
+	<!--Toastr -->
+<script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js')}}"></script>
+
+<script src="{{ asset('ajax/ajax.js') }}"></script>
 
 	<script>
 		function loader(state) {

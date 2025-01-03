@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\AppointmentDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
 
 class AppointmentController extends Controller
@@ -29,18 +30,24 @@ class AppointmentController extends Controller
 
         if ($expert) {
             $expert->businessSetting = $expert->businessSetting->getBusinessSettingObject();
-            $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now()->subDays(3), null, $expert->business_id);
+            $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
             return view('front.appointment.expert', compact('expert', 'timeSlots'));
         } else {
             return view('404');
         }
     }
 
+    public function getAppoinmenterTiming(Request $request)
+    {
+        $slots = getAppoinmenterTiming($request->appointmenter_id, $request->date, null, $request->business_id);
+        return response()->json($slots);
+    }
+
     public function bookAppointment(Request $request)
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = Route('business.appointment.bookings.index');
+        $redirect = '';
         $data = array();
 
         try {
@@ -56,8 +63,8 @@ class AppointmentController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) { // Validation fails
-                $message = $validator->errors();
-                // $message = $validator->errors()->first();
+                // $message = $validator->errors();
+                $message = $validator->errors()->first();
             } else {
 
                 $getLastToken = AppointmentBooking::where('appointmenter_id', $request->expert_id)->whereDate('booking_date', Carbon::parse($request->booking_date))->orderBy('token_number', 'desc')->where('business_id', $request->business_id)->first();
@@ -67,7 +74,7 @@ class AppointmentController extends Controller
                     $tokenNumber = 1;
                 }
                 $insert = new AppointmentBooking();
-                $insert->business_id  = Auth::user()->business_id;
+                $insert->business_id  = $request->business_id;
                 $insert->token_number  = $tokenNumber;
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_id = $request->expert_id;
