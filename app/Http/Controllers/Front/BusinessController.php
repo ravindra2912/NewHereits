@@ -14,6 +14,7 @@ use App\Models\AppointmentDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Favorite;
 
 class BusinessController extends Controller
 {
@@ -38,6 +39,19 @@ class BusinessController extends Controller
         $businesses =  $businesses->limit($request->limit)
             ->skip($request->offset)
             ->get();
+
+        foreach ($businesses as $key => $business) {
+            $businesses[$key]->is_favorite = false;
+            if (Auth::check()) {
+                $favorite = Favorite::where('business_id', $business->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('favorite_type', 'business')
+                    ->first();
+                if ($favorite) {
+                    $businesses[$key]->is_favorite = true;
+                }
+            }
+        }
 
         $data['list'] =  view('front.business.elements.storeList', compact('businesses'))->render();
         $data['counts'] =  $businesses->count();
@@ -65,5 +79,34 @@ class BusinessController extends Controller
         } else {
             return view('404');
         }
+    }
+
+    function businessFavorite(Request $request)
+    {
+        $success = false;
+        $is_favorite = false;
+        $message = 'Something Wrong!';
+        $redirect = route('home');
+        $data = array();
+
+        $favorite = Favorite::where('business_id', $request->business_id)
+            ->where('user_id', Auth::user()->id)
+            ->where('favorite_type', 'business')
+            ->first();
+        if ($favorite) {
+            $favorite->delete();
+            $success = true;
+            $message = 'Removed from favourite';
+        } else {
+            $favorite = new \App\Models\Favorite();
+            $favorite->business_id = $request->business_id;
+            $favorite->user_id = Auth::user()->id;
+            $favorite->favorite_type = 'business';
+            $favorite->save();
+            $success = true;
+            $is_favorite = true;
+            $message = 'Added to favourite';
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect, 'is_favorite' => $is_favorite]);
     }
 }

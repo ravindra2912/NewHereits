@@ -13,7 +13,7 @@
 	@if (isset($seo) && !empty($seo))
 	<meta name="description" content="<?= $seo['description'] ?>">
 	<meta name="keywords" content="<?= $seo['keywords'] ?>">
-	
+
 
 	<link rel="canonical" href="{{ url()->current() }}" />
 
@@ -112,17 +112,13 @@
 						<nav class="primary-menu navbar navbar-expand-lg">
 							<div id="header-nav" class="collapse navbar-collapse">
 								<ul class="navbar-nav">
-									<?php /* if($this->session->User->store_id != NULL){ ?>
-					<li class="mobile-hide"> <a href="Store_dashboard" target="_blank" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Manage Store</a> </li>
-					<li class="mobile-show"> <a href="Store_dashboard" target="_blank">Manage Store</a> </li>
-				<?php }else{ ?>
-					<li class="mobile-hide"> <a href="Business" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Register Your business</a> </li>
-					<li class="mobile-show"> <a href="Business" >Register Your business</a> </li>
-				<?php } */ ?>
-
-									<li class="mobile-hide"> <a href="{{ route('business.dashboard') }}" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Register Your business</a> </li>
-									<li class="mobile-show"> <a href="{{ route('business.dashboard') }}">Register Your business</a> </li>
-
+									@if (Auth::check() && Auth::user()->role_id == 2)
+									<li class="mobile-hide"> <a href="{{ route('business.dashboard') }}" target="_blank" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Manage Store</a> </li>
+									<li class="mobile-show"> <a href="{{ route('business.dashboard') }}" target="_blank">Manage Store</a> </li>
+									@else
+									<li class="mobile-hide"> <a href="Business" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Register Your business</a> </li>
+									<li class="mobile-show"> <a href="Business">Register Your business</a> </li>
+									@endif
 								</ul>
 							</div>
 						</nav>
@@ -148,10 +144,7 @@
 												<div class="modal-body py-4 px-0">
 													<div class="row">
 														<div class="col-11 col-md-10 mx-auto search-input-line">
-															<!-- ul class="nav nav-tabs nav-justified mb-4" role="tablist">
-							  <li class="nav-item"> <a class="nav-link text-5 line-height-3 active">Location</a> </li>
-							 
-							</ul -->
+
 															<input type="text" class="form-control" data-bv-field="number" onkeyup="myFunction()" id="city-search" required="" placeholder="Search City">
 															<?php $cites = array() ?>
 															<ul class="p-0" id="location-area">
@@ -173,8 +166,6 @@
 										</div>
 									</div>
 									<!-- Location Modal End -->
-
-
 
 									<a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
 										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
@@ -200,10 +191,6 @@
 												<div class="modal-body py-4 px-0">
 													<div class="row">
 														<div class="col-11 col-md-10 mx-auto search-input-line">
-															<!-- ul class="nav nav-tabs nav-justified mb-4" role="tablist">
-							  <li class="nav-item"> <a class="nav-link text-5 line-height-3 active">Location</a> </li>
-							 
-							</ul -->
 															<input type="text" class="form-control" data-bv-field="number" onkeyup="search(this.value)" id="search_input" required="" placeholder="Search">
 															<ul class="p-0" id="search-result" style="height: 400px;">
 
@@ -244,9 +231,7 @@
 									$pcout = 0;
 									$scout = 0;
 									?>
-
-
-									<a class="pr-0 mr-0" href="Cart" title="Product Cart">
+									<!-- <a class="pr-0 mr-0" href="Cart" title="Product Cart">
 										<span class="text-5 ml-sm-2"><i class="fas fa-shopping-cart"></i></span>
 										<?php if ($pcout > 0) { ?> <span class='badge' id='lblCartCount'> <?= $pcout ?> </span> <?php } ?>
 									</a>
@@ -254,28 +239,29 @@
 									<a class="pr-0 pl-1 mr-0" href="Cart/Booking_cart" title="Booking Cart">
 										<span class="text-5 ml-sm-2"><i class="far fa-calendar-alt" style="font-size: 23px;"></i></span>
 										<?php if ($scout > 0) { ?> <span class='badge' id='lblCartCount'> <?= $scout ?> </span> <?php } ?>
-									</a>
+									</a> -->
 
+
+									@if (Auth::check())
 								<li class="dropdown mobile-hide">
-									<a class="pr-0 pl-1" href="#" title="Login / Sign up">
-										<span class="d-none d-sm-inline-block">user</span>
-										<span class=" ml-sm-2"><img src="" style="height: 30px;border-radius: 10px;" /></span>
+									<a class="pr-0 pl-1" href="#" title="Profile">
+										<span class="d-none d-sm-inline-block">{{ Auth::User()->first_name }}</span>
+										<span class="user-icon ml-sm-2"><img src="{{ getImage(Auth::User()->profile) }}" style="height: 30px;border-radius: 10px;" /></span>
 									</a>
 									<ul class="dropdown-menu">
-										<li><a class="dropdown-item" href="Account/My_profile">User Info</a></li>
+										<li><a class="dropdown-item" href="{{ route('account.userprofile') }}">User Info</a></li>
 										<li><a class="dropdown-item" href="Account/Address">My Address</a></li>
 										<li><a class="dropdown-item" href="Account/Orders">My Order</a></li>
 										<li><a class="dropdown-item" href="Account/Bookings">My Booking</a></li>
-										<li><a class="dropdown-item" href="Login/logout">Logout</a></li>
+										<li><a class="dropdown-item" href="{{ route('logout') }}">Logout</a></li>
 									</ul>
 								</li>
-
-
+								@else
 								<a class="pr-0 mobile-hide" style="padding-top: 18px;" data-toggle="modal" data-target="#login-modal" href="#" title="Login / Sign up">
 									<span class="d-none d-sm-inline-block">Login</span>
-									<span class="user-icon ml-sm-2"><i class="fas fa-user"></i></span>
+									<!-- <span class="user-icon ml-sm-2"><i class="fas fa-user"></i></span> -->
 								</a>
-
+								@endif
 
 								</li>
 							</ul>
@@ -402,9 +388,10 @@
 							</ul>
 							<p class="text-4 font-weight-300 text-muted text-center mb-4">We are glad to see you again!</p>
 							<p class="text-3 text-center text-danger mb-4" id="login_msg"></p>
-							<form id="loginForm" method="post">
+							<form id="loginForm" action="{{ route('login') }}" data-action="reload" class="formaction">
+								@csrf
 								<div class="form-group">
-									<input type="email" class="form-control" id="email_id" name="email_id" required placeholder="Email">
+									<input type="email" class="form-control" id="email" name="email" required placeholder="Email">
 								</div>
 								<div class="form-group">
 									<input type="password" class="form-control" id="password" name="password" required placeholder="Password">
@@ -418,9 +405,11 @@
 									</div>
 									<div class="col text-2 text-right"><a class="btn-link" href="" data-toggle="modal" data-target="#forgot-password-modal" data-dismiss="modal">Forgot Password ?</a></div>
 								</div>
-								<button class="btn btn-primary btn-block my-4" type="submit">Login</button>
+								<button class="btn btn-primary btn-block my-4 btn_action" type="submit">
+									<span id="buttonText">Login</span>
+									<span id="loader" class="d-none">Login ...</span>
+								</button>
 							</form>
-
 							<p class="text-2 text-center mb-0">New to Hereits? <a class="btn-link" href="" data-toggle="modal" data-target="#signup-modal" data-dismiss="modal">Sign Up</a></p>
 						</div>
 					</div>
@@ -529,9 +518,9 @@
 	<script src="{{ asset('front/js/theme.js') }}"></script>
 
 	<!--Toastr -->
-<script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js')}}"></script>
+	<script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js')}}"></script>
 
-<script src="{{ asset('ajax/ajax.js') }}"></script>
+	<script src="{{ asset('ajax/ajax.js') }}"></script>
 
 	<script>
 		function loader(state) {
@@ -547,72 +536,6 @@
 	@stack('js')
 
 	<script>
-		//Login
-		$("#loginForm").on('submit', (function(e) {
-			e.preventDefault();
-			$.ajax({
-				url: url + 'Login/chack_user_login',
-				type: "POST",
-				data: new FormData(this),
-				dataType: 'json',
-				contentType: false,
-				cache: false,
-				processData: false,
-				beforeSend: function() {
-					document.getElementById("preloader").style.display = "block";
-				},
-				success: function(data) {
-					//alert(data);
-					console.log(data);
-					if (data.status == 1) {
-						location.reload();
-					} else {
-						$('#login_msg').html(data.Message);
-					}
-					document.getElementById("preloader").style.display = "none";
-				},
-				error: function(e) {
-					alert('Somthing Wron');
-					console.log(e);
-					document.getElementById("preloader").style.display = "none";
-				}
-			});
-		}));
-
-		//new registration
-		$("#registerForm").on('submit', (function(e) {
-			e.preventDefault();
-			$.ajax({
-				url: url + 'Login/User_Registration',
-				type: "POST",
-				data: new FormData(this),
-				dataType: 'json',
-				contentType: false,
-				cache: false,
-				processData: false,
-				beforeSend: function() {
-					document.getElementById("preloader").style.display = "block";
-				},
-				success: function(data) {
-					//alert(data);
-					console.log(data);
-					if (data.status == 1) {
-						location.reload();
-					} else {
-						$('#gegister_msg').html(data.Message);
-						var elmnt = document.getElementById("gegister_msg");
-						elmnt.scrollIntoView();
-					}
-					document.getElementById("preloader").style.display = "none";
-				},
-				error: function(e) {
-					alert('Somthing Wron');
-					console.log(e);
-					document.getElementById("preloader").style.display = "none";
-				}
-			});
-		}));
-
 		//new forgotForm
 		$("#forgotForm").on('submit', (function(e) {
 			e.preventDefault();

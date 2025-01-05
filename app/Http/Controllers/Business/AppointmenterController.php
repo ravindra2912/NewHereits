@@ -89,6 +89,8 @@ class AppointmenterController extends Controller
                 'appointmenter_image' => 'required|mimes:jpg,jpeg,png|',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'appointmenter_name' => 'required',
+                'title' => 'required',
+                'description' => 'required',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -105,6 +107,9 @@ class AppointmenterController extends Controller
                 $insert->business_id  = Auth::user()->business_id;
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_name = $request->appointmenter_name;
+                $insert->title = $request->title;
+                $insert->description = $request->description;
+                $insert->slug = generateUniqueSlug(Appointmenter::class, $request->appointmenter_name);
                 $insert->save();
 
                 $success = true;
@@ -148,6 +153,8 @@ class AppointmenterController extends Controller
                 'appointmenter_image' => 'nullable|mimes:jpg,jpeg,png|',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'appointmenter_name' => 'required',
+                'title' => 'required',
+                'description' => 'required',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -167,6 +174,8 @@ class AppointmenterController extends Controller
                 $update->business_id  = Auth::user()->business_id;
                 $update->department_id = $request->department_id;
                 $update->appointmenter_name = $request->appointmenter_name;
+                $update->title = $request->title;
+                $update->description = $request->description;
                 $update->save();
 
                 // Remove old uploaded image if exist

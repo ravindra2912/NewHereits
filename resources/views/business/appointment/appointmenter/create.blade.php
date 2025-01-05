@@ -101,6 +101,20 @@
                     <input type="text" class="form-control" name="appointmenter_name" placeholder="Appointmenter name" />
                   </div>
                 </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Job title <span class="error">*</span></label>
+                    <input type="text" class="form-control" name="title" placeholder="Job title" />
+                  </div>
+                </div>
+                
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label>Short description <span class="error">*</span></label>
+                    <input type="text" class="form-control" name="description" placeholder="Description" />
+                  </div>
+                </div>
               </div>
             </div>
 

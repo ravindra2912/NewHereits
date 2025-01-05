@@ -3,9 +3,13 @@
   <div class="row">
     <div class="col-md-4 col-4" style="align-self: center;">
       @if (Auth::check())
-      <span class="cf store-fav border rounded-pill text-nowrap" id="store-fav-{{ $res->id }}" onclick="store_fevourit({{ $res->id }})">
-        <i class="far fa-heart"></i>
-        <!-- <i class="fas fa-heart"></i> -->
+      <span class="cf store-fav border rounded-pill text-nowrap" id="store-fav-{{ $res->id }}" onclick="favorite({{ $res->id }})">
+      @if (isset($res->is_favorite) && $res->is_favorite)
+      <i class="fas fa-heart"></i>
+      @else
+      <i class="far fa-heart"></i>
+      @endif  
+      
       </span>
       @endif
       <a href="{{ route('business-details', $res->slug) }}"><img class="img-fluid rounded align-top store-img" src="{{ getImage($res->business_image) }}" alt="{{ $res->name }}"></a>
