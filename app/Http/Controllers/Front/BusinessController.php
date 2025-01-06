@@ -27,8 +27,13 @@ class BusinessController extends Controller
     public function getBusiness(Request $request)
     {
 
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id')
-            ->with(['businessCategory'])
+        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id')
+            ->with([
+                'businessCategory',
+                'contry',
+                'state',
+                'city',
+            ])
             ->where('status', 'active');
         if (isset($request->category) && !empty($request->category)) {
             $cat = BusinessCategory::where('slug', $request->category)->first('id');
@@ -41,6 +46,18 @@ class BusinessController extends Controller
             ->get();
 
         foreach ($businesses as $key => $business) {
+            $address = $business->address;
+            if(isset($business->city) && !empty($business->city->name)){
+                $address .= ', ' . $business->city->name;
+            }
+            if(isset($business->state) && !empty($business->state->name)){
+                $address .= ', ' . $business->state->name;
+            }
+            if(isset($business->contry) && !empty($business->contry->name)){ 
+                $address .= ', ' . $business->contry->name;
+            }
+            $businesses[$key]->address = $address;
+
             $businesses[$key]->is_favorite = false;
             if (Auth::check()) {
                 $favorite = Favorite::where('business_id', $business->id)
@@ -51,6 +68,7 @@ class BusinessController extends Controller
                     $businesses[$key]->is_favorite = true;
                 }
             }
+
         }
 
         $data['list'] =  view('front.business.elements.storeList', compact('businesses'))->render();
@@ -67,6 +85,18 @@ class BusinessController extends Controller
             ->first();
 
         if ($business) {
+
+            $business->is_favorite = false;
+            if (Auth::check()) {
+                $favorite = Favorite::where('business_id', $business->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('favorite_type', 'business')
+                    ->first();
+                if ($favorite) {
+                    $business->is_favorite = true;
+                }
+            }
+
             $setting = getBusinessSettings($business->id);
             $departments = array();
             if ($setting->is_appointment_with_department) {
@@ -98,7 +128,7 @@ class BusinessController extends Controller
             $success = true;
             $message = 'Removed from favourite';
         } else {
-            $favorite = new \App\Models\Favorite();
+            $favorite = new Favorite();
             $favorite->business_id = $request->business_id;
             $favorite->user_id = Auth::user()->id;
             $favorite->favorite_type = 'business';

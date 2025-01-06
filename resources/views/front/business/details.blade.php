@@ -137,10 +137,16 @@
             <p class=" d-flex align-items-center mb-2 text-4">
 
               <!-- store fevourit -->
-              <span class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2" data-toggle="tooltip" data-original-title="Favourite" id="fav" item_id="{{ $business->id }}" store_id="{{ $business->id }}"><i class="{{ 1 == 1? 'fas fa-heart':'far fa-heart' }}"></i></span>
-
+              @if (Auth::check()) 
+              <span class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2" data-toggle="tooltip" data-original-title="Favourite" id="fav" onclick="favorite({{ $business->id }})"><i class="{{ $business->is_favorite ? 'fas fa-heart':'far fa-heart' }}"></i></span>
+              @else
+              <span class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2" data-toggle="modal" data-target="#login-modal" title="Favourite">
+              <i class="far fa-heart"></i>
+              </span>
+              @endif
+              
               <a href="tel:{{ $business->contact }}" target="_blank" data-toggle="tooltip" data-original-title="Call" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="fas fa-phone-alt"></i></a>
-              <a href="#" id="copylink" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
+              <a href="javascript:void(0)" id="copylink" data-url="{{ url()->current() }}" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
               <a href="http://maps.google.com/maps?q={{ $business->latitude.','.$business->longitude }}&ll={{ $business->latitude.','.$business->longitude }}&z=17" target="_blank" data-toggle="tooltip" data-original-title="get directions" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="fas fa-map-marker-alt"></i></a>
               <a href="https://wa.me/91{{ $business->contact }}/?text=i want to know about" target="_blank" data-toggle="tooltip" data-original-title="Chat With Store" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="fab fa-whatsapp"></i></a>
             </p>
@@ -190,6 +196,7 @@
   </div>
   @endif
 
+  <!-- review and rating  -->
   <div class="section mx-5 mt-5 py-2">
     <div class="resp-tabs-container bg-white shadow-md rounded p-3">
       <h2 id="reviews" class="text-6 mb-3 mt-2">Reviews</h2>
@@ -332,6 +339,36 @@
       });
     });
   });
+
+  function favorite(id) {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('businessFavorite') }}",
+      data: {
+        business_id: id,
+      },
+      dataType: "json",
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      beforeSend: function() {
+        loader(true)
+      },
+      success: function(res) {
+        if (res.is_favorite) {
+          $('#fav').html('<i class="fas fa-heart"></i>');
+        } else {
+          $('#fav').html('<i class="far fa-heart"></i>');
+        }
+        loader(false)
+      },
+      error: function(xhr, status, error) {
+        console.error("Error: " + error);
+        loader(false)
+        alert("There was an error on favourite.");
+      }
+    });
+  }
 </script>
 @endpush
 

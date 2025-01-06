@@ -531,6 +531,17 @@
 			}
 
 		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			$('#copylink').click(function() {
+				var $temp = $("<input>");
+				$("body").append($temp);
+				$temp.val($(this).data('url')).select();
+				document.execCommand("copy");
+				$temp.remove();
+				alert("Link copied to clipboard");
+			});
+		});
 	</script>
 
 	@stack('js')
