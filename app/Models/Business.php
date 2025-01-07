@@ -19,7 +19,7 @@ class Business extends Model
         return $this->belongsTo(BusinessCategory::class, 'business_category_id', 'id')->select('id', 'name', 'image');
     }
 
-    public function contry()
+    public function country()
     {
         return $this->belongsTo(Country::class, 'country_id', 'id')->select('id', 'sortname', 'name', 'phonecode');
     }

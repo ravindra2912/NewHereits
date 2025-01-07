@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('last_name', 20);
             $table->string('email', 100)->unique()->index();
             $table->bigInteger('contact')->unique()->index()->nullable();
-            $table->bigInteger('role_id')->unsigned();
+            $table->bigInteger('role_id')->unsigned()->default(3);
             $table->string('profile', 150)->nullable();
             $table->date('dob')->nullable();
             $table->enum('gender', ['Male', 'Female'])->nullable();

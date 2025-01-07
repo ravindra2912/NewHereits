@@ -11,6 +11,8 @@ use App\Http\Controllers\Front\AppointmentController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
+    Route::get('/privacy-policy', 'privacyPolicy')->name('privacyPolicy');
+    Route::get('/term-and-condition', 'termAndCondition')->name('termAndCondition');
 });
 
 Route::controller(BusinessController::class)->group(function () {
@@ -29,6 +31,7 @@ Route::controller(AppointmentController::class)->group(function () {
 // User Authenticated Routes
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'store')->name('login');
+    Route::post('Register', 'register')->name('register');
 });
 
 Route::middleware(['web', 'front'])->group(function () {

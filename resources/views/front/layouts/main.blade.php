@@ -371,8 +371,7 @@
 
 
 
-	<!-- Login Modal
-=========================== -->
+	<!-- Login Modal =========================== -->
 	<div id="login-modal" class="modal fade" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content border-0">
@@ -420,15 +419,13 @@
 	</div>
 	<!-- Login Modal End -->
 
-	<!-- Sign Up Modal
-=========================== -->
+	<!-- Sign Up Modal =========================== -->
 	<div id="signup-modal" class="modal fade" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content border-0">
 				<div class="modal-body py-4 px-0">
 					<button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-					<!-- Sign Up Form
-        ====================== -->
+					<!-- Sign Up Form ====================== -->
 					<div class="row">
 						<div class="col-11 col-md-10 mx-auto">
 							<ul class="nav nav-tabs nav-justified mb-4" role="tablist">
@@ -437,21 +434,19 @@
 							</ul>
 							<p class="text-4 font-weight-300 text-muted text-center mb-4">Looks like you're new here!</p>
 							<p class="text-3 text-center text-danger mb-4" id="gegister_msg"></p>
-							<form id="registerForm" method="post">
+							<form id="registerForm" action="{{ route('register') }}" data-action="reload" class="formaction">
+								@csrf
 								<div class="form-group">
-									<input type="text" class="form-control border-2" id="frist_name" name="frist_name" placeholder="First Name">
+									<input type="text" class="form-control border-2" id="first_name" name="first_name" placeholder="First Name">
 								</div>
 								<div class="form-group">
 									<input type="text" class="form-control border-2" id="last_name" name="last_name" placeholder="Last Name">
 								</div>
 								<div class="form-group">
-									<input type="text" class="form-control border-2" id="username" name="username" placeholder="User Name">
-								</div>
-								<div class="form-group">
 									<input type="number" class="form-control border-2" id="contact" name="contact" placeholder="Contact">
 								</div>
 								<div class="form-group">
-									<input type="email" class="form-control border-2" id="re-email" name="email" placeholder="Email Id">
+									<input type="email" class="form-control border-2" id="email" name="email" placeholder="Email Id">
 								</div>
 								<div class="form-group">
 									<input type="password" class="form-control border-2" id="password" name="password" placeholder="Password">
@@ -459,10 +454,13 @@
 								<div class="form-group my-4">
 									<div class="form-check text-2 custom-control custom-checkbox">
 										<input id="agree" class="custom-control-input" type="checkbox" CHECKED required>
-										<label class="custom-control-label" for="agree">I agree to the <a href="Terms">Terms</a> and <a href="Privacy">Privacy Policy</a>.</label>
+										<label class="custom-control-label" for="agree">I agree to the <a href="{{ route('termAndCondition') }}">Terms</a> and <a href="{{ route('privacyPolicy') }}">Privacy Policy</a>.</label>
 									</div>
 								</div>
-								<button class="btn btn-primary btn-block my-4" type="submit">Sign Up</button>
+								<button class="btn btn-primary btn-block my-4 btn_action" type="submit">
+									<span id="buttonText">Sign Up</span>
+									<span id="loader" class="d-none">Loading ...</span>
+								</button>
 							</form>
 
 							<p class="text-2 text-center mb-0">Already have an account? <a class="btn-link" href="" data-toggle="modal" data-target="#login-modal" data-dismiss="modal">Log In</a></p>

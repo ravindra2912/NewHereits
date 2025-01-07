@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Http\Controllers\Controller;
 use App\Models\LegalPage;
+use Illuminate\Support\Facades\Cache;
 
 class LagelPagesController extends Controller
 {
@@ -68,6 +69,8 @@ class LagelPagesController extends Controller
                 $update->save();
                 $success = true;
                 $message = 'Page updated successfully.';
+
+                Cache::forget($request->type);
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();

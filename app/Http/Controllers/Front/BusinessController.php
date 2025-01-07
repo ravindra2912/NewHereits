@@ -30,7 +30,7 @@ class BusinessController extends Controller
         $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id')
             ->with([
                 'businessCategory',
-                'contry',
+                'country',
                 'state',
                 'city',
             ])
@@ -46,18 +46,7 @@ class BusinessController extends Controller
             ->get();
 
         foreach ($businesses as $key => $business) {
-            $address = $business->address;
-            if(isset($business->city) && !empty($business->city->name)){
-                $address .= ', ' . $business->city->name;
-            }
-            if(isset($business->state) && !empty($business->state->name)){
-                $address .= ', ' . $business->state->name;
-            }
-            if(isset($business->contry) && !empty($business->contry->name)){ 
-                $address .= ', ' . $business->contry->name;
-            }
-            $businesses[$key]->address = $address;
-
+            $businesses[$key]->address = $this->getBusinessAddress($business);
             $businesses[$key]->is_favorite = false;
             if (Auth::check()) {
                 $favorite = Favorite::where('business_id', $business->id)
@@ -68,7 +57,6 @@ class BusinessController extends Controller
                     $businesses[$key]->is_favorite = true;
                 }
             }
-
         }
 
         $data['list'] =  view('front.business.elements.storeList', compact('businesses'))->render();
@@ -76,16 +64,21 @@ class BusinessController extends Controller
         return response()->json($data);
     }
 
-    public function businessDetails(Request $request, $slug)
+    public function businessDetails(Request $request, $slug): View
     {
-        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude')
-            ->with(['businessCategory'])
+        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id')
+            ->with([
+                'businessCategory',
+                'country',
+                'state',
+                'city',
+            ])
             ->where('slug', $slug)
             ->where('status', 'active')
             ->first();
 
         if ($business) {
-
+            $business->address = $this->getBusinessAddress($business);
             $business->is_favorite = false;
             if (Auth::check()) {
                 $favorite = Favorite::where('business_id', $business->id)
@@ -138,5 +131,20 @@ class BusinessController extends Controller
             $message = 'Added to favourite';
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect, 'is_favorite' => $is_favorite]);
+    }
+
+    function getBusinessAddress($business): string
+    {
+        $address = $business->address;
+        if (isset($business->city) && !empty($business->city->name)) {
+            $address .= ', ' . $business->city->name;
+        }
+        if (isset($business->state) && !empty($business->state->name)) {
+            $address .= ', ' . $business->state->name;
+        }
+        if (isset($business->country) && !empty($business->country->name)) {
+            $address .= ', ' . $business->country->name;
+        }
+        return $address;
     }
 }

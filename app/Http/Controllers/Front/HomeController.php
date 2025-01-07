@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use App\Models\Business;
+use App\Models\Favorite;
+use App\Models\LegalPage;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use App\Models\BusinessCategory;
 
 use App\Http\Controllers\Controller;
-use App\Models\Business;
-use App\Models\BusinessCategory;
-use App\Models\Favorite;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ProfileUpdateRequest;
 
 class HomeController extends Controller
 {
@@ -39,5 +41,19 @@ class HomeController extends Controller
         return view('front.home', compact('businesses', 'businessCategory', 'fevoriteBusinesses'));
     }
 
-    
+    public function privacyPolicy(Request $request): View
+    {
+        $privacy = Cache::rememberForever('PrivacyPolicy', function () { // 1440/60 = 1 day
+            return LegalPage::where('page_type', 'PrivacyPolicy')->first();
+        });
+        return view('front.privacy-policy', compact('privacy'));
+    }
+
+    public function termAndCondition(Request $request): View
+    {
+        $term = Cache::rememberForever('TermsAndCondition', function () { // 1440/60 = 1 day
+            return LegalPage::where('page_type', 'TermsAndCondition')->first();
+        });
+        return view('front.term-and-condition', compact('term'));
+    }
 }
