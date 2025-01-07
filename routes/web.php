@@ -13,6 +13,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('/privacy-policy', 'privacyPolicy')->name('privacyPolicy');
     Route::get('/term-and-condition', 'termAndCondition')->name('termAndCondition');
+    Route::get('/copy-right', 'CopyRight')->name('CopyRight');
 });
 
 Route::controller(BusinessController::class)->group(function () {

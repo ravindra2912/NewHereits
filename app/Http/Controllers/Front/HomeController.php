@@ -56,4 +56,12 @@ class HomeController extends Controller
         });
         return view('front.term-and-condition', compact('term'));
     }
+    
+    public function CopyRight(Request $request): View
+    {
+        $CopyRight = Cache::rememberForever('CopyRight', function () { // 1440/60 = 1 day
+            return LegalPage::where('page_type', 'CopyRight')->first();
+        });
+        return view('front.copy-right', compact('CopyRight'));
+    }
 }

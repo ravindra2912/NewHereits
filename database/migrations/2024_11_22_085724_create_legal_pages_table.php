@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('legal_pages', function (Blueprint $table) {
             $table->id();
             $table->text('description');
-            $table->enum('page_type', ['PrivacyPolicy', 'TermsAndCondition']);
+            $table->enum('page_type', ['PrivacyPolicy', 'TermsAndCondition', 'CopyRight']);
             $table->timestamps();
         });
     }

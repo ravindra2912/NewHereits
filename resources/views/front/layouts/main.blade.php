@@ -309,15 +309,15 @@
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="About_us" title="Hereits About Us">About Us</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="Business" title="Hereits For business">Register Your business</a></li>
 							<!-- li class="nav-item"> <a target="_blank" class="nav-link" href="Report" title="">Report</a></li -->
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Credits" title="">Credits</a></li>
+							<!-- <li class="nav-item"> <a target="_blank" class="nav-link" href="Credits" title="">Credits</a></li> -->
 						</ul>
 					</div>
 					<div class="col-sm-6 col-md mb-3 mb-md-0">
 						<h4 class="text-3 text-white font-weight-400 mb-3">Policy</h4>
 						<ul class="nav flex-column">
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Terms" title="Hereits Terms &amp; Conditions">Terms Of Use</a></li>
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Privacy" title="Hereits PRIVACY POLICY">Privacy</a></li>
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Copyright" title="Hereits Copy Rights">Copyright</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('termAndCondition') }}" title="Hereits Terms &amp; Conditions">Terms Of Use</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('privacyPolicy') }}" title="Hereits PRIVACY POLICY">Privacy</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('CopyRight') }}" title="Hereits Copy Rights">Copyright</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="Faqs" title="">FAQ</a></li>
 						</ul>
 					</div>
@@ -480,8 +480,7 @@
 			<div class="modal-content border-0">
 				<div class="modal-body py-4 px-0">
 					<button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-					<!-- Forgot Password Form
-        =========================== -->
+					<!-- Forgot Password Form =========================== -->
 					<div class="row">
 						<div class="col-11 col-md-10 mx-auto">
 							<h3 class="text-center mt-3 mb-4">Forgot your password?</h3>

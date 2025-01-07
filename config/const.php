@@ -11,7 +11,7 @@ return [
     "fevicon" => env('APP_URL').'/admin/images/small_logo.png',
    ],
 
-    "legal_page_type" => ["PrivacyPolicy", "TermsAndCondition"],
+    "legal_page_type" => ["PrivacyPolicy", "TermsAndCondition", "CopyRight"],
     
     "gender" => ["Male", "Female"],
 
