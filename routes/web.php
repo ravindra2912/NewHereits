@@ -11,6 +11,9 @@ use App\Http\Controllers\Front\AppointmentController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
+    Route::get('/faq', 'faq')->name('faq');
+    Route::get('/about-us', 'aboutUs')->name('aboutUs');
+    Route::get('/contact-us', 'contactUs')->name('contactUs');
     Route::get('/privacy-policy', 'privacyPolicy')->name('privacyPolicy');
     Route::get('/term-and-condition', 'termAndCondition')->name('termAndCondition');
     Route::get('/copy-right', 'CopyRight')->name('CopyRight');

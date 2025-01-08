@@ -305,8 +305,8 @@
 					<div class="col-sm-6 col-md mb-3 mb-md-0">
 						<h4 class="text-3 text-white font-weight-400 mb-3">About</h4>
 						<ul class="nav flex-column">
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Contact_us" title="Hereits Contact Us">Contact Us</a></li>
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="About_us" title="Hereits About Us">About Us</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('contactUs') }}" title="Hereits Contact Us">Contact Us</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('aboutUs') }}" title="Hereits About Us">About Us</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="Business" title="Hereits For business">Register Your business</a></li>
 							<!-- li class="nav-item"> <a target="_blank" class="nav-link" href="Report" title="">Report</a></li -->
 							<!-- <li class="nav-item"> <a target="_blank" class="nav-link" href="Credits" title="">Credits</a></li> -->
@@ -318,7 +318,7 @@
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('termAndCondition') }}" title="Hereits Terms &amp; Conditions">Terms Of Use</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('privacyPolicy') }}" title="Hereits PRIVACY POLICY">Privacy</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('CopyRight') }}" title="Hereits Copy Rights">Copyright</a></li>
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Faqs" title="">FAQ</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('faq') }}" title="Faqs">FAQ</a></li>
 						</ul>
 					</div>
 

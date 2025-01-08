@@ -25,4 +25,6 @@ return [
     
     "appointment_status" => ["pending", "complete","cancel"],
 
+    "faq_type" => ['General', 'Business', 'Appointment', 'Services', 'Product'],
+
 ];

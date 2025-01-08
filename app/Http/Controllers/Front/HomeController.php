@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Models\Faq;
 use App\Models\Business;
 use App\Models\Favorite;
 use App\Models\LegalPage;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\BusinessCategory;
 
+use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -41,6 +42,25 @@ class HomeController extends Controller
         return view('front.home', compact('businesses', 'businessCategory', 'fevoriteBusinesses'));
     }
 
+    public function faq(Request $request): View
+    {
+        // Cache::forget('Faq'); // Clear Cache
+        $faqs = Cache::rememberForever('Faq', function () { // 1440/60 = 1 day
+            return Faq::select('id', 'question', 'answer', 'type')->get()->groupBy('type');
+        });
+        return view('front.faq', compact('faqs'));
+    }
+    
+    public function aboutUs(Request $request): View
+    {
+        return view('front.about-us');
+    }
+    
+    public function contactUs(Request $request): View
+    {
+        return view('front.contact-us');
+    }
+    
     public function privacyPolicy(Request $request): View
     {
         $privacy = Cache::rememberForever('PrivacyPolicy', function () { // 1440/60 = 1 day
