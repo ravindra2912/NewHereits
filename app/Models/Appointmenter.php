@@ -13,4 +13,14 @@ class Appointmenter extends Model
     {
         return $this->belongsTo(AppointmentDepartment::class, 'department_id', 'id')->select('id', 'department_name', 'department_image');
     }
+    
+    public function businessSetting()
+    {
+        return $this->belongsTo(BusinessSetting::class, 'business_id', 'business_id');
+    }
+    
+    public function business()
+    {
+        return $this->belongsTo(Business::class, 'business_id', 'id');
+    }
 }

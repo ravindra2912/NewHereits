@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('legal_pages', function (Blueprint $table) {
+        Schema::create('faqs', function (Blueprint $table) {
             $table->id();
-            $table->text('description');
-            $table->enum('page_type', ['PrivacyPolicy', 'TermsAndCondition', 'CopyRight']);
+            $table->string('question');
+            $table->text('answer');
+            $table->enum('type', ['General', 'Business', 'Appointment', 'Services', 'Product']);
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('legal_pages');
+        Schema::dropIfExists('faqs');
     }
 };

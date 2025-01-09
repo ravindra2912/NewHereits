@@ -76,7 +76,7 @@ class UsersController extends Controller
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'email' => 'required|email|unique:users,email',
-                'contact' => 'required|numeric|unique:users,contact',
+                'contact' => 'required|numeric|digits:10|unique:users,contact',
                 'dob' => 'nullable|date',
                 'gender' => 'nullable',
                 'role_id' => 'required',
@@ -104,7 +104,7 @@ class UsersController extends Controller
                 $insert->gender = $request->gender;
                 $insert->role_id = $request->role_id;
                 $insert->status = $request->status;
-                $insert->password = Hash::make($request->status);
+                $insert->password = Hash::make($request->password);
                 $insert->save();
 
                 $success = true;
@@ -147,7 +147,7 @@ class UsersController extends Controller
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'email' => 'required|email|unique:users,email,'.$id,
-                'contact' => 'required|numeric|unique:users,contact,'.$id,
+                'contact' => 'required|numeric|digits:10|unique:users,contact,'.$id,
                 'dob' => 'nullable|date',
                 'gender' => 'nullable',
                 'role_id' => 'required',

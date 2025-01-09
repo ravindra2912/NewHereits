@@ -34,7 +34,7 @@
 
 <!-- Categories -->
 @if ($businessCategory)
-<section class="section bg-white" style="padding-top: 15px;">
+<section class="section bg-white pt-3 pb-2">
   <div class="container ">
     <h5 class="font-weight-600 mb-3">Business Category</h5>
     <div class="row">
@@ -56,7 +56,7 @@
 @endif
 
 @if ($businesses)
-<section class="section  pt-3 bg-white" style="margin-top: -75px;">
+<section class="section py-2 bg-white">
   <div class="container ">
     <div class="d-flex justify-content-between align-items-center">
       <h2 id="reviews" class="text-6 mb-3">Businesses</h2>
@@ -73,7 +73,29 @@
       </a>
       @endforeach
     </div>
+  </div>
+</section>
+@endif
 
+
+@if ($fevoriteBusinesses)
+<section class="section  py-2 bg-white">
+  <div class="container ">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 id="reviews" class="text-6 mb-3">Favourite Businesses</h2>
+      <a href="{{ route('business') }}" class="view-more" title="view-more">View More -></a>
+    </div>
+
+    <div class="row ">
+      @foreach($fevoriteBusinesses as $res)
+      <a href="{{ route('business-details', $res->business->slug) }}" title="{{ $res->business->name }}" class="col-md-2 col-6 p-1">
+        <div class="card shadow-md border-0 mb-2">
+          <h5 class="store-name text-3 mb-0 text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->business->name }}</h5>
+          <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->business->name }}"></div>
+        </div>
+      </a>
+      @endforeach
+    </div>
   </div>
 </section>
 @endif

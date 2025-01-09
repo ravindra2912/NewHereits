@@ -5,11 +5,11 @@
 
 <section class="container mt-2 mb-5">
   <!-- fore filters -->
- <input type="hidden" id="category" value="{{ $catSlug }}" />
+  <input type="hidden" id="category" value="{{ $catSlug }}" />
 
   <div class="row">
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">
-        <p class="text-center"> for advertisement </p>
+      <p class="text-center"> for advertisement </p>
     </div>
     <div class="col-lg-8 mt-1 mt-lg-0">
       <!-- Sort Filters
@@ -30,17 +30,17 @@
         </div>
       </div><!-- Sort Filters end -->
 
-     
+
       <div class="" id="business-data"></div>
 
-    <div class="text-center h5 mt-4 d-none" id="data-loader">Loading ...</div>
+      <div class="text-center h5 mt-4 d-none" id="data-loader">Loading ...</div>
 
-      <div id="list-obj" ></div>
+      <div id="list-obj"></div>
       <!-- Paginations end -->
 
     </div>
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">
-    <p class="text-center"> for advertisement </p>
+      <p class="text-center"> for advertisement </p>
     </div>
   </div>
 </section>
@@ -55,7 +55,7 @@
   // getList()
 
   function getList() {
-    if(listAjax != '' || !is_data){
+    if (listAjax != '' || !is_data) {
       return true;
     }
     listAjax = $.ajax({
@@ -96,20 +96,49 @@
   }
 
   //Set up Intersection Observer
-      const whitepaperobserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              getList();
-            }
-        });
-    }, {
-        root: null,
-        rootMargin: '0px',
-        threshold: 1.0
+  const whitepaperobserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        getList();
+      }
     });
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0
+  });
+  whitepaperobserver.observe(document.querySelector('#list-obj'));
 
 
-    whitepaperobserver.observe(document.querySelector('#list-obj'));
+  function favorite(id) {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('businessFavorite') }}",
+      data: {
+        business_id: id,
+      },
+      dataType: "json",
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      beforeSend: function() {
+        loader(true)
+      },
+      success: function(res) {
+        if(res.is_favorite){
+          $('#store-fav-' + id).html('<i class="fas fa-heart"></i>');
+        }else{
+          $('#store-fav-' + id).html('<i class="far fa-heart"></i>');
+        }
+        loader(false)
+      },
+      error: function(xhr, status, error) {
+        console.error("Error: " + error);
+        loader(false)
+        alert("There was an error on favourite.");
+      }
+    });
+  }
 </script>
 @endpush
 

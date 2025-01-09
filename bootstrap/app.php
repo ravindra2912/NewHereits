@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\Admin::class,
             'business' => \App\Http\Middleware\Business::class,
+            'front' => \App\Http\Middleware\Front::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

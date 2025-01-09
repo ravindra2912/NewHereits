@@ -11,7 +11,7 @@ return [
     "fevicon" => env('APP_URL').'/admin/images/small_logo.png',
    ],
 
-    "legal_page_type" => ["PrivacyPolicy", "TermsAndCondition"],
+    "legal_page_type" => ["PrivacyPolicy", "TermsAndCondition", "CopyRight"],
     
     "gender" => ["Male", "Female"],
 
@@ -24,5 +24,7 @@ return [
     "week_day_name" => ["Monday", "Tuesday","Wednesday","Thursday","Friday","Saturday", 'Sunday'],
     
     "appointment_status" => ["pending", "complete","cancel"],
+
+    "faq_type" => ['General', 'Business', 'Appointment', 'Services', 'Product'],
 
 ];

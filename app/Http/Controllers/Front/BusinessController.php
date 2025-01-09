@@ -14,6 +14,7 @@ use App\Models\AppointmentDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Favorite;
 
 class BusinessController extends Controller
 {
@@ -26,8 +27,13 @@ class BusinessController extends Controller
     public function getBusiness(Request $request)
     {
 
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id')
-            ->with(['businessCategory'])
+        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id')
+            ->with([
+                'businessCategory',
+                'country',
+                'state',
+                'city',
+            ])
             ->where('status', 'active');
         if (isset($request->category) && !empty($request->category)) {
             $cat = BusinessCategory::where('slug', $request->category)->first('id');
@@ -39,20 +45,51 @@ class BusinessController extends Controller
             ->skip($request->offset)
             ->get();
 
+        foreach ($businesses as $key => $business) {
+            $businesses[$key]->address = $this->getBusinessAddress($business);
+            $businesses[$key]->is_favorite = false;
+            if (Auth::check()) {
+                $favorite = Favorite::where('business_id', $business->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('favorite_type', 'business')
+                    ->first();
+                if ($favorite) {
+                    $businesses[$key]->is_favorite = true;
+                }
+            }
+        }
+
         $data['list'] =  view('front.business.elements.storeList', compact('businesses'))->render();
         $data['counts'] =  $businesses->count();
         return response()->json($data);
     }
 
-    public function businessDetails(Request $request, $slug)
+    public function businessDetails(Request $request, $slug): View
     {
-        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude')
-            ->with(['businessCategory'])
+        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id')
+            ->with([
+                'businessCategory',
+                'country',
+                'state',
+                'city',
+            ])
             ->where('slug', $slug)
             ->where('status', 'active')
             ->first();
 
         if ($business) {
+            $business->address = $this->getBusinessAddress($business);
+            $business->is_favorite = false;
+            if (Auth::check()) {
+                $favorite = Favorite::where('business_id', $business->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('favorite_type', 'business')
+                    ->first();
+                if ($favorite) {
+                    $business->is_favorite = true;
+                }
+            }
+
             $setting = getBusinessSettings($business->id);
             $departments = array();
             if ($setting->is_appointment_with_department) {
@@ -65,5 +102,49 @@ class BusinessController extends Controller
         } else {
             return view('404');
         }
+    }
+
+    function businessFavorite(Request $request)
+    {
+        $success = false;
+        $is_favorite = false;
+        $message = 'Something Wrong!';
+        $redirect = route('home');
+        $data = array();
+
+        $favorite = Favorite::where('business_id', $request->business_id)
+            ->where('user_id', Auth::user()->id)
+            ->where('favorite_type', 'business')
+            ->first();
+        if ($favorite) {
+            $favorite->delete();
+            $success = true;
+            $message = 'Removed from favourite';
+        } else {
+            $favorite = new Favorite();
+            $favorite->business_id = $request->business_id;
+            $favorite->user_id = Auth::user()->id;
+            $favorite->favorite_type = 'business';
+            $favorite->save();
+            $success = true;
+            $is_favorite = true;
+            $message = 'Added to favourite';
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect, 'is_favorite' => $is_favorite]);
+    }
+
+    function getBusinessAddress($business): string
+    {
+        $address = $business->address;
+        if (isset($business->city) && !empty($business->city->name)) {
+            $address .= ', ' . $business->city->name;
+        }
+        if (isset($business->state) && !empty($business->state->name)) {
+            $address .= ', ' . $business->state->name;
+        }
+        if (isset($business->country) && !empty($business->country->name)) {
+            $address .= ', ' . $business->country->name;
+        }
+        return $address;
     }
 }

@@ -32,6 +32,11 @@ class LegalPageSeeder extends Seeder
             'page_type' => 'TermsAndCondition',
             'description' => '<p>Terms And Condition</p>',
         ]);
+        
+        LegalPage::create([
+            'page_type' => 'CopyRight',
+            'description' => '<p>Copy right</p>',
+        ]);
     
     }
 }
