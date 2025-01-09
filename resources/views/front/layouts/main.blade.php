@@ -111,6 +111,7 @@
           ============================================= -->
 						<nav class="primary-menu navbar navbar-expand-lg">
 							<div id="header-nav" class="collapse navbar-collapse">
+								<li class="mobile-show"> <a href="{{ route('home') }}">Home</a> </li>	
 								<ul class="navbar-nav">
 									@if (Auth::check() && Auth::user()->role_id == 2)
 									<li class="mobile-hide"> <a href="{{ route('business.dashboard') }}" target="_blank" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Manage Store</a> </li>
@@ -119,6 +120,7 @@
 									<li class="mobile-hide"> <a href="Business" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Register Your business</a> </li>
 									<li class="mobile-show"> <a href="Business">Register Your business</a> </li>
 									@endif
+
 								</ul>
 							</div>
 						</nav>

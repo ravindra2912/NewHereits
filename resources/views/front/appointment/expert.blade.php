@@ -40,6 +40,8 @@
     border-radius: 10px;
   }
 
+
+
   .title-sub h1,
   .title-sub h2 {
     position: relative;
@@ -72,51 +74,25 @@
 
 
 
+  @media (max-width: 767px) {
+    .banner-info {
+      text-align: center;
+      justify-items: center;
+    }
 
-  .form-select:not(.form-select-sm) {
-    height: calc(3.05rem + 2px);
-    /* min-height: 100%; */
-    padding-top: .700rem;
-    padding-bottom: .700rem;
-  }
+    .hero-banner.hero-banner-auther .inner .auth-img-wrap img {
+      object-fit: contain;
+      height: 150px;
+      max-width: unset;
+    }
 
-  .form-select:invalid {
-    color: #b1b4b6;
-  }
-
-  .form-control,
-  .form-select {
-    border-color: #d5d3d3;
-    color: #777;
-  }
-
-  .form-select {
-    display: block;
-    width: 100%;
-    padding: .375rem 2.25rem .375rem .75rem;
-    -moz-padding-start: calc(.75rem - 3px);
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
-    /* background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e); */
-    background-repeat: no-repeat;
-    background-position: right .75rem center;
-    background-size: 16px 12px;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    appearance: none;
-  }
-
-  select {
-    word-wrap: normal;
-  }
-
-  button,
-  select {
-    text-transform: none;
+    .title-sub h1:after {
+      justify-self: center;
+      width: 150px;
+    }
+    .expert-name{
+      font-size: 1.5rem;
+    }
   }
 
   .fa-check-circle {
@@ -139,12 +115,13 @@
         <div class="col-12 col-lg-3 col-md-4 mb-md-0 mb-4 auth-img-wrap">
           <img src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" title="{{ $expert->appointmenter_name }}" class="">
         </div>
-        <div class="col-12 col-lg-8 col-md-7 auth-content-wrap">
+        <div class="col-12 col-lg-8 col-md-7 auth-content-wrap banner-info">
           <div class="title-sub mb-md-4 mb-3">
-            <h1 class="text-white">{{ $expert->appointmenter_name }}</h1>
+            <h1 class="text-white expert-name">{{ $expert->appointmenter_name }}</h1>
+            <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
+            <p class="text-white mt-3">{{ $expert->description }}</p>
           </div>
-          <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
-          <p class="text-white mt-3">{{ $expert->description }}</p>
+
         </div>
       </div>
     </div>
@@ -174,7 +151,7 @@
             @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
             <div class="col-md-6 col-sm-6 col-12 mb-3">
               <label for="operator" class="form-label">Appointment Time</label>
-              <select class="form-select" name="timeslote" id="timeslote" required="">
+              <select class="form-control" name="timeslote" id="timeslote" required="">
                 <option value="">Select Your Appointment Time</option>
                 @foreach ($timeSlots as $time)
                 <option value="{{ $time['time'] }}" {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option>

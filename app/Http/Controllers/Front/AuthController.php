@@ -83,6 +83,40 @@ class AuthController extends Controller
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
 
+    public function forgotPassword(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = '';
+        $data = array();
+
+        try {
+            $rules = [
+                'email' => 'required|email',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else {
+                $user = User::where('email', $request->email)->first();
+                if ($user) {
+                    $user->password = Hash::make('123456');
+                    $user->save();
+                    $success = true;
+                    $message = 'Password reset successfully.';
+                } else {
+                    $message = 'Email not found.';
+                }
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
     /**
      * Delete the user's account.
      */
