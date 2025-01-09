@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\AdminManagenent;
 use App\Models\Business;
 use App\Models\BusinessCategory;
+use App\Models\Country;
 use App\Models\UserRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -29,13 +30,22 @@ class BusinessSeeder extends Seeder
 
         foreach ($roles as $role) {
             BusinessCategory::create([
-                'name' => $role
+                'name' => $role,
+                'slug' => $role
             ]);
         }
+
+        Country::create([
+            'id' => 101,
+            'sortname' => 'IN',
+            'name' => 'india',
+            'phonecode' => '91',
+        ]);
 
         Business::create([
             'owner_id' => 2,
             'name' => $role,
+            'slug' => $role,
             'business_category_id' => 1,
             'address' => 'suart',
             'longitude' => 72.2345,

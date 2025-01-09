@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('business_id')->nullable();
+            $table->bigInteger('business_id')->nullable();
+            // $table->unsignedBigInteger('business_id')->nullable();
             $table->string('first_name', 20);
             $table->string('last_name', 20);
             $table->string('email', 100)->unique()->index();
@@ -29,7 +30,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('role_id')->references('id')->on('user_roles')->cascadeOnDelete();
-            $table->foreign('business_id')->references('id')->on('businesses')->cascadeOnDelete();
+            // $table->foreign('business_id')->references('id')->on('businesses')->cascadeOnDelete();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
