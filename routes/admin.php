@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Admin\DashboarController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\LagelPagesController;
 
 Route::name('admin.')->group(function () {
@@ -32,6 +33,7 @@ Route::name('admin.')->group(function () {
 
 
         Route::resource('user', UsersController::class);
+        Route::resource('faq', FaqController::class);
         Route::resource('business', BusinessController::class);
         Route::controller(BusinessController::class)->group(function () {
             Route::post('business/setting/{id}', 'systemSettingUpdate')->name('business.systemsetting.update');

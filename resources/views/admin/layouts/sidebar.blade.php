@@ -41,6 +41,13 @@
             <p> Lagel Pages </p>
           </a>
         </li>
+        
+        <li class="nav-item">
+          <a href="{{ route('admin.faq.index') }}" class="nav-link {{ request()->routeIs('admin.faq*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-file-contract"></i>
+            <p> FAQ </p>
+          </a>
+        </li>
 
         <li class="nav-item {{ request()->routeIs('admin.setting*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->routeIs('admin.setting*') ? 'active' : '' }}">
