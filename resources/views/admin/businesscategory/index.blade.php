@@ -1,6 +1,6 @@
 @extends('admin.layouts.main')
 @section('content')
-@section('title', 'Faqs Page')
+@section('title', 'Business Category Page')
 
 @push('style')
 <link rel="stylesheet" type="text/css" href="{{ asset('admin/dist/css/jquery.dataTables.css') }}" />
@@ -12,12 +12,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Faqs list</h1>
+        <h1 class="m-0">Business Category list</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-          <li class="breadcrumb-item active">Faqs list</li>
+          <li class="breadcrumb-item active">Business Category list</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
@@ -33,9 +33,9 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Faqs list</h3>
+            <h3 class="card-title">Business Category list</h3>
             <div class="float-right">
-              <a href="{{ route('admin.faq.create') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add</a>
+              <a href="{{ route('admin.business-category.create') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add</a>
             </div>
           </div>
           <!-- /.card-header -->
@@ -44,8 +44,9 @@
             <table class="table table-hover text-nowrap w-100"  id="data-table">
               <thead>
                 <tr>
-                  <th>Question</th>
-                  <th>Type</th>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -76,14 +77,19 @@
     var table = $('#data-table').DataTable({
       processing: true,
       serverSide: true,
-      ajax: "{{ route('admin.faq.index') }}",
+      ajax: "{{ route('admin.business-category.index') }}",
       columns: [{
-          data: 'question',
-          name: 'question'
+          data: 'img',
+          name: 'img',
+          orderable: false,
+          searchable: false
         },
         {
-          data: 'type',
-          name: 'type'
+          data: 'name',
+          name: 'name'
+        },{
+          data: 'status',
+          name: 'status'
         },
         {
           data: 'action',
@@ -101,7 +107,7 @@
     Swal.fire({
         title: 'Are you sure?',
         icon: 'error',
-        html: "You want to delete this faq?",
+        html: "You want to delete this Category?",
         allowOutsideClick: false,
         showCancelButton: true,
         confirmButtonText: 'Delete',

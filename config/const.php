@@ -17,6 +17,8 @@ return [
 
     "user_status" => ["active", "in-active"],
     
+    "business_type_status" => ["active", "in-active"],
+    
     "business_status" => ["active", "in-active", 'baned'],
     "business_type" => ["Service", "Product", 'Both'],
 

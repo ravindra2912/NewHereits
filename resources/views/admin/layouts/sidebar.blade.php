@@ -34,7 +34,7 @@
         </li>
         
         <li class="nav-item">
-          <a href="{{ route('admin.business.index') }}" class="nav-link {{ request()->routeIs('admin.business*') ? 'active' : '' }}">
+          <a href="{{ route('admin.business.index') }}" class="nav-link {{ request()->routeIs('admin.business/*') ? 'active' : '' }}">
             <i class="nav-icon fas fa-user"></i>
             <p> Businesses </p>
           </a>
