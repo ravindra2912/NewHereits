@@ -10,6 +10,7 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Str;
 use App\Models\BusinessTiming;
 use App\Models\BusinessSetting;
+use App\Models\BusinessCategory;
 use App\Models\AppointmentBooking;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +41,8 @@ function fileUploadStorage($imageObject, $directory = "", $width = "", $hieght =
         $imgname = time() . "_" . rand(11111, 99999) . '.' . $imageObject->getClientOriginalExtension();
         $imageName = $directory . "/" . $imgname;
 
-        if ($width != "" && $hieght != "") {
+        $is_compress = false;
+        if ($width != "" && $hieght != "" && $is_compress) {
 
             // create folder if not exist
             if (!Storage::disk('public')->exists($directory)) {
@@ -198,6 +200,27 @@ function getBusinessSettings($business_id = null)
     }
 
     return (object)$data;
+}
+
+function getBusinessCategory()
+{
+    return Cache::rememberForever('BusinessCategory', function () { // 1440/60 = 1 day
+        return BusinessCategory::where('status', 'active')->get();
+    });
+}
+
+function isBusinessOpen($business_id = null)
+{
+    if ($business_id == null) {
+        $business_id = getBusinessId();
+    }
+    $day = Carbon::now()->format('l');
+    $time = Carbon::now()->format('H:i:s');
+    $businessTiming = BusinessTiming::where('day', $day)->where('business_id', $business_id)->where('start_time', '<=', $time)->where('end_time', '>=', $time)->first();
+    if ($businessTiming) {
+        return true;
+    }
+    return false;
 }
 
 // =============== Business functions end ================

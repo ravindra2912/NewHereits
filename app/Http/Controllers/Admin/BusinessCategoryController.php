@@ -25,10 +25,10 @@ class BusinessCategoryController extends Controller
                     return '<div class="text-center"><img src="' . getImage($row->image) . '" class="table_img" /></div>';
                 })
                 ->addColumn('action', function ($row) {
-                    $url = route('admin.business-category.destroy', $row->id);
+                    $url = route('admin.businesscategory.destroy', $row->id);
                     $url = "'" . $url . "'";
                     return ' <div class="text-center">
-                    <a href="' . route('admin.business-category.edit', $row->id) . '" class="btn btn-outline-primary btn-sm" title="edit"><i class="far fa-edit"></i></a>
+                    <a href="' . route('admin.businesscategory.edit', $row->id) . '" class="btn btn-outline-primary btn-sm" title="edit"><i class="far fa-edit"></i></a>
                     <button onclick="destroy(' . $url . ', ' . $row->id . ')" class="btn btn-outline-danger btn-sm btn_delete-' . $row->id . '" title="Delete">
                         <i id="buttonText" class="far fa-trash-alt"></i>
                         <span id="loader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
@@ -56,13 +56,14 @@ class BusinessCategoryController extends Controller
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = Route('admin.business-category.index');
+        $redirect = Route('admin.businesscategory.index');
         $data = array();
 
         try {
             $rules = [
                 'image' => 'required|mimes:jpg,jpeg,png|',
-                'name' => 'required'
+                'name' => 'required',
+                'status' => 'required'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -78,7 +79,11 @@ class BusinessCategoryController extends Controller
                 $insert->image = $image_name;
 
                 $insert->name = $request->name;
+                $insert->slug = generateUniqueSlug(BusinessCategory::class, $request->name);
+                $insert->status = $request->status;
                 $insert->save();
+
+                Cache::forget('BusinessCategory');
 
                 $success = true;
                 $message = 'Business category add successfully.';
@@ -102,15 +107,15 @@ class BusinessCategoryController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $faq = BusinessCategory::find($id);
-        return view('admin.businesscategory.edit', compact('faq'));
+        $cat = BusinessCategory::find($id);
+        return view('admin.businesscategory.edit', compact('cat'));
     }
 
     public function update(Request $request, $id)
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = Route('admin.business-category.index');
+        $redirect = Route('admin.businesscategory.index');
         $data = array();
 
         try {
@@ -143,6 +148,8 @@ class BusinessCategoryController extends Controller
                     fileRemoveStorage($oldimage);
                 }
 
+                Cache::forget('BusinessCategory'); 
+
                 $success = true;
                 $message = 'Business category updated successfully.';
             }
@@ -162,7 +169,7 @@ class BusinessCategoryController extends Controller
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = route('admin.business-category.index');
+        $redirect = route('admin.businesscategory.index');
         $data = array();
 
         try {

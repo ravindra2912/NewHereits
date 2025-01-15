@@ -42,12 +42,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Create Faq</h1>
+        <h1 class="m-0">Create Business Category</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-          <li class="breadcrumb-item"><a href="{{ route('admin.user.index') }}">Business Category list</a></li>
+          <li class="breadcrumb-item"><a href="{{ route('admin.businesscategory.index') }}">Business Category list</a></li>
           <li class="breadcrumb-item active">Create Business Category</li>
         </ol>
       </div><!-- /.col -->
@@ -68,7 +68,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-          <form action="{{ route('admin.business-category.store') }}" data-action="redirect" class="row formaction">
+          <form action="{{ route('admin.businesscategory.store') }}" data-action="redirect" class="row formaction">
             @csrf
             <input type="hidden" name="_method" value="POST">
 
@@ -79,14 +79,14 @@
                   <img src="{{ getImage('') }}" class="avtar_img" />
                   <label for="profile" title="Change Image"><i class="far fa-edit"></i></label>
                 </div>
-                <input type="file" name="business_image" class="avtar_input" id="profile" accept="image/png, image/webp, image/jpeg" />
+                <input type="file" name="image" class="avtar_input" id="profile" accept="image/png, image/webp, image/jpeg" />
               </div>
 
               <div class="col-md-8 row">
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>name <span class="error">*</span></label>
+                    <label>Name <span class="error">*</span></label>
                     <input type="text" class="form-control" name="name" placeholder="Name" />
                   </div>
                 </div>

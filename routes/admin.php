@@ -36,7 +36,7 @@ Route::name('admin.')->group(function () {
         Route::resource('user', UsersController::class);
         Route::resource('faq', FaqController::class);
         Route::resource('business', BusinessController::class);
-        Route::resource('business-category', BusinessCategoryController::class);
+        Route::resource('businesscategory', BusinessCategoryController::class);
         Route::controller(BusinessController::class)->group(function () {
             Route::post('business/setting/{id}', 'systemSettingUpdate')->name('business.systemsetting.update');
         });

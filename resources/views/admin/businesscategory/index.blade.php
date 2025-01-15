@@ -35,7 +35,7 @@
           <div class="card-header">
             <h3 class="card-title">Business Category list</h3>
             <div class="float-right">
-              <a href="{{ route('admin.business-category.create') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add</a>
+              <a href="{{ route('admin.businesscategory.create') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add</a>
             </div>
           </div>
           <!-- /.card-header -->
@@ -77,7 +77,7 @@
     var table = $('#data-table').DataTable({
       processing: true,
       serverSide: true,
-      ajax: "{{ route('admin.business-category.index') }}",
+      ajax: "{{ route('admin.businesscategory.index') }}",
       columns: [{
           data: 'img',
           name: 'img',

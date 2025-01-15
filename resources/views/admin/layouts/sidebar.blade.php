@@ -27,14 +27,14 @@
         </li>
         
         <li class="nav-item">
-          <a href="{{ route('admin.business-category.index') }}" class="nav-link {{ request()->routeIs('admin.business-category*') ? 'active' : '' }}">
+          <a href="{{ route('admin.businesscategory.index') }}" class="nav-link {{ request()->routeIs('admin.businesscategory.*') ? 'active' : '' }}">
             <i class="nav-icon fas fa-user"></i>
             <p> Businesses Category </p>
           </a>
         </li>
         
         <li class="nav-item">
-          <a href="{{ route('admin.business.index') }}" class="nav-link {{ request()->routeIs('admin.business/*') ? 'active' : '' }}">
+          <a href="{{ route('admin.business.index') }}" class="nav-link {{ request()->routeIs('admin.business.*') ? 'active' : '' }}">
             <i class="nav-icon fas fa-user"></i>
             <p> Businesses </p>
           </a>

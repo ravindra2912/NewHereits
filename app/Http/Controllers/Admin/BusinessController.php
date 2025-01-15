@@ -67,7 +67,7 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        $businessCat = BusinessCategory::get();
+        $businessCat = getBusinessCategory();
         return view('admin.business.create', compact('businessCat'));
     }
 
@@ -92,6 +92,7 @@ class BusinessController extends Controller
                 'contact' => 'required|numeric|unique:businesses,contact',
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
+                'pincode' => 'required',
                 'status' => 'required',
             ];
 
@@ -112,9 +113,12 @@ class BusinessController extends Controller
                 $insert->business_category_id = $request->business_category_id;
                 $insert->business_type = $request->business_type;
                 $insert->address = $request->address;
+                $insert->latitude = $request->latitude;
+                $insert->longitude = $request->longitude;
                 $insert->contact = $request->contact;
                 $insert->state_id = $request->state_id;
                 $insert->city_id = $request->city_id;
+                $insert->pincode = $request->pincode;
                 $insert->status = $request->status;
                 $insert->save();
 
@@ -141,7 +145,7 @@ class BusinessController extends Controller
     public function edit(Request $request, $id)
     {
         $business = Business::find($id);
-        $businessCat = BusinessCategory::get();
+        $businessCat = getBusinessCategory();
         $setting = getBusinessSettings($id);
         return view('admin.business.edit', compact('business', 'businessCat', 'setting'));
     }
@@ -164,6 +168,7 @@ class BusinessController extends Controller
                 'contact' => 'required|numeric|unique:businesses,contact,' . $id,
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
+                'pincode' => 'required',
                 'status' => 'required',
             ];
 
@@ -186,9 +191,12 @@ class BusinessController extends Controller
                 $update->business_category_id = $request->business_category_id;
                 $update->business_type = $request->business_type;
                 $update->address = $request->address;
+                $update->latitude = $request->latitude;
+                $update->longitude = $request->longitude;
                 $update->contact = $request->contact;
                 $update->state_id = $request->state_id;
                 $update->city_id = $request->city_id;
+                $update->pincode = $request->pincode;
                 $update->status = $request->status;
                 $update->save();
 

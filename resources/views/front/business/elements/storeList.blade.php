@@ -20,27 +20,32 @@
           <h4><a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="text-dark text-5 store-name">{{ $res->name }}</a></h4>
 
           <span class="mr-2">
-            <i class="fas fa-star text-warning"></i>
-            <i class="fas fa-star text-warning"></i>
-            <i class="fas fa-star text-warning"></i>
-            <i class="fas fa-star text-warning"></i>
+            <i class="fas fa-star {{ $res->rating >= 1? 'text-warning':'text-muted' }}"></i>
+            <i class="fas fa-star {{ $res->rating >= 2? 'text-warning':'text-muted' }}"></i>
+            <i class="fas fa-star {{ $res->rating >= 3? 'text-warning':'text-muted' }}"></i>
+            <i class="fas fa-star {{ $res->rating >= 4? 'text-warning':'text-muted' }}"></i>
+            <i class="fas fa-star {{ $res->rating >= 5? 'text-warning':'text-muted' }}"></i>
           </span>
-          <p class="mb-2 store-address"><span><a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="text-black-50"><i class="fas fa-map-marker-alt pr-1"></i>{{ $res->address }}</a></span>
+          <p class="mb-2 mt-2 store-address"><span><a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="text-black-50"><i class="fas fa-map-marker-alt pr-1 text-muted"></i>{{ $res->address }}</a></span>
           </p>
           <!-- <p class=" d-flex align-items-center mb-2 text-4">
             <span class="cf border rounded-pill text-1 text-nowrap px-2">verified</span>
           </p> -->
-          <p class="reviews mb-2">
-            <span class="reviews-score px-2 py-1 rounded font-weight-600 text-light">8.2</span> <span class="font-weight-600">Excellent</span> <a class="text-black-50" href="#">(245 reviews)</a>
-          </p>
+          <!-- <p class="reviews mb-2">
+            <span class="reviews-score px-2 py-1 rounded font-weight-600 text-light">{{ $res->rating }}</span> <span class="font-weight-600">{{ config('const.business_rating.'.round($res->rating)) }}</span> <a class="text-black-50" href="#">(245 reviews)</a>
+          </p> -->
           @if (isset($res->businessCategory) && !empty($res->businessCategory))
           <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $res->businessCategory->name }}</div>
           @endif
           
         </div>
         <div class="col-sm-3 text-right d-flex d-sm-block align-items-center">
+          @if (isBusinessOpen($res->id))
           <p class="text-success mb-0">Open</p>
-          <!-- <p class="text-danger mb-0">close</p> -->
+          @else
+          <p class="text-danger mb-0">close</p>
+          @endif
+          
         </div>
       </div>
     </div>

@@ -3,18 +3,20 @@
 namespace App\Http\Controllers\Front;
 
 use App\Models\Business;
+use App\Models\Favorite;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\Appointmenter;
-use App\Models\BusinessCategory;
-use App\Http\Controllers\Controller;
+use App\Models\ReviewAndRating;
 
+use App\Models\BusinessCategory;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AppointmentDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Favorite;
 
 class BusinessController extends Controller
 {
@@ -27,7 +29,7 @@ class BusinessController extends Controller
     public function getBusiness(Request $request)
     {
 
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id')
+        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'rating', 'pincode')
             ->with([
                 'businessCategory',
                 'country',
@@ -66,7 +68,8 @@ class BusinessController extends Controller
 
     public function businessDetails(Request $request, $slug): View
     {
-        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id')
+        
+        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id', 'rating', 'pincode')
             ->with([
                 'businessCategory',
                 'country',
@@ -76,8 +79,26 @@ class BusinessController extends Controller
             ->where('slug', $slug)
             ->where('status', 'active')
             ->first();
+            
 
         if ($business) {
+            // review and rating count
+            $business->ReviewAndRating = ReviewAndRating::select(
+                DB::raw('SUM(CASE WHEN rating = "1" THEN 1 ELSE 0 END) as reviewCount1'),
+                DB::raw('SUM(CASE WHEN rating = "2" THEN 1 ELSE 0 END) as reviewCount2'),
+                DB::raw('SUM(CASE WHEN rating = "3" THEN 1 ELSE 0 END) as reviewCount3'),
+                DB::raw('SUM(CASE WHEN rating = "4" THEN 1 ELSE 0 END) as reviewCount4'),
+                DB::raw('SUM(CASE WHEN rating = "5" THEN 1 ELSE 0 END) as reviewCount5'),
+                DB::raw('COUNT(rating) as totalReview'),
+                // DB::raw('AVG(rating) as avgRating'),
+                // DB::raw('SELECT * FROM review_and_ratings WHERE business_id = '.$business->id.' AND review_type = "business" AND user_id = '.Auth::user()->id.' as is_reviewed'),
+            )
+            ->where('business_id', $business->id)
+            ->where('review_type', 'business')
+            ->first();
+
+            // dd($business->ReviewAndRating->toArray());
+
             $business->address = $this->getBusinessAddress($business);
             $business->is_favorite = false;
             if (Auth::check()) {
@@ -144,6 +165,9 @@ class BusinessController extends Controller
         }
         if (isset($business->country) && !empty($business->country->name)) {
             $address .= ', ' . $business->country->name;
+        }
+        if (isset($business->pincode) && !empty($business->pincode)) {
+            $address .= '-' . $business->pincode;
         }
         return $address;
     }

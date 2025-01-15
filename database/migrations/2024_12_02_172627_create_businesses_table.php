@@ -24,9 +24,12 @@ return new class extends Migration
             $table->unsignedBigInteger('country_id')->default(101)->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
+            $table->integer('pincode')->nullable();
+            $table->string('area', 50)->nullable();
             $table->bigInteger('contact')->unique()->nullable();
             $table->string('business_image', 150)->nullable();
             $table->enum('status', ['active','in-active', 'baned'])->default('active');
+            $table->float('rating', 2, 1)->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -83,7 +83,7 @@
               <div class="col-md-8 row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Owner ID <span class="error">*</span></label>
+                    <label>Owner ID</label>
                     <input type="text" class="form-control" name="owner_id" placeholder="owner Id" />
                   </div>
                 </div>
@@ -97,8 +97,13 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Address <span class="error">*</span></label>
-                    <input type="text" class="form-control" name="address" placeholder="Address" />
+                    <label>Business Category <span class="error">*</span></label>
+                    <select class="form-control" name="business_category_id">
+                      <option value="">Select Business Category</option>
+                      @foreach ( $businessCat as $cat)
+                      <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                      @endforeach
+                    </select>
                   </div>
                 </div>
 
@@ -113,13 +118,22 @@
 
             <div class="col-md-4">
               <div class="form-group">
-                <label>Business Category <span class="error">*</span></label>
-                <select class="form-control" name="business_category_id">
-                  <option value="">Select Business Category</option>
-                  @foreach ( $businessCat as $cat)
-                  <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                  @endforeach
-                </select>
+                <label>Address <span class="error">*</span></label>
+                <input type="text" class="form-control" name="address" placeholder="Address" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Latitude</label>
+                <input type="text" class="form-control" name="latitude" placeholder="Latitude" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Longitude</label>
+                <input type="text" class="form-control" name="longitude" placeholder="Longitude" />
               </div>
             </div>
 
@@ -144,6 +158,13 @@
                   <option value="{{ $city->id }}">{{ $city->name }}</option>
                   @endforeach
                 </select>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Pincode <span class="error">*</span></label>
+                <input type="text" class="form-control" name="pincode" placeholder="Pincode" />
               </div>
             </div>
 

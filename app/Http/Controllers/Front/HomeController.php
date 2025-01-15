@@ -26,7 +26,8 @@ class HomeController extends Controller
     {
         $fevoriteBusinesses = array();
         $businesses = Business::select('id', 'name', 'slug', 'business_image')->where('status', 'active')->limit(8)->get();
-        $businessCategory = BusinessCategory::select('id', 'name', 'image', 'slug')->where('status', 'active')->limit(8)->get();
+        $businessCategory = getBusinessCategory();
+        // $businessCategory = BusinessCategory::select('id', 'name', 'image', 'slug')->where('status', 'active')->limit(8)->get();
        
         if (Auth::check() && Auth::user()->role_id != 1) {
             $fevoriteBusinesses = Favorite::select('id', 'business_id')

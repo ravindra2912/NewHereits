@@ -125,26 +125,27 @@
             <h2 class=" font-weight-600 text-light store-name">{{ $business->name }} </h2>
             <p class="mb-2">
               <span class="mr-2">
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
+                @for ($i = 1; $i <= 5; $i++)
+                  <i class="fas fa-star {{ $business->rating >= $i? 'text-warning':'text-muted' }}"></i>
+                  @endfor
               </span>
-              <span class="text-light product-description"><i class="fas fa-map-marker-alt "></i> {{ $business->address }} </span>
-            <p class="reviews mb-3">
-              <span class="reviews-score px-2 py-1 rounded font-weight-600 text-light">8.2</span> <span class="font-weight-600 text-light">Excellent</span> <a class="text-light" href="#">(245 reviews)</a>
-            </p>
+              <span class="text-light product-description"><i class="fas fa-map-marker-alt pr-1"></i> {{ $business->address }} </span>
+              <!-- <p class="reviews mb-2">
+              <span class="reviews-score px-2 py-1 rounded font-weight-600 text-light">{{ $business->rating }}</span>
+              <span class="font-weight-600">{{ config('const.business_rating.'.round($business->rating)) }}</span>
+              <a class="text-black-50" href="#">(245 reviews)</a>
+            </p> -->
             <p class=" d-flex align-items-center mb-2 text-4">
 
               <!-- store fevourit -->
-              @if (Auth::check()) 
+              @if (Auth::check())
               <span class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2" data-toggle="tooltip" data-original-title="Favourite" id="fav" onclick="favorite({{ $business->id }})"><i class="{{ $business->is_favorite ? 'fas fa-heart':'far fa-heart' }}"></i></span>
               @else
               <span class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2" data-toggle="modal" data-target="#login-modal" title="Favourite">
-              <i class="far fa-heart"></i>
+                <i class="far fa-heart"></i>
               </span>
               @endif
-              
+
               <a href="tel:{{ $business->contact }}" target="_blank" data-toggle="tooltip" data-original-title="Call" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="fas fa-phone-alt"></i></a>
               <a href="javascript:void(0)" id="copylink" data-url="{{ url()->current() }}" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
               <a href="http://maps.google.com/maps?q={{ $business->latitude.','.$business->longitude }}&ll={{ $business->latitude.','.$business->longitude }}&z=17" target="_blank" data-toggle="tooltip" data-original-title="get directions" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="fas fa-map-marker-alt"></i></a>
@@ -203,52 +204,25 @@
       <div class="row">
         <div class="col-sm-4 col-md-3">
           <div id="review-summary" class="bg-primary text-light rounded px-2 py-4 mb-4 mb-sm-0 text-center">
-            <div class="text-10 font-weight-600 line-height-1 d-block">4.5</div>
-            <div class="font-weight-500 my-1">Excellent</div>
-            <small class="d-block">Based on 245 reviews</small>
+            <div class="text-10 font-weight-600 line-height-1 d-block">{{ $business->rating }}</div>
+            <div class="font-weight-500 my-1">{{ config('const.business_rating.'.round($business->rating)) }}</div>
+            <small class="d-block">Based on {{ $business->ReviewAndRating->totalReview }} reviews</small>
           </div>
         </div>
         <div class="col-sm-8 col-md-9">
+          @for ($i = 5; $i >= 1; $i--)
+          @php
+          $reviewCount = 'reviewCount'.$i;
+          @endphp
           <div class="row">
             <div class="col-8 col-sm-9 col-lg-10">
               <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ (100 * (int)$business->ReviewAndRating->$reviewCount) / (int)$business->ReviewAndRating->totalReview }}%" aria-valuenow="{{ (100 * (int)$business->ReviewAndRating->$reviewCount) / (int)$business->ReviewAndRating->totalReview }}" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
             </div>
-            <div class="col-4 col-sm-3 col-lg-2"><small class="font-weight-600 align-text-top line-height-1">Excellent</small></div>
+            <div class="col-4 col-sm-3 col-lg-2"><small class="font-weight-600 align-text-top line-height-1">{{ config('const.business_rating.'.$i)}}</small></div>
           </div>
-          <div class="row">
-            <div class="col-lg-10 col-9">
-              <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <div class="col-lg-2 col-3"><small class="font-weight-600 align-text-top line-height-1">Good</small></div>
-          </div>
-          <div class="row">
-            <div class="col-lg-10 col-9">
-              <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <div class="col-lg-2 col-3"><small class="font-weight-600 align-text-top line-height-1">Fair</small></div>
-          </div>
-          <div class="row">
-            <div class="col-lg-10 col-9">
-              <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <div class="col-lg-2 col-3"><small class="font-weight-600 align-text-top line-height-1">Poor</small></div>
-          </div>
-          <div class="row">
-            <div class="col-lg-10 col-9">
-              <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <div class="col-lg-2 col-3"><small class="font-weight-600 align-text-top line-height-1">Bad</small></div>
-          </div>
+          @endfor
         </div>
       </div>
       <hr class="mb-4">
