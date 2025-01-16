@@ -4,8 +4,9 @@ use Carbon\Carbon;
 use App\Models\City;
 use App\Models\User;
 use App\Models\State;
-use App\Models\Country;
+use GuzzleHttp\Client;
 // use Google\Client;
+use App\Models\Country;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Str;
 use App\Models\BusinessTiming;
@@ -41,8 +42,8 @@ function fileUploadStorage($imageObject, $directory = "", $width = "", $hieght =
         $imgname = time() . "_" . rand(11111, 99999) . '.' . $imageObject->getClientOriginalExtension();
         $imageName = $directory . "/" . $imgname;
 
-        $is_compress = false;
-        if ($width != "" && $hieght != "" && $is_compress) {
+        $is_compress = $imageObject->path();
+        if ($width != "" && $hieght != "" && $is_compress != false) {
 
             // create folder if not exist
             if (!Storage::disk('public')->exists($directory)) {
@@ -257,7 +258,7 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
 {
     $day = Carbon::parse($date)->format('l');
 
-    if($getBusinessId == null){
+    if ($getBusinessId == null) {
         $getBusinessId = getBusinessId();
     }
 
@@ -302,6 +303,85 @@ function getIpDetails()
     return $data;
     // $location = geoip()->getLocation($ip);
     // return $location;
+}
+
+
+function getLatLongOnAddress($address)
+{
+    $apiKey = ''; //get your api key from https://opencagedata.com/
+    $client = new Client();
+
+    if (empty($apiKey)) {
+        $response = $client->get('https://nominatim.openstreetmap.org/search', [
+            'query' => [
+                'q' => $address,
+                'format' => 'json',
+            ],
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+
+        if (!empty($data)) {
+            return [
+                'latitude' => $data[0]['lat'],
+                'longitude' => $data[0]['lon'],
+            ];
+        }
+    } else {
+        $response = $client->get('https://api.opencagedata.com/geocode/v1/json', [
+            'query' => [
+                'q' => $address,
+                'key' => $apiKey,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+
+        if (!empty($data['results'])) {
+            $location = $data['results'][0]['geometry'];
+            return [
+                'latitude' => $location['lat'],
+                'longitude' => $location['lng'],
+            ];
+        } 
+    }
+    return ['error' => 'Unable to fetch coordinates'];
+}
+
+function getAddressOnLatLong($latitude, $longitude)
+{
+    $apiKey = ''; //get your api key from https://opencagedata.com/
+    $client = new Client();
+
+    if (empty($apiKey)) {
+        $response = $client->get('https://nominatim.openstreetmap.org/reverse', [
+            'query' => [
+                'lat' => $latitude,
+                'lon' => $longitude,
+                'format' => 'json',
+            ],
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+
+        if (!empty($data)) {
+            return $data['display_name'];
+        }
+    } else {
+        $response = $client->get('https://api.opencagedata.com/geocode/v1/json', [
+            'query' => [
+                'q' => $latitude . ',' . $longitude,
+                'key' => $apiKey,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+
+        if (!empty($data['results'])) {
+            return $data['results'][0]['formatted'];
+        }
+    }
+    return 'Unable to fetch address';
 }
 
 // =============== geo location info functions end ================
@@ -417,7 +497,8 @@ function sendNotification($user_id, $title, $body, $permission, $type, array $ex
 //      Frontend functions Start 
 // ==============================================
 
-function getAvailableCities(){
+function getAvailableCities()
+{
     return City::select('id', 'name')->where('state_id', 12)->get();
 }
 
