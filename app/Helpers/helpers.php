@@ -42,8 +42,7 @@ function fileUploadStorage($imageObject, $directory = "", $width = "", $hieght =
         $imgname = time() . "_" . rand(11111, 99999) . '.' . $imageObject->getClientOriginalExtension();
         $imageName = $directory . "/" . $imgname;
 
-        $is_compress = $imageObject->path();
-        if ($width != "" && $hieght != "" && $is_compress != false) {
+        if ($width != "" && $hieght != "") {
 
             // create folder if not exist
             if (!Storage::disk('public')->exists($directory)) {
