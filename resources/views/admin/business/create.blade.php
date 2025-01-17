@@ -119,7 +119,16 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label>Address <span class="error">*</span></label>
-                <input type="text" class="form-control" name="address" id="address" placeholder="Address" />
+                <div class="input-group">
+                  <input type="text" class="form-control" name="address" id="address" placeholder="Address" />
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="getlatlong" title="get Latlong">
+                      <i class="fas fa-location-arrow" id="text"></i>
+                      <i class="spinner-border spinner-border-sm d-none" id="loader"></i>
+                    </span>
+                  </div>
+                </div>
+
               </div>
             </div>
 
@@ -214,7 +223,14 @@
 <script src="{{ asset('ajax/map.js') }}"></script>
 
 <script>
+  $('#getlatlong').on('click', function(event) {
+    
+    getletlog();
+    
+  });
   async function getletlog() {
+    $('#getlatlong #text').addClass('d-none');
+    $('#getlatlong #loader').removeClass('d-none');
     if ($('#address').val() != '') {
       var location = await getLatLongOnAddress_OS($('#address').val());
       if (location != null) {
@@ -223,11 +239,12 @@
       } else {
         alert('Latlong not found');
       }
-    }else{
+    } else {
       alert('Please enter address');
     }
+    $('#getlatlong #loader').addClass('d-none');
+    $('#getlatlong #text').removeClass('d-none');
   }
-
 </script>
 
 <script>
