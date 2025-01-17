@@ -4,12 +4,12 @@
     <div class="col-md-4 col-4" style="align-self: center;">
       @if (Auth::check())
       <span class="cf store-fav border rounded-pill text-nowrap" id="store-fav-{{ $res->id }}" onclick="favorite({{ $res->id }})">
-      @if (isset($res->is_favorite) && $res->is_favorite)
-      <i class="fas fa-heart"></i>
-      @else
-      <i class="far fa-heart"></i>
-      @endif  
-      
+        @if (isset($res->is_favorite) && $res->is_favorite)
+        <i class="fas fa-heart"></i>
+        @else
+        <i class="far fa-heart"></i>
+        @endif
+
       </span>
       @endif
       <a href="{{ route('business-details', $res->slug) }}"><img class="img-fluid rounded align-top store-img" src="{{ getImage($res->business_image) }}" alt="{{ $res->name }}"></a>
@@ -20,11 +20,9 @@
           <h4><a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="text-dark text-5 store-name">{{ $res->name }}</a></h4>
 
           <span class="mr-2">
-            <i class="fas fa-star {{ $res->rating >= 1? 'text-warning':'text-muted' }}"></i>
-            <i class="fas fa-star {{ $res->rating >= 2? 'text-warning':'text-muted' }}"></i>
-            <i class="fas fa-star {{ $res->rating >= 3? 'text-warning':'text-muted' }}"></i>
-            <i class="fas fa-star {{ $res->rating >= 4? 'text-warning':'text-muted' }}"></i>
-            <i class="fas fa-star {{ $res->rating >= 5? 'text-warning':'text-muted' }}"></i>
+            @for ($i = 1; $i <= 5; $i++)
+              <i class="fas fa-star {{ $res->rating >= $i? 'text-warning':'text-muted' }}"></i>
+              @endfor
           </span>
           <p class="mb-2 mt-2 store-address"><span><a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="text-black-50"><i class="fas fa-map-marker-alt pr-1 text-muted"></i>{{ $res->address }}</a></span>
           </p>
@@ -37,7 +35,7 @@
           @if (isset($res->businessCategory) && !empty($res->businessCategory))
           <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $res->businessCategory->name }}</div>
           @endif
-          
+
         </div>
         <div class="col-sm-3 text-right d-flex d-sm-block align-items-center">
           @if (isBusinessOpen($res->id))
@@ -45,7 +43,7 @@
           @else
           <p class="text-danger mb-0">close</p>
           @endif
-          
+
         </div>
       </div>
     </div>

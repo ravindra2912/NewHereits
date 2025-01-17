@@ -119,21 +119,21 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label>Address <span class="error">*</span></label>
-                <input type="text" class="form-control" name="address" placeholder="Address" />
+                <input type="text" class="form-control" name="address" id="address" placeholder="Address" />
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label>Latitude</label>
-                <input type="text" class="form-control" name="latitude" placeholder="Latitude" />
+                <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Latitude" />
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label>Longitude</label>
-                <input type="text" class="form-control" name="longitude" placeholder="Longitude" />
+                <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Longitude" />
               </div>
             </div>
 
@@ -210,6 +210,25 @@
 <!-- /.content -->
 
 @push('js')
+
+<script src="{{ asset('ajax/map.js') }}"></script>
+
+<script>
+  async function getletlog() {
+    if ($('#address').val() != '') {
+      var location = await getLatLongOnAddress_OS($('#address').val());
+      if (location != null) {
+        $('#latitude').val(location.lat);
+        $('#longitude').val(location.lon);
+      } else {
+        alert('Latlong not found');
+      }
+    }else{
+      alert('Please enter address');
+    }
+  }
+
+</script>
 
 <script>
   $('#state_id').on('change', function(event) {
