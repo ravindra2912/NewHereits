@@ -48,6 +48,7 @@ Route::middleware(['web', 'front'])->group(function () {
     });
 
     Route::controller(AccountController::class)->name('account.')->group(function () {
+        Route::get('account', 'index')->name('index');
         Route::get('user-profile', 'userProfile')->name('userprofile');
         Route::post('user-profile/update/{id}', 'userProfileUpdate')->name('userprofile.update');
         Route::get('chnage-password', 'changePassword')->name('changePassword');

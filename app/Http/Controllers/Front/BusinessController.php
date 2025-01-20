@@ -81,7 +81,8 @@ class BusinessController extends Controller
                                 $query->select('id', 'first_name', 'last_name', 'profile');
                             }
                         ])
-                    ->select('id', 'business_id', 'user_id', 'rating', 'review', 'created_at');
+                    ->select('id', 'business_id', 'user_id', 'rating', 'review', 'created_at')
+                    ->limit(6);
                 }
             ])
             ->where('slug', $slug)

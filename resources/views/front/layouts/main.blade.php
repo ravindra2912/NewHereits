@@ -76,6 +76,8 @@
 
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/css/custom.css') }}" />
 
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
 	@stack('style')
 
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
@@ -111,14 +113,14 @@
           ============================================= -->
 						<nav class="primary-menu navbar navbar-expand-lg">
 							<div id="header-nav" class="collapse navbar-collapse">
-								<li class="mobile-show"> <a href="{{ route('home') }}">Home</a> </li>	
+								<li class="mobile-show"> <a href="{{ route('home') }}">Home</a> </li>
 								<ul class="navbar-nav">
 									@if (Auth::check() && Auth::user()->role_id == 2)
-									<li class="mobile-hide"> <a href="{{ route('business.dashboard') }}" target="_blank" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Manage Store</a> </li>
-									<li class="mobile-show"> <a href="{{ route('business.dashboard') }}" target="_blank">Manage Store</a> </li>
+									<!-- <li class="mobile-hide"> <a href="{{ route('business.dashboard') }}" target="_blank" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Manage Store</a> </li> -->
+									<li class="mobile-show"> <a href="{{ route('business.dashboard') }}" target="_blank">Manage Business</a> </li>
 									@else
-									<li class="mobile-hide"> <a href="Business" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Register Your business</a> </li>
-									<li class="mobile-show"> <a href="Business">Register Your business</a> </li>
+									<!-- <li class="mobile-hide"> <a href="Business" class="btn btn-primary-gradien " style="padding: 3px 11px 3px 11px;">Register Your business</a> </li> -->
+									<!-- <li class="mobile-show"> <a href="Business">Register Your business</a> </li> -->
 									@endif
 
 								</ul>
@@ -132,7 +134,7 @@
 
 						<!-- Login Signup
 		  =============================== -->
-						<nav class="login-signup navbar navbar-expand separator ml-sm-2 pl-sm-2">
+						<nav class="login-signup navbar navbar-expand ml-sm-2 pl-sm-2"> <!-- separator -->
 							<ul class="navbar-nav">
 								<li class="profile">
 									<a class="pr-0 mr-0 location-contaiter" href="#" data-toggle="modal" data-target="#location-modal">
@@ -169,7 +171,7 @@
 									</div>
 									<!-- Location Modal End -->
 
-									<a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
+									<!-- <a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
 										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
 									</a>
 
@@ -179,7 +181,7 @@
 												$('#search_input').focus();
 											});
 										});
-									</script>
+									</script> -->
 
 
 
@@ -245,24 +247,25 @@
 
 
 									@if (Auth::check())
-								<li class="dropdown mobile-hide">
-									<a class="pr-0 pl-1" href="#" title="Profile">
-										<span class="d-none d-sm-inline-block">{{ Auth::User()->first_name }}</span>
-										<span class="user-icon ml-sm-2"><img src="{{ getImage(Auth::User()->profile) }}" style="height: 30px;border-radius: 10px;" /></span>
+								<li class="dropdown mobile-hide align-self-center">
+									<a class="pr-0 pl-1" href="#" title="Profile" style="height: unset;">
+										<!-- <span class="d-none d-sm-inline-block">{{ Auth::User()->first_name }}</span> -->
+										<span class="user-icon ml-sm-2"><img src="{{ getImage(Auth::User()->profile) }}" style="height: 33px; border-radius: 100%; width: 33px; border: 1px solid; object-fit: cover;" /></span>
 									</a>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" href="{{ route('account.userprofile') }}">User Info</a></li>
-										<li><a class="dropdown-item" href="Account/Address">My Address</a></li>
-										<li><a class="dropdown-item" href="Account/Orders">My Order</a></li>
-										<li><a class="dropdown-item" href="Account/Bookings">My Booking</a></li>
+										@if (Auth::check() && Auth::user()->role_id == 2)
+										<li><a class="dropdown-item" href="{{ route('business.dashboard') }}">Manage Business</a></li>
+										@endif
 										<li><a class="dropdown-item" href="{{ route('logout') }}">Logout</a></li>
 									</ul>
 								</li>
 								@else
-								<a class="pr-0 mobile-hide" style="padding-top: 18px;" data-toggle="modal" data-target="#login-modal" href="#" title="Login / Sign up">
-									<span class="d-none d-sm-inline-block">Login</span>
+								<div class="pr-0 mobile-hide align-self-center" style="height: auto;" data-toggle="modal" data-target="#login-modal" href="#" title="Login / Sign up">
+									<!-- <span class="d-none d-sm-inline-block">Login</span> -->
+									 <span href="Business" class="btn btn-primary-gradien mobile-hide ml-3 px-2 py-1">Login</span> 
 									<!-- <span class="user-icon ml-sm-2"><i class="fas fa-user"></i></span> -->
-								</a>
+									</div>
 								@endif
 
 								</li>
@@ -287,13 +290,17 @@
 		<div class="home-menu-icon-container">
 			<div class="mobile-icon-section pt-1 pb-1 pr-2 pl-2">
 				<a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="fas fa-home" style="font-size:25px"></i><span> Home</span></a>
-				<a href="#" class=""><i class="fab fa-dropbox" style="font-size:25px"></i><span> Products</span></a>
+				<!-- <a href="#" class=""><i class="fab fa-dropbox" style="font-size:25px"></i><span> Products</span></a> -->
 				<a href="{{ route('business') }}" class="{{ request()->routeIs('business') ? 'active' : '' }}"><i class="fas fa-store-alt" style="font-size:25px"></i><span> Stores</span></a>
-				<a href="#" class=">"><i class="fas fa-list-ul" style="font-size:25px"></i><span> Services</span></a>
+				<!-- <a href="#" class=">"><i class="fas fa-list-ul" style="font-size:25px"></i><span> Services</span></a> -->
 
-				<!-- <a href="Account" class=""><i class="far fa-user" style="font-size:25px"></i><span> Account</span></a> -->
-
+				@if (Auth::check())
+				<a href="{{ route('account.index') }}" class=""><i class="far fa-user" style="font-size:25px"></i><span> Account</span></a>
+				@else
 				<a data-toggle="modal" data-target="#login-modal" href="#"><i class="far fa-user" style="font-size:25px"></i><span> Account</span></a>
+				@endif
+				
+
 
 			</div>
 		</div>
@@ -379,8 +386,7 @@
 			<div class="modal-content border-0">
 				<div class="modal-body py-4 px-0">
 					<button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-					<!-- Login Form
-				====================== -->
+					<!-- Login Form ====================== -->
 					<div class="row">
 						<div class="col-11 col-md-10 mx-auto">
 							<ul class="nav nav-tabs nav-justified mb-4" role="tablist">
@@ -411,6 +417,16 @@
 									<span id="loader" class="d-none">Login ...</span>
 								</button>
 							</form>
+							<!-- <div class="d-flex align-items-center my-3">
+								<hr class="flex-grow-1">
+								<span class="mx-2 text-2 text-muted">Or Login with Social Profile</span>
+								<hr class="flex-grow-1">
+							</div>
+							<div class="d-flex  flex-column align-items-center mb-3">
+								<ul class="social-icons social-icons-colored social-icons-circle">
+									<li class="social-icons-google"><a href="#" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
+								</ul>
+							</div> -->
 							<p class="text-2 text-center mb-0">New to Hereits? <a class="btn-link" href="" data-toggle="modal" data-target="#signup-modal" data-dismiss="modal">Sign Up</a></p>
 						</div>
 					</div>

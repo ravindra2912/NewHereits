@@ -9,7 +9,18 @@
 
   <div class="row">
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">
-      <p class="text-center"> for advertisement </p>
+      <!-- <p class="text-center"> for advertisement </p> -->
+      <div class="ad-container">
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-3940256099942544" <!-- Google test Ad Client -->
+          data-ad-slot="6300978111" <!-- Google test Ad Unit ID -->
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
     </div>
     <div class="col-lg-8 mt-1 mt-lg-0">
       <!-- Sort Filters
@@ -125,9 +136,9 @@
         loader(true)
       },
       success: function(res) {
-        if(res.is_favorite){
+        if (res.is_favorite) {
           $('#store-fav-' + id).html('<i class="fas fa-heart"></i>');
-        }else{
+        } else {
           $('#store-fav-' + id).html('<i class="far fa-heart"></i>');
         }
         loader(false)

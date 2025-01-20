@@ -17,9 +17,10 @@ use App\Http\Requests\ProfileUpdateRequest;
 
 class AccountController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    public function index(): View
+    {
+        return view('front.account.index');
+    }
     public function userProfile(Request $request): View
     {
         // dd(getIpDetails());

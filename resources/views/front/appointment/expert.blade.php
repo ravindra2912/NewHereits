@@ -90,7 +90,8 @@
       justify-self: center;
       width: 150px;
     }
-    .expert-name{
+
+    .expert-name {
       font-size: 1.5rem;
     }
   }
@@ -191,6 +192,106 @@
       </iframe>
 
       <p>for advertisement</p>
+    </div>
+  </div>
+
+  <!-- review and rating  -->
+  <div class="section mx-5 py-2">
+    <div class="resp-tabs-container bg-white shadow-md rounded p-3">
+      <h2 id="reviews" class="text-6 mb-3 mt-2">Reviews</h2>
+      <div class="row">
+        <div class="col-sm-4 col-md-3">
+          <div id="review-summary" class="bg-primary text-light rounded px-2 py-4 mb-4 mb-sm-0 text-center">
+            <div class="text-10 font-weight-600 line-height-1 d-block">{{ $expert->ReviewAndRating->avgRating > 0 ?$expert->ReviewAndRating->avgRating:0.0 }}</div>
+            <div class="font-weight-500 my-1">{{ config('const.business_rating.'.round($expert->ReviewAndRating->avgRating > 0 ?$expert->ReviewAndRating->avgRating:0)) }}</div>
+            <small class="d-block">Based on {{ $expert->ReviewAndRating->totalReview }} reviews</small>
+          </div>
+        </div>
+        <div class="col-sm-8 col-md-9">
+          @for ($i = 5; $i >= 1; $i--)
+          @php
+          $reviewCount = 'reviewCount'.$i;
+          @endphp
+          <div class="row">
+            <div class="col-8 col-sm-9 col-lg-10">
+              <div class="progress mb-3">
+                @php
+                $reviewper = 0;
+                if($expert->ReviewAndRating->totalReview > 0){
+                $reviewper = (100 * (int)$expert->ReviewAndRating->$reviewCount) / (int)$expert->ReviewAndRating->totalReview;
+                }
+                @endphp
+                <div class="progress-bar" role="progressbar" style="width: {{ $reviewper }}%" aria-valuenow="{{ $reviewper }}" aria-valuemin="0" aria-valuemax="100">{{ round($reviewper) }}%</div>
+              </div>
+            </div>
+            <div class="col-4 col-sm-3 col-lg-2"><small class="font-weight-600 align-text-top line-height-1">{{ config('const.business_rating.'.$i)}}</small></div>
+          </div>
+          @endfor
+        </div>
+      </div>
+      <hr class="mb-4">
+      @if (isset($expert->reviews) && count($expert->reviews) > 0)
+      @foreach ($expert->reviews as $reviews)
+      <div class="row">
+        <div class="col-12 col-sm-3 text-center">
+          <div class="review-tumb bg-dark-5 text-light rounded-circle d-inline-block mb-2 text-center text-8">{{ $reviews->user->first_name[0]}}</div>
+          <p class="mb-0 line-height-1">{{ $reviews->user->first_name.' '.$reviews->user->last_name }}</p>
+          <small><em>{{ get_date($reviews->createdat, 'd M Y') }}</em></small>
+        </div>
+        <div class="col-12 col-sm-9 text-center text-sm-left" style="min-height: 105px; align-content: end;">
+          <span class="text-2">
+            @for ($i = 1; $i <= 5; $i++)
+              <i class="fas fa-star {{ $reviews->rating >= $i? 'text-warning':'text-muted opacity-4' }}"></i>
+              @endfor
+
+          </span>
+          <!-- <p class="font-weight-600 mb-1">Excellent hotel with great location</p> -->
+          <p>{{ $reviews->review }}</p>
+          <hr>
+        </div>
+      </div>
+      @endforeach
+      @endif
+
+
+      <!-- <div class="text-center"> <a href="#" class="btn btn-sm btn-outline-dark shadow-none">view more reviews</a> </div>
+      <h5 class="mb-3 mt-2">Write a review</h5>
+      <form>
+        <div class="form-group">
+          <label for="yourName">Your Name</label>
+          <input type="email" class="form-control" id="yourName" required="" aria-describedby="yourName" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label for="yourReview">Your Review</label>
+          <textarea class="form-control" rows="5" id="yourReview" required="" placeholder="Enter Your Review"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Rating</label>
+          <div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input id="bad" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
+              <label class="custom-control-label" for="bad">Bad</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input id="poor" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
+              <label class="custom-control-label" for="poor">Poor</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input id="fair" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
+              <label class="custom-control-label" for="fair">Fair</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input id="good" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
+              <label class="custom-control-label" for="good">Good</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input id="excellent" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
+              <label class="custom-control-label" for="excellent">Excellent</label>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form> -->
     </div>
   </div>
 

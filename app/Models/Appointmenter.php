@@ -23,4 +23,9 @@ class Appointmenter extends Model
     {
         return $this->belongsTo(Business::class, 'business_id', 'id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(ReviewAndRating::class, 'review_on_id', 'id')->where('review_type', 'appointmenter');
+    }
 }

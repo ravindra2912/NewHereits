@@ -158,7 +158,7 @@
     </div>
   </div>
 
-  @if (isset($setting->is_appointment_system) && $setting->is_appointment_system)
+  @if (isset($setting->is_appointment_system) && $setting->is_appointment_system && $appontmentersHtml != null)
   <div class="mt-5 mb-5 mx-3">
     <div class="row">
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">
@@ -166,8 +166,7 @@
       </div>
       <div class="col-lg-8 mt-1 mt-lg-0">
         @if ($setting->is_appointment_with_department)
-        <!-- Sort Filters
-          ============================================= -->
+        <!-- Sort Filters ============================================= -->
         <div class=" mb-2 pb-2">
           <div class="row align-items-center">
             <div class="col-12 col-md-12">
@@ -198,7 +197,7 @@
   @endif
 
   <!-- review and rating  -->
-  <div class="section mx-5 mt-5 py-2">
+  <div class="section mx-5 mt-2 py-2">
     <div class="resp-tabs-container bg-white shadow-md rounded p-3">
       <h2 id="reviews" class="text-6 mb-3 mt-2">Reviews</h2>
       <div class="row">
@@ -217,7 +216,13 @@
           <div class="row">
             <div class="col-8 col-sm-9 col-lg-10">
               <div class="progress mb-3">
-                <div class="progress-bar" role="progressbar" style="width: {{ (100 * (int)$business->ReviewAndRating->$reviewCount) / (int)$business->ReviewAndRating->totalReview }}%" aria-valuenow="{{ (100 * (int)$business->ReviewAndRating->$reviewCount) / (int)$business->ReviewAndRating->totalReview }}" aria-valuemin="0" aria-valuemax="100"></div>
+                @php
+                $reviewper = 0;
+                if($business->ReviewAndRating->totalReview > 0){
+                $reviewper = (100 * (int)$business->ReviewAndRating->$reviewCount) / (int)$business->ReviewAndRating->totalReview;
+                }
+                @endphp
+                <div class="progress-bar" role="progressbar" style="width: {{ $reviewper }}%" aria-valuenow="{{ $reviewper }}" aria-valuemin="0" aria-valuemax="100">{{ round($reviewper) }}%</div>
               </div>
             </div>
             <div class="col-4 col-sm-3 col-lg-2"><small class="font-weight-600 align-text-top line-height-1">{{ config('const.business_rating.'.$i)}}</small></div>
@@ -226,30 +231,30 @@
         </div>
       </div>
       <hr class="mb-4">
+      @if (isset($business->reviews) && count($business->reviews) > 0)
+      @foreach ($business->reviews as $reviews)
       <div class="row">
         <div class="col-12 col-sm-3 text-center">
-          <div class="review-tumb bg-dark-5 text-light rounded-circle d-inline-block mb-2 text-center text-8">R</div>
-          <p class="mb-0 line-height-1">Ruby Clinton</p>
-          <small><em>Jan 25, 2019</em></small>
+          <div class="review-tumb bg-dark-5 text-light rounded-circle d-inline-block mb-2 text-center text-8">{{ $reviews->user->first_name[0]}}</div>
+          <p class="mb-0 line-height-1">{{ $reviews->user->first_name.' '.$reviews->user->last_name }}</p>
+          <small><em>{{ get_date($reviews->createdat, 'd M Y') }}</em></small>
         </div>
-        <div class="col-12 col-sm-9 text-center text-sm-left"> <span class="text-2"> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-muted opacity-4"></i> </span>
-          <p class="font-weight-600 mb-1">Excellent hotel with great location</p>
-          <p>We stayed in this hotel for one night and were happy that we booked this hotel. Location is excellent and hotel has a lovely ambience . Rooms are very spacious with a decent decor. Overall experience was good.</p>
+        <div class="col-12 col-sm-9 text-center text-sm-left" style="min-height: 105px; align-content: end;">
+          <span class="text-2">
+            @for ($i = 1; $i <= 5; $i++)
+              <i class="fas fa-star {{ $reviews->rating >= $i? 'text-warning':'text-muted opacity-4' }}"></i>
+              @endfor
+
+          </span>
+          <!-- <p class="font-weight-600 mb-1">Excellent hotel with great location</p> -->
+          <p>{{ $reviews->review }}</p>
           <hr>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12 col-sm-3 text-center">
-          <div class="review-tumb text-light rounded-circle d-inline-block mb-2 text-center text-8"> <img class="rounded-circle" alt="" src="images/brands/hotels/tumb.jpg"> </div>
-          <p class="mb-0 line-height-1">James Maxwell</p>
-          <small><em>Dec 19, 2018</em></small>
-        </div>
-        <div class="col-12 col-sm-9 text-center text-sm-left"> <span class="text-2"> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> </span>
-          <p class="font-weight-600 mb-1">Safe for Family &amp; Good service</p>
-          <p>It was a nice experience the hotel was neat and clean. Good location nice staffs. food items specially Curry needs to be more tastier. this is my third stay in this hotel. great experience, Safe for Family.</p>
-          <hr>
-        </div>
-      </div>
+      @endforeach
+      @endif
+
+
       <!-- <div class="text-center"> <a href="#" class="btn btn-sm btn-outline-dark shadow-none">view more reviews</a> </div>
       <h5 class="mb-3 mt-2">Write a review</h5>
       <form>

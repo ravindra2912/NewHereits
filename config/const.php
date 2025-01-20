@@ -22,6 +22,7 @@ return [
     "business_status" => ["active", "in-active", 'baned'],
     "business_type" => ["Service", "Product", 'Both'],
     "business_rating" => [
+        0 => 'No Review',
         1 => 'Bad',
         2 => 'Poor',
         3 => 'Average',

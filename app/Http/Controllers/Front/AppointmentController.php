@@ -7,9 +7,11 @@ use App\Models\Business;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\Appointmenter;
-use App\Models\BusinessCategory;
+use App\Models\ReviewAndRating;
 
+use App\Models\BusinessCategory;
 use App\Models\AppointmentBooking;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AppointmentDepartment;
@@ -23,14 +25,41 @@ class AppointmentController extends Controller
     public function index(Request $request, $slug): View
     {
         $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
-            ->with(['business' => function($q){
-                return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
-            }, 'businessSetting'])
+            ->with([
+                'business' => function ($q) {
+                    return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
+                },
+                'reviews' => function ($q) {
+                    $q->select('id', 'business_id', 'user_id', 'review_on_id', 'rating', 'review', 'created_at')
+                        ->with([
+                            'user' => function ($query) {
+                                $query->select('id', 'first_name', 'last_name', 'profile');
+                            }
+                        ])
+                        ->limit(6);
+                },
+                'businessSetting'
+            ])
             ->where('status', 'active')
             ->where('slug', $slug)
             ->first();
 
         if ($expert) {
+            // review and rating count
+            $expert->ReviewAndRating = ReviewAndRating::select(
+                DB::raw('SUM(CASE WHEN rating = "1" THEN 1 ELSE 0 END) as reviewCount1'),
+                DB::raw('SUM(CASE WHEN rating = "2" THEN 1 ELSE 0 END) as reviewCount2'),
+                DB::raw('SUM(CASE WHEN rating = "3" THEN 1 ELSE 0 END) as reviewCount3'),
+                DB::raw('SUM(CASE WHEN rating = "4" THEN 1 ELSE 0 END) as reviewCount4'),
+                DB::raw('SUM(CASE WHEN rating = "5" THEN 1 ELSE 0 END) as reviewCount5'),
+                DB::raw('COUNT(rating) as totalReview'),
+                DB::raw('AVG(rating) as avgRating'),
+                // DB::raw('SELECT * FROM review_and_ratings WHERE business_id = '.$business->id.' AND review_type = "business" AND user_id = '.Auth::user()->id.' as is_reviewed'),
+            )
+                ->where('review_on_id', $expert->id)
+                ->where('review_type', 'appointmenter')
+                ->first();
+
             $expert->businessSetting = $expert->businessSetting->getBusinessSettingObject();
             $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
             return view('front.appointment.expert', compact('expert', 'timeSlots'));
