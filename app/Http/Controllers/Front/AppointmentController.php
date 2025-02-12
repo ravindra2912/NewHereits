@@ -67,6 +67,21 @@ class AppointmentController extends Controller
             return view('404');
         }
     }
+    
+    
+    public function board(Request $request, $slug): View
+    {
+        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
+            ->where('status', 'active')
+            ->where('slug', $slug)
+            ->first();
+
+        if ($expert) {
+            return view('front.appointment.board', compact('expert'));
+        } else {
+            return view('404');
+        }
+    }
 
     public function getAppoinmenterTiming(Request $request)
     {
@@ -129,4 +144,5 @@ class AppointmentController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
+
 }

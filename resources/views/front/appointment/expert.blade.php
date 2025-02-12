@@ -121,7 +121,14 @@
             <h1 class="text-white expert-name">{{ $expert->appointmenter_name }}</h1>
             <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
             <p class="text-white mt-3">{{ $expert->description }}</p>
+            
           </div>
+          <div>
+          <p class=" d-flex align-items-center mb-2 text-4">
+              <a href="javascript:void(0)" id="copylink" data-url="{{ route('expert', $expert->slug) }}" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
+              <a href="{{ route('expert.board', $expert->slug) }}" target="_blank" data-toggle="tooltip" data-original-title="Board" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-clipboard"></i></a>
+          </p>
+            </div>
 
         </div>
       </div>

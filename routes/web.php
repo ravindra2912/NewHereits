@@ -30,6 +30,7 @@ Route::controller(AppointmentController::class)->group(function () {
     Route::get('expert/{slug?}', 'index')->name('expert');
     Route::post('book-appointment', 'bookAppointment')->name('book.appointment');
     Route::post('get-appoinmenter-timing', 'getAppoinmenterTiming')->name('get.appoinmenter.timing');
+    Route::get('expert/board/{slug?}', 'board')->name('expert.board');
 });
 
 // User Authenticated Routes
