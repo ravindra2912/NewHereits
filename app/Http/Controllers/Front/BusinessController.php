@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Front;
 
+use Carbon\Carbon;
 use App\Models\Business;
 use App\Models\Favorite;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\Appointmenter;
-use App\Models\ReviewAndRating;
 
+use App\Models\ReviewAndRating;
 use App\Models\BusinessCategory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -84,7 +85,7 @@ class BusinessController extends Controller
                     ->select('id', 'business_id', 'user_id', 'rating', 'review', 'created_at')
                     ->limit(6);
                 }
-            ])
+            ],)
             ->where('slug', $slug)
             ->where('status', 'active')
             ->first();
@@ -124,10 +125,28 @@ class BusinessController extends Controller
             if ($setting->is_appointment_with_department) {
                 $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', $business->id)->get();
             }
-            $appontmenters = Appointmenter::select('id', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug')->with('department')->where('business_id', $business->id)->get();
+            $appontmenters = Appointmenter::select('id', 'business_id', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug')
+            ->with(['department',
+                'business' => function ($q) {
+                        return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
+                    },
+                    'businessSetting'
+            ])
+            ->where('business_id', $business->id)
+            ->where('status', 'active')
+            ->get();
 
-            $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();
-            return view('front.business.details', compact('business', 'setting', 'departments', 'appontmentersHtml'));
+            $expert = array();
+            $timeSlots = array();
+            $appontmentersHtml = '';
+            if(count( $appontmenters) == 1){
+                $expert = $appontmenters[0];
+                $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
+            }else{
+                $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();
+            }
+
+            return view('front.business.details', compact('business', 'setting', 'departments', 'appontmentersHtml', 'expert', 'timeSlots'));
         } else {
             return view('404');
         }

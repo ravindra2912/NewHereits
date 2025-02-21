@@ -19,6 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use Cart;
 
 class AppointmentController extends Controller
 {
@@ -67,8 +68,8 @@ class AppointmentController extends Controller
             return view('404');
         }
     }
-    
-    
+
+
     public function board(Request $request, $slug): View
     {
         $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
@@ -77,7 +78,25 @@ class AppointmentController extends Controller
             ->first();
 
         if ($expert) {
-            return view('front.appointment.board', compact('expert'));
+
+            $appointmentFirst = AppointmentBooking::whereDate('booking_date', Carbon::now())
+                ->where('appointmenter_id', $expert->id)
+                ->where('status', 'pending')
+                ->orderBy('token_number', 'asc')
+                ->first();
+            $appointmentList = array();
+            if ($appointmentFirst) {
+                $appointmentList = AppointmentBooking::whereDate('booking_date', Carbon::now())
+                    ->where('appointmenter_id', $expert->id)
+                    ->where('id', '!=', $appointmentFirst->id)
+                    ->where('status', 'pending')
+                    ->orderBy('token_number', 'asc')
+                    ->limit(5)
+                    ->get();
+            }
+
+
+            return view('front.appointment.board', compact('expert', 'appointmentList', 'appointmentFirst'));
         } else {
             return view('404');
         }
@@ -144,5 +163,4 @@ class AppointmentController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
-
 }

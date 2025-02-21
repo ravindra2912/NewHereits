@@ -107,6 +107,14 @@
       width: 150px;
     }
   }
+
+  .fa-check-circle {
+    font-size: 60px;
+  }
+  .googleMap {
+    width: -webkit-fill-available;
+    height: 300px;
+  }
 </style>
 
 
@@ -158,7 +166,11 @@
     </div>
   </div>
 
-  @if (isset($setting->is_appointment_system) && $setting->is_appointment_system && $appontmentersHtml != null)
+
+  @if (isset($expert) && !empty($expert))
+  @include('front.appointment.appointmentForm')
+  @elseif(isset($setting->is_appointment_system) && $setting->is_appointment_system && $appontmentersHtml != null)
+  
   <div class="mt-5 mb-5 mx-3">
     <div class="row">
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">

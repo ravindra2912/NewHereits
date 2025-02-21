@@ -137,70 +137,7 @@
 
 
 
-  <div class="section mx-3 row">
-    <div class="col-md-7 col-sm-7 col-12 my-sm-5">
-      <div class="resp-tabs-container bg-white shadow-md rounded p-3">
-        <div class="resp-tab-content resp-tab-content-active" style="display:block" aria-labelledby="tab_item-0">
-          <h2 class="text-6 mb-1">Book your appointment</h2>
-          <p>Book your appointment with {{ $expert->appointmenter_name }}. Please fill the form below to book your appointment.</p>
-          <form id="appointment-form" action="{{ route('book.appointment') }}" data-action="call" data-reset="true" class="row formaction">
-            @csrf
-
-            <input type="hidden" name="expert_id" id="expert_id" value="{{ $expert->id }}">
-            <input type="hidden" name="business_id" id="business_id" value="{{ $expert->business_id }}">
-            <input type="hidden" name="department_id" value="{{ $expert->department_id }}">
-            <input type="hidden" value="{{ $expert->businessSetting['is_appointment_book_with_time_slote'] }}" id="with-timing">
-
-            <div class="col-md-6 col-sm-6 col-12 mb-3">
-              <label for="booking_date" class="form-label">Appointment date</label>
-              <input type="date" name="booking_date" class="form-control" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
-            </div>
-
-            @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
-            <div class="col-md-6 col-sm-6 col-12 mb-3">
-              <label for="operator" class="form-label">Appointment Time</label>
-              <select class="form-control" name="timeslote" id="timeslote" required="">
-                <option value="">Select Your Appointment Time</option>
-                @foreach ($timeSlots as $time)
-                <option value="{{ $time['time'] }}" {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option>
-                @endforeach
-              </select>
-            </div>
-            @endif
-
-            <div class="col-md-6 col-sm-6 col-12 mb-3">
-              <label for="user_name" class="form-label">Your Name</label>
-              <div class="input-group">
-                <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" required="" type="text">
-              </div>
-            </div>
-
-            <div class="col-md-6 col-sm-6 col-12 mb-3">
-              <label for="user_contact" class="form-label">Mobile Number</label>
-              <input type="text" name="user_contact" class="form-control" id="user_contact" required="" placeholder="Enter Mobile Number">
-            </div>
-
-            <div class="col-12 mb-3">
-              <button class="btn btn-primary btn_action" href="recharge-order-summary.html">
-                <span id="buttonText"> Appointment Book</span>
-                <span id="loader" class="d-none"> Booking ...</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-5 col-sm-5 col-12 my-sm-5 text-center">
-
-      <iframe
-        src="https://www.google.com/maps?q={{ $expert->business->latitude.','.$expert->business->longitude }}&hl=es;z=14&output=embed"
-        allowfullscreen
-        loading="lazy" class="googleMap">
-      </iframe>
-
-      <p>for advertisement</p>
-    </div>
-  </div>
+  @include('front.appointment.appointmentForm')
 
   <!-- review and rating  -->
   <div class="section mx-5 py-2">
