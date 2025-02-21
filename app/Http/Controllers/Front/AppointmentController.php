@@ -63,7 +63,10 @@ class AppointmentController extends Controller
 
             $expert->businessSetting = $expert->businessSetting->getBusinessSettingObject();
             $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
-            return view('front.appointment.expert', compact('expert', 'timeSlots'));
+
+            $getCurrentTocken = getCurrentTocken($expert->id);
+
+            return view('front.appointment.expert', compact('expert', 'timeSlots', 'getCurrentTocken'));
         } else {
             return view('404');
         }
@@ -78,12 +81,7 @@ class AppointmentController extends Controller
             ->first();
 
         if ($expert) {
-
-            $appointmentFirst = AppointmentBooking::whereDate('booking_date', Carbon::now())
-                ->where('appointmenter_id', $expert->id)
-                ->where('status', 'pending')
-                ->orderBy('token_number', 'asc')
-                ->first();
+            $appointmentFirst = getCurrentTocken($expert->id);
             $appointmentList = array();
             if ($appointmentFirst) {
                 $appointmentList = AppointmentBooking::whereDate('booking_date', Carbon::now())
@@ -94,8 +92,6 @@ class AppointmentController extends Controller
                     ->limit(5)
                     ->get();
             }
-
-
             return view('front.appointment.board', compact('expert', 'appointmentList', 'appointmentFirst'));
         } else {
             return view('404');

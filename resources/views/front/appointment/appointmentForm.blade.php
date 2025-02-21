@@ -1,5 +1,5 @@
 <div class="section mx-3 row">
-  <div class="col-md-7 col-sm-7 col-12 my-sm-5">
+  <div class="col-md-7 col-sm-7 col-12 my-sm-2">
     <div class="resp-tabs-container bg-white shadow-md rounded p-3">
       <div class="resp-tab-content resp-tab-content-active" style="display:block" aria-labelledby="tab_item-0">
         <h2 class="text-6 mb-1">Book your appointment</h2>
@@ -51,7 +51,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-5 col-sm-5 col-12 my-sm-5 text-center">
+  <div class="col-md-5 col-sm-5 col-12 my-sm-2 mt-3 text-center">
 
     <iframe
       src="https://www.google.com/maps?q={{ $expert->business->latitude.','.$expert->business->longitude }}&hl=es;z=14&output=embed"

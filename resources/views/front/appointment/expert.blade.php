@@ -104,6 +104,11 @@
     width: -webkit-fill-available;
     height: 300px;
   }
+
+  .toen-no {
+    font-weight: 600;
+    font-size: 60px;
+  }
 </style>
 
 
@@ -117,18 +122,27 @@
           <img src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" title="{{ $expert->appointmenter_name }}" class="">
         </div>
         <div class="col-12 col-lg-8 col-md-7 auth-content-wrap banner-info">
-          <div class="title-sub mb-md-4 mb-3">
-            <h1 class="text-white expert-name">{{ $expert->appointmenter_name }}</h1>
-            <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
-            <p class="text-white mt-3">{{ $expert->description }}</p>
-            
+          <div class="title-sub mb-md-4 mb-3 row">
+            <div class="col-sm-8 col-12">
+              <h1 class="text-white expert-name">{{ $expert->appointmenter_name }}</h1>
+              <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
+              <p class="text-white mt-3">{{ $expert->description }}</p>
+            </div>
+            @if($getCurrentTocken)
+            <div class="col-sm-4 col-12 text-center align-self-center ">
+              <div class="border rounded py-2">
+                <h4 class="text-white">Token No.</h4>
+                <h3 class="text-white toen-no">{{ $getCurrentTocken->token_number }}</h3>
+              </div>
+            </div>
+            @endif
           </div>
           <div>
-          <p class=" d-flex align-items-center mb-2 text-4">
+            <p class=" d-flex align-items-center mb-2 text-4">
               <a href="javascript:void(0)" id="copylink" data-url="{{ route('expert', $expert->slug) }}" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
               <a href="{{ route('expert.board', $expert->slug) }}" target="_blank" data-toggle="tooltip" data-original-title="Board" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-clipboard"></i></a>
-          </p>
-            </div>
+            </p>
+          </div>
 
         </div>
       </div>
