@@ -4,23 +4,22 @@
     <img src="{{ isset(Auth::user()->getBusinessDetails) ? getImage(Auth::user()->getBusinessDetails->business_image):config('const.site_setting.small_logo') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
     <span class="brand-text font-weight-light">{{ isset(Auth::user()->getBusinessDetails) ? Auth::user()->getBusinessDetails->name:'' }}</span>
     <!-- <span><i class="fas fa-random float-right pr-2"></i></span> -->
-
+    @if (isset(Auth::user()->getBusinesses) && count(Auth::user()->getBusinesses) > 1)
     <div class="btn-group float-right">
       <button type="button" title="Switch Business" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown">
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <div class="dropdown-menu" role="menu">
-        @if (isset(Auth::user()->getBusinesses) && count(Auth::user()->getBusinesses) > 0)
-          @foreach (Auth::user()->getBusinesses as $business)
-          <a class="dropdown-item" href="{{ route('business.switchBusiness', $business->id) }}">
+        @foreach (Auth::user()->getBusinesses as $business)
+        <a class="dropdown-item" href="{{ route('business.switchBusiness', $business->id) }}">
           <img src="{{ getImage($business->business_image) }}" alt="Logo" class="brand-image img-circle " style="height: 30px; width: 30px; object-fit: cover;">
-            {{ $business->name }}
-          </a>
-          <div class="dropdown-divider"></div>
-          @endforeach
-        @endif
+          {{ $business->name }}
+        </a>
+        <div class="dropdown-divider"></div>
+        @endforeach
       </div>
     </div>
+    @endif
   </div>
 
   @php

@@ -36,7 +36,7 @@ class SettingController extends Controller
 
         try {
             $rules = [
-                'profile' => 'nullable|mimes:jpg,jpeg,png|',
+                'profile' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'email' => 'required|email|unique:users,email,'.$id,

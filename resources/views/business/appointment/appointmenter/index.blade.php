@@ -54,6 +54,7 @@
                   <th></th>
                   <th>department</th>
                   <th>Professionals Name</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -97,6 +98,10 @@
         {
           data: 'appointmenter_name',
           name: 'appointmenter_name'
+        },
+        {
+          data: 'status',
+          name: 'status'
         },
         {
           data: 'action',

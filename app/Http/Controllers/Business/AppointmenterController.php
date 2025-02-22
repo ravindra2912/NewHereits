@@ -31,7 +31,10 @@ class AppointmenterController extends Controller
     {
         $businessSetting = getBusinessSettings();
         if ($request->ajax()) {
-            $data = Appointmenter::with('department')->where('business_id', getBusinessId())->select('id', 'department_id',  'appointmenter_name', 'appointmenter_image');
+            $data = Appointmenter::with(['department' => function($q){
+                $q->select('id','department_name');
+            }])->where('appointmenters.business_id', getBusinessId())
+            ->select('appointmenters.id', 'department_id',  'appointmenter_name', 'appointmenter_image', 'status');
 
             return Datatables::of($data)
                 ->addIndexColumn()
@@ -86,9 +89,10 @@ class AppointmenterController extends Controller
         try {
             $businessSetting = getBusinessSettings();
             $rules = [
-                'appointmenter_image' => 'required|mimes:jpg,jpeg,png|',
+                'appointmenter_image' => 'required|mimes:jpg,jpeg,png,webp|',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'appointmenter_name' => 'required',
+                'timing_per_appointment' => 'required|numeric|gt:0',
                 'title' => 'required',
                 'description' => 'required',
             ];
@@ -107,8 +111,10 @@ class AppointmenterController extends Controller
                 $insert->business_id  = Auth::user()->business_id;
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_name = $request->appointmenter_name;
+                $insert->timing_per_appointment = $request->timing_per_appointment;
                 $insert->title = $request->title;
                 $insert->description = $request->description;
+                $insert->status = $request->status;
                 $insert->slug = generateUniqueSlug(Appointmenter::class, $request->appointmenter_name);
                 $insert->save();
 
@@ -150,9 +156,10 @@ class AppointmenterController extends Controller
         try {
             $businessSetting = getBusinessSettings();
             $rules = [
-                'appointmenter_image' => 'nullable|mimes:jpg,jpeg,png|',
+                'appointmenter_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'appointmenter_name' => 'required',
+                'timing_per_appointment' => 'required|numeric|gt:0',
                 'title' => 'required',
                 'description' => 'required',
             ];
@@ -174,8 +181,10 @@ class AppointmenterController extends Controller
                 $update->business_id  = Auth::user()->business_id;
                 $update->department_id = $request->department_id;
                 $update->appointmenter_name = $request->appointmenter_name;
+                $update->timing_per_appointment = $request->timing_per_appointment;
                 $update->title = $request->title;
                 $update->description = $request->description;
+                $update->status = $request->status;
                 $update->save();
 
                 // Remove old uploaded image if exist

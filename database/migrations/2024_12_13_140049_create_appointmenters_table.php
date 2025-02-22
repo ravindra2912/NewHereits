@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->string('appointmenter_name');
             $table->string('appointmenter_image')->nullable();
+            $table->integer('timing_per_appointment');
             $table->string('title')->nullable();
             $table->string('description')->nullable();
             $table->string('slug', 50)->unique();

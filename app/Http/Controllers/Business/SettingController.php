@@ -42,7 +42,7 @@ class SettingController extends Controller
 
         try {
             $rules = [
-                'profile' => 'nullable|mimes:jpg,jpeg,png|',
+                'profile' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'email' => 'required|email|unique:users,email,'.$id,
@@ -114,7 +114,7 @@ class SettingController extends Controller
 
         try {
             $rules = [
-                'business_image' => 'nullable|mimes:jpg,jpeg,png|',
+                'business_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'name' => 'required',
                 'business_category_id' => 'required',
                 'business_type' => 'required',
@@ -249,7 +249,7 @@ class SettingController extends Controller
 
         try {
             $rules = [
-                // 'business_image' => 'nullable|mimes:jpg,jpeg,png|',
+                // 'business_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
             ];
 
             $validator = Validator::make($request->all(), $rules);

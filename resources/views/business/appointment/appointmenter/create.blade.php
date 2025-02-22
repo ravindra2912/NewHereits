@@ -101,19 +101,36 @@
                     <input type="text" class="form-control" name="appointmenter_name" placeholder="Appointmenter name" />
                   </div>
                 </div>
-                
+
                 <div class="col-md-6">
                   <div class="form-group">
                     <label>Job title <span class="error">*</span></label>
                     <input type="text" class="form-control" name="title" placeholder="Job title" />
                   </div>
                 </div>
-                
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Time per appointment <span class="error">*</span></label>
+                    <input type="text" class="form-control" name="timing_per_appointment" placeholder="Time per appointment" />
+                  </div>
+                </div>
+
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>Short description <span class="error">*</span></label>
                     <input type="text" class="form-control" name="description" placeholder="Description" />
                   </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Status <span class="error">*</span></label>
+                  <select class="form-control" name="status">
+                    @foreach ( config('const.appointmenter_status') as $status)
+                    <option value="{{ $status }}">{{ $status }}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
             </div>

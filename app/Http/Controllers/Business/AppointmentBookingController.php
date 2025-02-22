@@ -32,9 +32,14 @@ class AppointmentBookingController extends Controller
     {
         $businessSetting = getBusinessSettings();
         if ($request->ajax()) {
-            $data = AppointmentBooking::with(['department', 'appontmenter'])
-                ->where('business_id', getBusinessId())
-                ->whereDate('booking_date', $request->date)->select('*');
+            $data = AppointmentBooking::with(['department' => function ($q) {
+                $q->select('id', 'department_name');
+            }, 'appontmenter' => function ($q) {
+                $q->select('id', 'appointmenter_name');
+            }])
+                ->where('appointment_bookings.business_id', getBusinessId())
+                ->whereDate('booking_date', $request->date)
+                ->select('appointment_bookings.id', 'appointment_bookings.business_id', 'appointment_bookings.department_id', 'token_number', 'appointmenter_id', 'user_name', 'user_contact', 'booking_date', 'slot_start_time', 'slot_end_time', 'appointment_bookings.status');
             if (isset($request->department_id) && !empty($request->department_id)) {
                 $data = $data->where('department_id', $request->department_id);
             }
@@ -51,10 +56,10 @@ class AppointmentBookingController extends Controller
                     return isset($row->department) ? $row->department->department_name : '';
                 })
                 ->addColumn('start_time', function ($row) {
-                    return !empty($row->slot_start_time)?Carbon::parse($row->slot_start_time)->format('H:i a'):'';
+                    return !empty($row->slot_start_time) ? Carbon::parse($row->slot_start_time)->format('H:i a') : '';
                 })
                 ->addColumn('end_time', function ($row) {
-                    return !empty($row->slot_end_time)?Carbon::parse($row->slot_end_time)->format('H:i a'):'';
+                    return !empty($row->slot_end_time) ? Carbon::parse($row->slot_end_time)->format('H:i a') : '';
                 })
                 ->addColumn('action', function ($row) {
                     $url = route('business.appointment.bookings.destroy', $row->id);
@@ -102,7 +107,7 @@ class AppointmentBookingController extends Controller
     public function getAppoinmenterTiming(Request $request)
     {
         $appoinment_id = null;
-        if(isset($request->appoinment_id)){
+        if (isset($request->appoinment_id)) {
             $appoinment_id = $request->appoinment_id;
         }
         $slots = getAppoinmenterTiming($request->appointmenter_id, $request->date, $appoinment_id);

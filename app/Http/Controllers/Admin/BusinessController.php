@@ -83,7 +83,7 @@ class BusinessController extends Controller
 
         try {
             $rules = [
-                'business_image' => 'required|mimes:jpg,jpeg,png|',
+                'business_image' => 'required|mimes:jpg,jpeg,png,webp|',
                 'owner_id' => 'nullable|numeric|exists:users,id',
                 'name' => 'required',
                 'business_category_id' => 'required',
@@ -159,7 +159,7 @@ class BusinessController extends Controller
 
         try {
             $rules = [
-                'business_image' => 'nullable|mimes:jpg,jpeg,png|',
+                'business_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'owner_id' => 'nullable|numeric|exists:users,id',
                 'name' => 'required',
                 'business_category_id' => 'required',
@@ -251,7 +251,7 @@ class BusinessController extends Controller
 
         try {
             $rules = [
-                // 'business_image' => 'nullable|mimes:jpg,jpeg,png|',
+                // 'business_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
             ];
 
             $validator = Validator::make($request->all(), $rules);

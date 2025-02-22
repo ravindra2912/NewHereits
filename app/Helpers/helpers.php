@@ -13,6 +13,7 @@ use App\Models\BusinessTiming;
 use App\Models\BusinessSetting;
 use App\Models\BusinessCategory;
 use App\Models\AppointmentBooking;
+use App\Models\Appointmenter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -198,7 +199,6 @@ function getBusinessSettings($business_id = null)
             'is_appointment_with_department' => false,
         ];
     }
-
     return (object)$data;
 }
 
@@ -261,6 +261,13 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
         $getBusinessId = getBusinessId();
     }
 
+    $interval = 15;
+    // get appointmenter interval time
+    $geinterval = Appointmenter::find($id);
+    if ($geinterval) {
+        $interval = $geinterval->timing_per_appointment;
+    }
+
     $appontmentsData = AppointmentBooking::select('slot_start_time', 'slot_end_time')
         ->whereDate('booking_date', Carbon::parse($date))
         ->where('business_id', $getBusinessId)
@@ -279,7 +286,7 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
     foreach ($appontmenterTiming as $timing) {
         $startTime = Carbon::parse($timing->start_time)->format('H:i');
         $endTime = Carbon::parse($timing->end_time)->format('H:i');
-        $times = generateTimeSlots($startTime, $endTime, 15, $bookedArray);
+        $times = generateTimeSlots($startTime, $endTime, $interval, $bookedArray);
         $slots = array_merge($slots, $times,);
     }
     // dd($slots);

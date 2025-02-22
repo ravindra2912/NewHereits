@@ -61,7 +61,7 @@ class BusinessCategoryController extends Controller
 
         try {
             $rules = [
-                'image' => 'required|mimes:jpg,jpeg,png|',
+                'image' => 'required|mimes:jpg,jpeg,png,webp|',
                 'name' => 'required',
                 'status' => 'required'
             ];
@@ -120,7 +120,7 @@ class BusinessCategoryController extends Controller
 
         try {
             $rules = [
-                'image' => 'nullable|mimes:jpg,jpeg,png|',
+                'image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'name' => 'required'
             ];
 

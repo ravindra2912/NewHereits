@@ -16,6 +16,7 @@ return [
     "gender" => ["Male", "Female"],
 
     "user_status" => ["active", "in-active"],
+    "appointmenter_status" => ["active", "in-active"],
 
     "business_type_status" => ["active", "in-active"],
 

@@ -109,6 +109,13 @@
                   </div>
                 </div>
                 
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Time per appointment <span class="error">*</span></label>
+                    <input type="text" class="form-control" value="{{ $appointmenter->timing_per_appointment }}" name="timing_per_appointment" placeholder="Time per appointment" />
+                  </div>
+                </div>
+                
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>Short description <span class="error">*</span></label>
@@ -116,6 +123,16 @@
                   </div>
                 </div>
 
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Status <span class="error">*</span></label>
+                  <select class="form-control" name="status">
+                    @foreach ( config('const.appointmenter_status') as $status)
+                    <option value="{{ $status }}" {{ $appointmenter->status == $status?'selected':'' }}>{{ $status }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
             </div>
 
