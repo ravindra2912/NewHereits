@@ -56,6 +56,7 @@
               <thead>
                 <tr>
                   <th></th>
+                  <th>ID</th>
                   <th>First name</th>
                   <th>Last name</th>
                   <th>Email</th>
@@ -96,6 +97,10 @@
           name: 'img',
           orderable: false,
           searchable: false
+        },
+        {
+          data: 'id',
+          name: 'id'
         },
         {
           data: 'first_name',

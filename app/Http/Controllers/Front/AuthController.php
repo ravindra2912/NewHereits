@@ -27,6 +27,11 @@ class AuthController extends Controller
         try {
             $user = User::where('email', $request->email)->whereIn('role_id', [2, 3])->first();
             if ($user && Hash::check($request['password'], $user->password)) {
+                if($user->role_id == 2 && $user->business_id == null){
+                    $business = Business::select('id')->where('owner_id', $user->id)->first();
+                    $user->business_id = $business->id;
+                    $user->save();
+                }
                 $request->authenticate();
                 $request->session()->regenerate();
                 $success = true;

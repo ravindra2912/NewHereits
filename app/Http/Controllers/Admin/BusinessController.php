@@ -122,6 +122,14 @@ class BusinessController extends Controller
                 $insert->status = $request->status;
                 $insert->save();
 
+                //change user role to seller
+                $user = User::select('id', 'role_id', 'business_id')->find($request->owner_id);
+                if ($user && ( $user->role_id != 2 || $user->business_id == null)) {
+                    $user->business_id =  $insert->id;
+                    $user->role_id = 2;
+                    $user->save();
+                }
+
                 $success = true;
                 $message = 'Business add successfully.';
             }
@@ -187,6 +195,16 @@ class BusinessController extends Controller
                     $update->business_image = $image_name;
                 }
 
+                if ($update->owner_id != $request->owner_id) {
+                    //change user role to seller
+                    $user = User::select('id', 'role_id', 'business_id')->find($request->owner_id);
+                    if ($user && ( $user->role_id != 2 || $user->business_id == null)) {
+                        $user->business_id = $id;
+                        $user->role_id = 2;
+                        $user->save();
+                    }
+                }
+                $update->owner_id = $request->owner_id;
                 $update->name = $request->name;
                 $update->business_category_id = $request->business_category_id;
                 $update->business_type = $request->business_type;
@@ -199,6 +217,8 @@ class BusinessController extends Controller
                 $update->pincode = $request->pincode;
                 $update->status = $request->status;
                 $update->save();
+
+
 
                 // Remove old uploaded image if exist
                 if (isset($oldimage)) {
@@ -261,14 +281,14 @@ class BusinessController extends Controller
                 // $message = $validator->errors()->first();
             } else {
 
-                $update = BusinessSetting::where('business_id',$id)->first();
-                if(!$update){
+                $update = BusinessSetting::where('business_id', $id)->first();
+                if (!$update) {
                     $update = new BusinessSetting();
                     $update->business_id = $id;
                 }
-                $update->is_appointment_system = isset($request->is_appointment_system) && $request->is_appointment_system == 'on'?1:0;
-                $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on'?1:0;
-                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on'?1:0;
+                $update->is_appointment_system = isset($request->is_appointment_system) && $request->is_appointment_system == 'on' ? 1 : 0;
+                $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on' ? 1 : 0;
+                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on' ? 1 : 0;
                 $update->save();
 
                 $success = true;
@@ -279,5 +299,4 @@ class BusinessController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
-
 }
