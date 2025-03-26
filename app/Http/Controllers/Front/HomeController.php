@@ -24,8 +24,22 @@ class HomeController extends Controller
      */
     public function index(Request $request): View
     {
+        // session()->forget('hereitsLocation');
         $fevoriteBusinesses = array();
-        $businesses = Business::select('id', 'name', 'slug', 'business_image')->where('status', 'active')->limit(8)->get();
+        $userLocationInfo = getUserLocationInfo();
+        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id');
+        if($userLocationInfo){
+            if($userLocationInfo['locationType'] == 'manual'){
+                if($userLocationInfo['area'] != ''){
+                    $businesses = $businesses->where('area_id', $userLocationInfo['area']);
+                }
+                if($userLocationInfo['city'] != ''){
+                    $businesses = $businesses->where('city_id', $userLocationInfo['city']);
+                }
+                
+            }
+        }
+        $businesses = $businesses->where('status', 'active')->limit(8)->get();
         $businessCategory = getBusinessCategory();
         // $businessCategory = BusinessCategory::select('id', 'name', 'image', 'slug')->where('status', 'active')->limit(8)->get();
        

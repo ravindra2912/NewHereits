@@ -29,7 +29,7 @@ class BusinessController extends Controller
 
     public function getBusiness(Request $request)
     {
-
+        $userLocationInfo = getUserLocationInfo();
         $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'rating', 'pincode')
             ->with([
                 'businessCategory',
@@ -38,6 +38,18 @@ class BusinessController extends Controller
                 'city',
             ])
             ->where('status', 'active');
+
+            if($userLocationInfo){
+                if($userLocationInfo['locationType'] == 'manual'){
+                    if($userLocationInfo['area'] != ''){
+                        $businesses = $businesses->where('area_id', $userLocationInfo['area']);
+                    }
+                    if($userLocationInfo['city'] != ''){
+                        $businesses = $businesses->where('city_id', $userLocationInfo['city']);
+                    }
+                    
+                }
+            }
         if (isset($request->category) && !empty($request->category)) {
             $cat = BusinessCategory::where('slug', $request->category)->first('id');
             if ($cat) {

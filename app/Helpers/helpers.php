@@ -312,6 +312,10 @@ function getCurrentTocken($expert_id)
 
 // =============== geo location info functions start ================
 
+    function getUserLocationInfo(){
+        return session('hereitsLocation');
+    }
+
 function getIpDetails()
 {
 

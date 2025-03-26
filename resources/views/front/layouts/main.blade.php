@@ -80,6 +80,10 @@
 
 	@stack('style')
 
+	<script>
+		
+	</script>
+
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
 	<!-- <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
@@ -138,7 +142,7 @@
 							<ul class="navbar-nav">
 								<li class="profile">
 									<a class="pr-0 mr-0 location-contaiter" href="#" data-toggle="modal" data-target="#location-modal">
-										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i><span id="selectedLocation"> </span></span>
+										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i> {{ session('hereitsLocation') ? session('hereitsLocation')['fullAddress'] : null }} </span>
 									</a>
 
 									<!-- Location Modal =========================== -->
@@ -550,26 +554,28 @@
 				alert("Link copied to clipboard");
 			});
 		});
+
+		var locationData = @json(getUserLocationInfo());
 	</script>
 
 	@stack('js')
 
 	<script>
-		
-
 		// ********* location model Start ******************
+		
 		$(document).ready(function() {
-			const cookie = getCookie();
-			if(cookie != null){
-				if(cookie.city != ''){
-					$('input[name="location_city"][value="' + cookie.city + '"]').prop("checked", true);
+			
+			console.log(locationData);
+			if (locationData == null || locationData == '') {
+				$('#location-modal').modal('show');
+			} else {
+				if (locationData['city'] != '') {
+					$('input[name="location_city"][value="' + locationData['city'] + '"]').prop("checked", true);
 					$('.search-input-line').removeClass('d-none')
 				}
-				$('#selectedLocation').html(cookie.fullAddress);
-			}else{
-				$('#location-modal').modal('show');
+
 			}
-			
+
 		});
 		var lastAjax = null;
 
@@ -615,9 +621,9 @@
 		}
 
 		function setLocation(type, val) {
-			var cookieData = getCookie();
-			if (cookieData == null) {
-				var cookieData = {
+			var locationData = @json(getUserLocationInfo());
+			if (locationData == null || locationData == '') {
+				var locationData = {
 					'locationType': '',
 					'city': '',
 					'area': '',
@@ -627,25 +633,23 @@
 				}
 			}
 
-			cookieData.locationType = 'manual';
+			locationData.locationType = 'manual';
 			if (type == 'city') {
-				cookieData.city = val;
-				cookieData.area = '';
+				locationData['city'] = val;
+				locationData['area'] = '';
 			} else if (type == 'area') {
-				cookieData.area = val;
+				locationData['area'] = val;
 			} else if (type == 'currentLocation') {
-				cookieData.locationType = 'currentLocation';
-				cookieData.city = '';
-				cookieData.area = '';
-				cookieData.lat = '';
-				cookieData.long = '';
+				locationData['locationType'] = 'currentLocation';
+				locationData['city'] = '';
+				locationData['area'] = '';
 			}
 
 			$.ajax({
 				type: "get",
 				url: "{{ route('getLocationInfo') }}",
 				data: {
-					data: cookieData,
+					data: locationData,
 				},
 				dataType: "json",
 				headers: {
@@ -656,10 +660,9 @@
 				},
 				success: function(res) {
 					if (res.success) {
-						cookieData = res.data;
-						setCookie(cookieData);
-						// console.log(getCookie());
-						window.location.reload();
+						if (type == 'area') {
+							window.location.reload();
+						}
 					} else {
 						toastr.error(res.message);
 					}
@@ -671,42 +674,11 @@
 					document.getElementById("preloader").style.display = "none";
 				}
 			});
-
-
 		}
 
 		// ********* location model End ******************
 
-		// ********* Cookie start ******************
 
-		let cookieName = 'hereitsLocation';
-		let cookieExpireDays = 7;
-
-		function setCookie(value) {
-			let date = new Date();
-			date.setTime(date.getTime() + cookieExpireDays * 24 * 60 * 60 * 1000);
-			let expires = "; expires=" + date.toUTCString();
-			document.cookie = cookieName + "=" + encodeURIComponent(JSON.stringify(value)) + expires + "; path=/";
-		}
-
-		function getCookie() {
-			let nameEQ = cookieName + "=";
-			let cookies = document.cookie.split("; ");
-			for (let i = 0; i < cookies.length; i++) {
-				if (cookies[i].indexOf(nameEQ) === 0) {
-					return JSON.parse(decodeURIComponent(cookies[i].substring(nameEQ.length)));
-				}
-			}
-			return null;
-		}
-
-		function deleteCookie() {
-			document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-		}
-
-		console.log(getCookie());
-
-		// ********* Cookie End ******************
 
 		//new forgotForm
 		$("#forgotForm").on('submit', (function(e) {
