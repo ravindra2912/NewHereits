@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\BusinessCategoryController;
 Route::name('admin.')->group(function () {
     Route::controller(CommonController::class)->group(function () {
         Route::post('getCities', 'getCities')->name('getCities');
+        Route::post('get-citie-areas', 'getCitieArea')->name('getCitieArea');
     });
     Route::middleware('web','guest')->group(function () {
         

@@ -92,6 +92,7 @@ class BusinessController extends Controller
                 'contact' => 'required|numeric|unique:businesses,contact',
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
+                'area_id' => 'required|exists:city_areas,id',
                 'pincode' => 'required',
                 'status' => 'required',
             ];
@@ -118,6 +119,7 @@ class BusinessController extends Controller
                 $insert->contact = $request->contact;
                 $insert->state_id = $request->state_id;
                 $insert->city_id = $request->city_id;
+                $insert->area_id = $request->area_id;
                 $insert->pincode = $request->pincode;
                 $insert->status = $request->status;
                 $insert->save();
@@ -176,6 +178,7 @@ class BusinessController extends Controller
                 'contact' => 'required|numeric|unique:businesses,contact,' . $id,
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
+                'area_id' => 'required|exists:city_areas,id',
                 'pincode' => 'required',
                 'status' => 'required',
             ];
@@ -214,6 +217,7 @@ class BusinessController extends Controller
                 $update->contact = $request->contact;
                 $update->state_id = $request->state_id;
                 $update->city_id = $request->city_id;
+                $update->area_id = $request->area_id;
                 $update->pincode = $request->pincode;
                 $update->status = $request->status;
                 $update->save();

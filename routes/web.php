@@ -2,6 +2,7 @@
 
 use App\Models\Appointmenter;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Front\AuthController;
 use App\Http\Controllers\Front\HomeController;
@@ -9,6 +10,10 @@ use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\BusinessController;
 use App\Http\Controllers\Front\AppointmentController;
 
+Route::controller(CommonController::class)->group(function () {
+    Route::get('get-areas', 'getAreas')->name('getAreas');
+    Route::get('get-location-info', 'getLocationInfo')->name('getLocationInfo');
+});
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('/faq', 'faq')->name('faq');

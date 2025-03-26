@@ -7,13 +7,14 @@ use App\Models\State;
 use GuzzleHttp\Client;
 // use Google\Client;
 use App\Models\Country;
+use App\Models\CityArea;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Str;
+use App\Models\Appointmenter;
 use App\Models\BusinessTiming;
 use App\Models\BusinessSetting;
 use App\Models\BusinessCategory;
 use App\Models\AppointmentBooking;
-use App\Models\Appointmenter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -162,6 +163,11 @@ function getCities($state_id = 12)
         $state_id = 12;
     }
     return City::where('state_id', $state_id)->get();
+}
+
+function getCitieArea($city_id)
+{
+    return CityArea::select('id', 'area_name', 'city_id', 'pincode')->where('city_id', $city_id)->get();
 }
 
 function generateUniqueSlug($model, $username, $field = 'slug')
@@ -514,7 +520,7 @@ function sendNotification($user_id, $title, $body, $permission, $type, array $ex
 
 function getAvailableCities()
 {
-    return City::select('id', 'name')->where('state_id', 12)->get();
+    return City::select('id', 'name')->get();
 }
 
 // ==============================================

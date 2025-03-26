@@ -169,6 +169,15 @@
                 </select>
               </div>
             </div>
+            
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Area <span class="error">*</span></label>
+                <select class="form-control" name="area_id" id="area_id">
+                  <option value="">Select Area</option>
+                </select>
+              </div>
+            </div>
 
             <div class="col-md-4">
               <div class="form-group">
@@ -271,6 +280,34 @@
       error: function(xhr, status, error) {
         console.error("Error: " + error);
         $('#city_id').html('<option value="">Select CitY</option>');
+        alert("There was an error state chnage.");
+      }
+    });
+  });
+  
+  $('#city_id').on('change', function(event) {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('admin.getCitieArea') }}",
+      data: {
+        city_id: $(this).val()
+      },
+      dataType: "json",
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      beforeSend: function() {
+        $('#area_id').html('<option value="">Loading ...</option>');
+      },
+      success: function(states) {
+        $('#area_id').html('<option value="">Select area</option>');
+        $.each(states, function(index, item) {
+          $('#area_id').append('<option value="' + item.id + '">' + item.area_name + '</option>');
+        });
+      },
+      error: function(xhr, status, error) {
+        console.error("Error: " + error);
+        $('#area_id').html('<option value="">Select area</option>');
         alert("There was an error state chnage.");
       }
     });

@@ -138,30 +138,31 @@
 							<ul class="navbar-nav">
 								<li class="profile">
 									<a class="pr-0 mr-0 location-contaiter" href="#" data-toggle="modal" data-target="#location-modal">
-										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt"></i> GJ, Surat</span>
+										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i><span id="selectedLocation"> </span></span>
 									</a>
 
 									<!-- Location Modal =========================== -->
-									<div id="location-modal" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-										<div class="modal-dialog modal-dialog-centered" role="document">
-											<div class="modal-content border-0">
+									<div id="location-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+										<div class="modal-dialog modal-lg h-75 modal-dialog-centered" role="document">
+											<div class="modal-content h-75 border-0">
 												<div class="modal-body py-4 px-0">
 													<div class="row">
-														<div class="col-11 col-md-10 mx-auto search-input-line">
+														<div class="col-11 col-md-10 mx-auto city-selection">
+															<h5>Cities</h5>
+															<div class="d-flex overflow-auto">
+																@foreach(getAvailableCities() as $val)
+																<div class="mr-2">
+																	<input type="radio" name="location_city" value="{{$val->id}}" id="city-{{$val->id}}" onchange="getArea()" />
+																	<label class="radio-lable" for="city-{{$val->id}}">{{$val->name}}</label>
+																</div>
+																@endforeach
+															</div>
 
-															<input type="text" class="form-control" data-bv-field="number" onkeyup="myFunction()" id="city-search" required="" placeholder="Search City">
+														</div>
+														<div class="col-11 col-md-10 mx-auto search-input-line d-none">
+															<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area">
 															<?php $cites = array() ?>
-															<ul class="p-0" id="location-area">
-																<?php foreach (getAvailableCities() as $val) { ?>
-																	<li>
-																		<input id="<?= $val->name ?>" name="location" value="<?= $val->name ?>" state="<?= $val->name ?>" class="custom-control-input" type="radio">
-																		<label class="location-box" tabindex="2" for="<?= $val->city ?>">
-																			<span class="fas fa-map-marker-alt location-icon"></span>
-																			<p class="location-name"><?= $val->name ?></p>
-																		</label>
-																	</li>
-																<?php } ?>
-
+															<ul class="p-0" id="location-area-list">
 															</ul>
 														</div>
 													</div>
@@ -169,21 +170,13 @@
 											</div>
 										</div>
 									</div>
+
+
 									<!-- Location Modal End -->
 
 									<!-- <a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
 										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
-									</a>
-
-									<script>
-										$(document).ready(function() {
-											$('#Search-modal').on('shown.bs.modal', function() {
-												$('#search_input').focus();
-											});
-										});
-									</script> -->
-
-
+									</a> -->
 
 									<!-- Search Modal =========================== -->
 									<div id="Search-modal" class="modal fade" role="dialog">
@@ -263,9 +256,9 @@
 								@else
 								<div class="pr-0 mobile-hide align-self-center" style="height: auto;" data-toggle="modal" data-target="#login-modal" href="#" title="Login / Sign up">
 									<!-- <span class="d-none d-sm-inline-block">Login</span> -->
-									 <span href="Business" class="btn btn-primary-gradien mobile-hide ml-3 px-2 py-1">Login</span> 
+									<span href="Business" class="btn btn-primary-gradien mobile-hide ml-3 px-2 py-1">Login</span>
 									<!-- <span class="user-icon ml-sm-2"><i class="fas fa-user"></i></span> -->
-									</div>
+								</div>
 								@endif
 
 								</li>
@@ -299,7 +292,7 @@
 				@else
 				<a data-toggle="modal" data-target="#login-modal" href="#"><i class="far fa-user" style="font-size:25px"></i><span> Account</span></a>
 				@endif
-				
+
 
 
 			</div>
@@ -562,6 +555,159 @@
 	@stack('js')
 
 	<script>
+		
+
+		// ********* location model Start ******************
+		$(document).ready(function() {
+			const cookie = getCookie();
+			if(cookie != null){
+				if(cookie.city != ''){
+					$('input[name="location_city"][value="' + cookie.city + '"]').prop("checked", true);
+					$('.search-input-line').removeClass('d-none')
+				}
+				$('#selectedLocation').html(cookie.fullAddress);
+			}else{
+				$('#location-modal').modal('show');
+			}
+			
+		});
+		var lastAjax = null;
+
+		function getArea() {
+
+			setLocation('city', $('input[name="location_city"]:checked').val())
+
+			$('.search-input-line').removeClass('d-none')
+			// Abort previous AJAX request if it's still pending
+			if (lastAjax !== null && typeof lastAjax.abort === "function") {
+				lastAjax.abort();
+			}
+
+			lastAjax = $.ajax({
+				type: "get",
+				url: "{{ route('getAreas') }}",
+				data: {
+					area_search: $('input[name="location_area_search"]').val(),
+					city: $('input[name="location_city"]:checked').val(),
+				},
+				dataType: "json",
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				beforeSend: function() {
+					$('#location-area-list').html("<li> <label class='w-100 ' tabindex='2'> <p class='location-name border-bottom-0 text-center'>Fetching areas ...</p></label> </li>");
+				},
+				success: function(res) {
+					console.log(res);
+					if (res.success) {
+						$('#location-area-list').html(res.data.area);
+					} else {
+						toastr.error(res.message);
+					}
+					lastAjax = null; // Reset lastAjax after success
+				},
+				error: function(xhr, status, error) {
+					console.error("Error: " + error);
+					alert("There was an error fetching areas.");
+					lastAjax = null; // Reset lastAjax after error
+				}
+			});
+		}
+
+		function setLocation(type, val) {
+			var cookieData = getCookie();
+			if (cookieData == null) {
+				var cookieData = {
+					'locationType': '',
+					'city': '',
+					'area': '',
+					'fullAddress': '',
+					'lat': '',
+					'long': '',
+				}
+			}
+
+			cookieData.locationType = 'manual';
+			if (type == 'city') {
+				cookieData.city = val;
+				cookieData.area = '';
+			} else if (type == 'area') {
+				cookieData.area = val;
+			} else if (type == 'currentLocation') {
+				cookieData.locationType = 'currentLocation';
+				cookieData.city = '';
+				cookieData.area = '';
+				cookieData.lat = '';
+				cookieData.long = '';
+			}
+
+			$.ajax({
+				type: "get",
+				url: "{{ route('getLocationInfo') }}",
+				data: {
+					data: cookieData,
+				},
+				dataType: "json",
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				beforeSend: function() {
+					document.getElementById("preloader").style.display = "block";
+				},
+				success: function(res) {
+					if (res.success) {
+						cookieData = res.data;
+						setCookie(cookieData);
+						// console.log(getCookie());
+						window.location.reload();
+					} else {
+						toastr.error(res.message);
+					}
+					document.getElementById("preloader").style.display = "none";
+				},
+				error: function(xhr, status, error) {
+					console.error("Error: " + error);
+					alert("There was an error fetching areas.");
+					document.getElementById("preloader").style.display = "none";
+				}
+			});
+
+
+		}
+
+		// ********* location model End ******************
+
+		// ********* Cookie start ******************
+
+		let cookieName = 'hereitsLocation';
+		let cookieExpireDays = 7;
+
+		function setCookie(value) {
+			let date = new Date();
+			date.setTime(date.getTime() + cookieExpireDays * 24 * 60 * 60 * 1000);
+			let expires = "; expires=" + date.toUTCString();
+			document.cookie = cookieName + "=" + encodeURIComponent(JSON.stringify(value)) + expires + "; path=/";
+		}
+
+		function getCookie() {
+			let nameEQ = cookieName + "=";
+			let cookies = document.cookie.split("; ");
+			for (let i = 0; i < cookies.length; i++) {
+				if (cookies[i].indexOf(nameEQ) === 0) {
+					return JSON.parse(decodeURIComponent(cookies[i].substring(nameEQ.length)));
+				}
+			}
+			return null;
+		}
+
+		function deleteCookie() {
+			document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		}
+
+		console.log(getCookie());
+
+		// ********* Cookie End ******************
+
 		//new forgotForm
 		$("#forgotForm").on('submit', (function(e) {
 			e.preventDefault();
