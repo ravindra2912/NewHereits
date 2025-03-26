@@ -32,97 +32,108 @@
   </div>
 </div>
 
-<!-- Categories -->
-@if ($businessCategory)
-<section class="section bg-white pt-3 pb-2">
-  <div class="container ">
-    <h5 class="font-weight-600 mb-3">Business Category</h5>
-    <div class="row">
-      <div class="col-lg-12 mx-auto">
-        <div class="owl-carousel owl-theme" data-autoplay="false" data-loop="false" data-margin="10" data-items-xs="4" data-items-sm="5" data-items-md="5" data-items-lg="9">
-          @foreach($businessCategory as $val)
-          <div class="item">
-            <a href="{{ route('business', $val->slug) }}" class="text-center text-black">
-              <img class="img-fluid border" src="{{ getImage($val->image) }}" alt="{{ $val->name }}" />
-              <p class="pt-1 text-1 " style="color: black;">{{ $val->name }}</p>
-            </a>
+@if ($businesses && count($businesses) <= 0)
+  <section class="section py-2 bg-white ">
+  <div class="container d-flex justify-content-center align-items-center" style="height: 300px;">
+    <h1 class=""> We are Coming Soon </h1>
+  </div>
+  </section>
+  @else
+
+
+
+    <!-- Categories -->
+    @if ($businessCategory)
+    <section class="section bg-white pt-3 pb-2">
+      <div class="container ">
+        <h5 class="font-weight-600 mb-3">Business Category</h5>
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+            <div class="owl-carousel owl-theme" data-autoplay="false" data-loop="false" data-margin="10" data-items-xs="4" data-items-sm="5" data-items-md="5" data-items-lg="9">
+              @foreach($businessCategory as $val)
+              <div class="item">
+                <a href="{{ route('business', $val->slug) }}" class="text-center text-black">
+                  <img class="img-fluid border" src="{{ getImage($val->image) }}" alt="{{ $val->name }}" />
+                  <p class="pt-1 text-1 " style="color: black;">{{ $val->name }}</p>
+                </a>
+              </div>
+              @endforeach
+            </div>
           </div>
+        </div>
+      </div>
+    </section>
+    @endif
+
+    @if ($businesses && count($businesses) > 0)
+    <section class="section py-2 bg-white">
+      <div class="container ">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 id="reviews" class="text-6 mb-3">Businesses</h2>
+          <a href="{{ route('business') }}" class="view-more" title="view-more">View More -></a>
+        </div>
+
+        <div class="row ">
+          @foreach($businesses as $res)
+          <a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="col-md-2 col-6 p-1">
+            <div class="card shadow-md border-0 mb-2">
+              <h5 class="store-name text-3 mb-0 text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->name }}</h5>
+              <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->name }}"></div>
+            </div>
+          </a>
           @endforeach
         </div>
       </div>
-    </div>
-  </div>
-</section>
-@endif
+    </section>
+    @endif
 
-@if ($businesses)
-<section class="section py-2 bg-white">
-  <div class="container ">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2 id="reviews" class="text-6 mb-3">Businesses</h2>
-      <a href="{{ route('business') }}" class="view-more" title="view-more">View More -></a>
-    </div>
 
-    <div class="row ">
-      @foreach($businesses as $res)
-      <a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="col-md-2 col-6 p-1">
-        <div class="card shadow-md border-0 mb-2">
-          <h5 class="store-name text-3 mb-0 text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->name }}</h5>
-          <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->name }}"></div>
+    @if ($fevoriteBusinesses)
+    <section class="section  py-2 bg-white">
+      <div class="container ">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 id="reviews" class="text-6 mb-3">Favourite Businesses</h2>
+          <a href="{{ route('business') }}" class="view-more" title="view-more">View More -></a>
         </div>
-      </a>
-      @endforeach
-    </div>
-  </div>
-</section>
-@endif
 
-
-@if ($fevoriteBusinesses)
-<section class="section  py-2 bg-white">
-  <div class="container ">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2 id="reviews" class="text-6 mb-3">Favourite Businesses</h2>
-      <a href="{{ route('business') }}" class="view-more" title="view-more">View More -></a>
-    </div>
-
-    <div class="row ">
-      @foreach($fevoriteBusinesses as $res)
-      <a href="{{ route('business-details', $res->business->slug) }}" title="{{ $res->business->name }}" class="col-md-2 col-6 p-1">
-        <div class="card shadow-md border-0 mb-2">
-          <h5 class="store-name text-3 mb-0 text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->business->name }}</h5>
-          <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->business->name }}"></div>
+        <div class="row ">
+          @foreach($fevoriteBusinesses as $res)
+          <a href="{{ route('business-details', $res->business->slug) }}" title="{{ $res->business->name }}" class="col-md-2 col-6 p-1">
+            <div class="card shadow-md border-0 mb-2">
+              <h5 class="store-name text-3 mb-0 text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->business->name }}</h5>
+              <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->business->name }}"></div>
+            </div>
+          </a>
+          @endforeach
         </div>
-      </a>
-      @endforeach
-    </div>
-  </div>
-</section>
-@endif
+      </div>
+    </section>
+    @endif
+  @endif
 
-@push('js')
+  @push('js')
 
-<script>
-  function setSession(key, val) {
-    return sessionStorage.setItem(key, val)
-  }
+  <script>
+    function setSession(key, val) {
+      return sessionStorage.setItem(key, val)
+    }
 
-  function getSession(val) {
-    return sessionStorage.getItem(val)
-  }
+    function getSession(val) {
+      return sessionStorage.getItem(val)
+    }
 
-  function removeSession(val) {
-    return sessionStorage.removeItem(val); //cleare single session variable
-    // sessionStorage.clear(); // clear all sessi
-  }
+    function removeSession(val) {
+      return sessionStorage.removeItem(val); //cleare single session variable
+      // sessionStorage.clear(); // clear all sessi
+    }
 
-  setSession('user_city', 'surat');
-  setSession('user_area', 'vesu');
+    setSession('user_city', 'surat');
+    setSession('user_area', 'vesu');
 
-  let username = getSession('user_area');
-  console.log(username);
-</script>
+    let username = getSession('user_area');
+    console.log(username);
+  </script>
 
-@endpush
+  @endpush
 
-@endsection
+  @endsection
