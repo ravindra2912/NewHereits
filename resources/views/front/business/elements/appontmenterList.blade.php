@@ -9,7 +9,7 @@
         {{ $appontmenter->department->department_name }}
         @endif
       </h1>
-      <div class="appointment">Set Your<br>Appointment</div>
+      <div class="appointment">Book<br>appointment</div>
     </div>
     <div class="banner-image">
       <img src="{{ getImage($appontmenter->appointmenter_image) }}" alt="Doctor">

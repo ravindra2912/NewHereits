@@ -152,6 +152,16 @@
 /*-------------------------  Home page----------------------------------------*/
 
 /* banner */
+
+.hero-wrap:before {
+    content: "";
+    background: url("../img/shape-12.svg");
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0.06;
+  }
+
 .banner-taxt-container {
 	padding-top: 60px;
 	padding-bottom: 1px;

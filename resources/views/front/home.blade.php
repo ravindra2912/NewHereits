@@ -4,14 +4,7 @@
 
 @push('style')
 <style>
-  .hero-wrap:before {
-    content: "";
-    background: url("{{ asset(" front/img/shape-12.svg") }}");
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    opacity: 0.06;
-  }
+  
 </style>
 @endpush
 
@@ -20,8 +13,8 @@
   <div class="opacity-9 bg-white"></div>
   <div class="hero-content banner-taxt-container">
     <div class="container">
-      <h2 class="text-7 text-center font-weight-600 mb-2" style="color: white;">Discover The City Gems</h2>
-      <p class="text-5 text-center mb-4" style="color: white;">Find great places, shop products, or book services from local experts.</p>
+      <h2 class="text-7 text-center font-weight-600 mb-2" style="color: white;">BOOK SMART, SAVE TIME, SIMPLIFY LIFE</h2>
+      <p class="text-5 text-center mb-4" style="color: white;">Book In Advance and No Longer Waiting in Que At your Favorite Restaurant, salon or Hospital.</p>
       <div class="text-center mb-4 mobile-hide">
         <span class="redirect-btn mr-2"><a href="{{ route('business') }}" title="Stores"> <i class="fas fa-store-alt"></i> Stores </a></span>
         <!-- <span class="redirect-btn mr-2"><a href="Product"><i class="fab fa-dropbox"></i> Products </a></span> -->
@@ -35,7 +28,7 @@
 @if ($businesses && count($businesses) <= 0)
   <section class="section py-2 bg-white ">
   <div class="container d-flex justify-content-center align-items-center" style="height: 300px;">
-    <h1 class=""> We are Coming Soon </h1>
+    <h1 class=""> We are coming soon. </h1>
   </div>
   </section>
   @else
@@ -110,30 +103,5 @@
     </section>
     @endif
   @endif
-
-  @push('js')
-
-  <script>
-    function setSession(key, val) {
-      return sessionStorage.setItem(key, val)
-    }
-
-    function getSession(val) {
-      return sessionStorage.getItem(val)
-    }
-
-    function removeSession(val) {
-      return sessionStorage.removeItem(val); //cleare single session variable
-      // sessionStorage.clear(); // clear all sessi
-    }
-
-    setSession('user_city', 'surat');
-    setSession('user_area', 'vesu');
-
-    let username = getSession('user_area');
-    console.log(username);
-  </script>
-
-  @endpush
 
   @endsection

@@ -36,6 +36,7 @@
           <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $res->businessCategory->name }}</div>
           @endif
 
+
         </div>
         <div class="col-sm-3 text-right d-flex d-sm-block align-items-center">
           @if (isBusinessOpen($res->id))
@@ -43,8 +44,17 @@
           @else
           <p class="text-danger mb-0">close</p>
           @endif
-
         </div>
+
+        <!-- for appointmnet button -->
+        @if (isset($res->businessSetting) && !empty($res->businessSetting) && $res->businessSetting->is_appointment_system == 1)
+        <div class="text-right col-12">
+          <button class="btn btn-outline-danger w-50 btn-sm" onclick="window.location.href='{{ route('business-details', $res->slug) }}'">{{ $res->businessSetting->is_appointment_book_with_time_slote == 1 ? 'Book appointment':'Get token' }}</button>
+        </div>
+        @endif
+
+
+
       </div>
     </div>
   </div>

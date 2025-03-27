@@ -36,6 +36,7 @@ class BusinessController extends Controller
                 'country',
                 'state',
                 'city',
+                'businessSetting'
             ])
             ->where('status', 'active');
 

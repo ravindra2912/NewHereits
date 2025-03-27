@@ -76,12 +76,12 @@
 
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/css/custom.css') }}" />
 
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
 
 	@stack('style')
 
 	<script>
-		
+
 	</script>
 
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
@@ -136,8 +136,7 @@
 		  =============================== -->
 						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-nav"> <span></span> <span></span> <span></span> </button>
 
-						<!-- Login Signup
-		  =============================== -->
+						
 						<nav class="login-signup navbar navbar-expand ml-sm-2 pl-sm-2"> <!-- separator -->
 							<ul class="navbar-nav">
 								<li class="profile">
@@ -178,9 +177,9 @@
 
 									<!-- Location Modal End -->
 
-									<!-- <a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
+									<a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
 										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
-									</a> -->
+									</a>
 
 									<!-- Search Modal =========================== -->
 									<div id="Search-modal" class="modal fade" role="dialog">
@@ -562,10 +561,8 @@
 
 	<script>
 		// ********* location model Start ******************
-		
+
 		$(document).ready(function() {
-			
-			console.log(locationData);
 			if (locationData == null || locationData == '') {
 				$('#location-modal').modal('show');
 			} else {
@@ -604,7 +601,7 @@
 					$('#location-area-list').html("<li> <label class='w-100 ' tabindex='2'> <p class='location-name border-bottom-0 text-center'>Fetching areas ...</p></label> </li>");
 				},
 				success: function(res) {
-					console.log(res);
+					// console.log(res);
 					if (res.success) {
 						$('#location-area-list').html(res.data.area);
 					} else {
