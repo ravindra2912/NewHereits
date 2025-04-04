@@ -136,7 +136,7 @@
 		  =============================== -->
 						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-nav"> <span></span> <span></span> <span></span> </button>
 
-						
+
 						<nav class="login-signup navbar navbar-expand ml-sm-2 pl-sm-2"> <!-- separator -->
 							<ul class="navbar-nav">
 								<li class="profile">
@@ -149,6 +149,9 @@
 										<div class="modal-dialog modal-lg h-75 modal-dialog-centered" role="document">
 											<div class="modal-content h-75 border-0">
 												<div class="modal-body py-4 px-0">
+													<button type="button" class="close position-absolute location-close-btn d-none" style="right: 15px; top: 15px; z-index: 10;" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
 													<div class="row">
 														<div class="col-11 col-md-10 mx-auto city-selection">
 															<h5>Cities</h5>
@@ -163,7 +166,7 @@
 
 														</div>
 														<div class="col-11 col-md-10 mx-auto search-input-line d-none">
-															<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area">
+															<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area (Optional)">
 															<?php $cites = array() ?>
 															<ul class="p-0" id="location-area-list">
 															</ul>
@@ -569,12 +572,15 @@
 				if (locationData['city'] != '') {
 					$('input[name="location_city"][value="' + locationData['city'] + '"]').prop("checked", true);
 					$('.search-input-line').removeClass('d-none')
+					$('.location-close-btn').removeClass('d-none');
+					
 				}
 
 			}
 
 		});
 		var lastAjax = null;
+		var is_city_changes = false;
 
 		function getArea() {
 
@@ -634,6 +640,7 @@
 			if (type == 'city') {
 				locationData['city'] = val;
 				locationData['area'] = '';
+				is_city_changes = true;
 			} else if (type == 'area') {
 				locationData['area'] = val;
 			} else if (type == 'currentLocation') {
@@ -660,6 +667,7 @@
 						if (type == 'area') {
 							window.location.reload();
 						}
+						$('.location-close-btn').removeClass('d-none');
 					} else {
 						toastr.error(res.message);
 					}
@@ -669,6 +677,12 @@
 					console.error("Error: " + error);
 					alert("There was an error fetching areas.");
 					document.getElementById("preloader").style.display = "none";
+				}
+			});
+
+			$('.location-close-btn').on('click', function() {
+				if(is_city_changes){
+					window.location.reload();
 				}
 			});
 		}
