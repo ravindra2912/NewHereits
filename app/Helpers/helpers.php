@@ -359,14 +359,6 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
     return $slots;
 }
 
-function getCurrentTocken($expert_id)
-{
-    return AppointmentBooking::whereDate('booking_date', Carbon::now())
-        ->where('appointmenter_id', $expert_id)
-        ->where('status', 'pending')
-        ->orderBy('token_number', 'asc')
-        ->first();
-}
 
 // =============== Appoinmenter functions end ================
 

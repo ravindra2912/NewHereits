@@ -43,6 +43,7 @@
       <p>For Advertisement</p>
     </div>
     <div class="col-md-4 col-sm-4 col-12 my-sm-5">
+      @if ($timing['status'] == 'open')
       @if ($appointmentFirst)
       <h1 class="text-center mb-0">Token No.</h1>
       <h1 class="token-no">{{ $appointmentFirst->token_number }}</h1>
@@ -51,7 +52,14 @@
         <p>Next is : </p>
       </div>
       @else
-      <h1 class="text-center">Open Soon</h1>
+      <h1 class="text-success text-center">Available</h1>
+      <p class="text-center">Waiting for new appointment</p>
+      @endif
+      @elseif($timing['status'] == 'close')
+      <h1 class="text-center">Closed</h1>
+      @elseif($timing['status'] == 'break')
+      <h1 class="text-center">Break</h1>
+      <p class="text-center">Open at :- {{ get_time($timing['data']->start_time) }}</p>
       @endif
 
 
