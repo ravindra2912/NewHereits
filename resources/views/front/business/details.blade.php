@@ -111,6 +111,7 @@
   .fa-check-circle {
     font-size: 60px;
   }
+
   .googleMap {
     width: -webkit-fill-available;
     height: 300px;
@@ -122,7 +123,7 @@
 
 <section>
   <div class="hero-wrap section pb-3" id="store_info">
-    <div class="hero-bg" style="background-image:url({{ asset('front/img/store-bg.jpg') }});"></div>
+    <div class="hero-bg" style="background-image:url({{ asset('front/img/store-bg.webp') }});"></div>
     <div class="hero-content">
       <div class="container">
         <div class="row">
@@ -168,9 +169,71 @@
 
 
   @if (isset($expert) && !empty($expert))
+
+  <div class="section pt-3 pb-0 mx-3 row">
+    <a href="{{ route('expert', $expert->slug) }}" title="{{ $expert->appointmenter_name }}" class="col-md-7 col-sm-7 col-12 ">
+      <div class="bg-white shadow-md rounded p-3 mb-2 list-store">
+        <div class="row">
+          <div class="col-md-3 col-3 text-center">
+
+            <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" />
+          </div>
+          <div class="col-md-5 col-5 pl-3 pl-md-0 mt-3 mt-md-0">
+            <div class="row no-gutters">
+              <div class="col-sm-9">
+                <h4 class="text-dark text-5 store-name">{{ $expert->appointmenter_name }}</h4>
+                @if (isset($expert->title) && !empty($expert->title))
+                <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $expert->title }}</div>
+                @endif
+                @if (isset($expert->department) && !empty($expert->department->department_name))
+                <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $expert->department->department_name }}</div>
+                @endif
+                <!-- <span class="mr-2">
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-gray"></i>
+                  <i class="text-black-50" href="#">(245 reviews)</i>
+                </span> -->
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-4 pl-3 pl-md-0 mt-3 mt-md-0 d-flex flex-column justify-content-center">
+            @if($expert->getLastBooking['status'] == 'close')
+            <p class="text-danger mb-0 text-center h5 ">Available soon</p>
+            @elseif($expert->getLastBooking['status'] == 'open')
+            @if ($expert->getLastBooking['data'])
+            <div class="my-2 mx-3 text-center align-self-center ">
+              <div class=" py-2">
+                <h4 class="">Token No.</h4>
+                <h3>{{ $expert->getLastBooking['data']->token_number }}</h3>
+              </div>
+            </div>
+
+            @else
+            <p class="text-success mb-0 text-center h5">Available</p>
+            @endif
+            @elseif($expert->getLastBooking['status'] == 'break')
+            <div class="my-2 mx-3 text-center align-self-center ">
+              <div class="py-2">
+                <h4 class="text-danger">Break</h4>
+                @if ($expert->getLastBooking['data'])
+                <p>Open at : {{ get_time($expert->getLastBooking['data']->start_time) }}</p>
+                @endif
+              </div>
+            </div>
+            @endif
+          </div>
+        </div>
+      </div>
+</a>
+  </div>
+
   @include('front.appointment.appointmentForm')
   @elseif(isset($setting->is_appointment_system) && $setting->is_appointment_system && $appontmentersHtml != null)
-  
+
   <div class="mt-5 mb-5 mx-3">
     <div class="row">
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">

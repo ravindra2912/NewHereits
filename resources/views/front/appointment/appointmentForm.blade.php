@@ -1,4 +1,4 @@
-<div class="section mx-3 row">
+<div class="section pt-2 mx-3 row">
   <div class="col-md-7 col-sm-7 col-12 my-sm-2">
     <div class="resp-tabs-container bg-white shadow-md rounded p-3">
       <div class="resp-tab-content resp-tab-content-active" style="display:block" aria-labelledby="tab_item-0">
@@ -23,7 +23,7 @@
             <select class="form-control" name="timeslote" id="timeslote" required="">
               <option value="">Select Your Appointment Time</option>
               @foreach ($timeSlots as $time)
-              <option value="{{ $time['time'] }}" {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option>
+              <option value="{{ $time['time'] }}" {{ $time['is_booked'] || $time['is_available'] == false ?'disabled':'' }}>{{ $time['time'] }}</option>
               @endforeach
             </select>
           </div>

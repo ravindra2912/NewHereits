@@ -138,7 +138,7 @@ class BusinessController extends Controller
             if ($setting->is_appointment_with_department) {
                 $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', $business->id)->get();
             }
-            $appontmenters = Appointmenter::select('id', 'business_id', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug')
+            $appontmenters = Appointmenter::select('id', 'business_id', 'title', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug')
             ->with(['department',
                 'business' => function ($q) {
                         return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
@@ -154,6 +154,7 @@ class BusinessController extends Controller
             $appontmentersHtml = '';
             if(count( $appontmenters) == 1){
                 $expert = $appontmenters[0];
+                $expert->getLastBooking = isExpertAvailable($expert->id);
                 $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
             }else{
                 $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();

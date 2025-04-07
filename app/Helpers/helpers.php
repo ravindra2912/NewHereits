@@ -229,16 +229,64 @@ function isBusinessOpen($business_id = null)
     return false;
 }
 
+function isExpertAvailable($appointmenter_id = null)
+{
+    $res['status'] = 'close';
+    $res['data'] = null;
+    if ($appointmenter_id != null) {
+        $day = Carbon::now()->format('l');
+        $time = Carbon::now()->format('H:i:s');
+        $businessTiming = BusinessTiming::where('day', $day)
+            ->where('appointmenter_id', $appointmenter_id)
+            ->where('start_time', '<=', $time)
+            ->where('end_time', '>=', $time)
+            ->first();
+        if ($businessTiming) {
+            $res['status'] = 'open';
+            $businessSetting = getBusinessSettings($businessTiming->business_id);
+
+
+            $data = AppointmentBooking::select('id', 'token_number', 'user_id', 'appointmenter_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'status')
+                ->where('booking_date', Carbon::now()->format('Y-m-d'))
+                ->where('appointmenter_id', $appointmenter_id)
+                ->where('status', 'pending')
+                ;
+            if ($businessSetting->is_appointment_book_with_time_slote) {
+                $data = $data->orderBy('slot_start_time', 'asc');
+            } else {
+                $data = $data->orderBy('token_number', 'asc');
+            }
+            $data = $data->first();
+            if($data){
+                $res['data'] = $data;
+            }
+
+        } else {
+            $businessTiming = BusinessTiming::select('id', 'start_time')
+                ->where('day', $day)
+                ->where('appointmenter_id', $appointmenter_id)
+                ->where('start_time', '>=', $time)
+                ->first();
+            if ($businessTiming) {
+                $res['status'] = 'break';
+                $res['data'] = $businessTiming;
+            }
+        }
+    }
+    return $res;
+}
+
 // =============== Business functions end ================
 
 // =============== Appoinmenter functions start ================
 
 
-function generateTimeSlots($startTime, $endTime, $interval, $bookedArray)
+function generateTimeSlots($startTime, $endTime, $date, $interval, $bookedArray)
 {
     $slots = [];
 
     // Parse the start and end times into Carbon instances
+    $date = Carbon::parse($date)->format('Y-m-d');
     $start = Carbon::parse($startTime);
     $end = Carbon::parse($endTime);
 
@@ -251,6 +299,19 @@ function generateTimeSlots($startTime, $endTime, $interval, $bookedArray)
         // Add the slot to the array
         if ($start->lte($end)) {
             $temp['time'] = "$slotStart - $slotEnd";
+
+            // check if the slot is available
+            $currentDateTime = Carbon::now()->addMinutes($interval);
+            $slotStartDateTime = Carbon::parse(Carbon::parse($date)->format('Y-m-d') . ' ' . $slotStart);
+            $slotEndDateTime = Carbon::parse(Carbon::parse($date)->format('Y-m-d') . ' ' . $slotEnd);
+            if ($currentDateTime->between($slotStartDateTime, $slotEndDateTime)) {
+                $temp['is_available'] = false;
+            } elseif ($currentDateTime->greaterThan($slotEndDateTime)) {
+                $temp['is_available'] = false;
+            } else {
+                $temp['is_available'] = true;
+            }
+
             $temp['is_booked'] = in_array($temp['time'], $bookedArray) ? true : false;
             $slots[] = $temp;
         }
@@ -292,10 +353,9 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
     foreach ($appontmenterTiming as $timing) {
         $startTime = Carbon::parse($timing->start_time)->format('H:i');
         $endTime = Carbon::parse($timing->end_time)->format('H:i');
-        $times = generateTimeSlots($startTime, $endTime, $interval, $bookedArray);
+        $times = generateTimeSlots($startTime, $endTime, $date, $interval, $bookedArray);
         $slots = array_merge($slots, $times,);
     }
-    // dd($slots);
     return $slots;
 }
 
@@ -312,9 +372,10 @@ function getCurrentTocken($expert_id)
 
 // =============== geo location info functions start ================
 
-    function getUserLocationInfo(){
-        return session('hereitsLocation');
-    }
+function getUserLocationInfo()
+{
+    return session('hereitsLocation');
+}
 
 function getIpDetails()
 {

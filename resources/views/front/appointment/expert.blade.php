@@ -27,7 +27,7 @@
     position: relative;
     z-index: 0;
     overflow: hidden;
-    background-image: url("{{ asset('front/images/expert-bg.jpg') }}");
+    background-image: url("{{ asset('front/images/expert-bg.webp') }}");
     padding-bottom: 20px !important;
   }
 
@@ -128,14 +128,36 @@
               <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
               <p class="text-white mt-3">{{ $expert->description }}</p>
             </div>
-            @if($getCurrentTocken)
-            <div class="col-sm-4 col-12 text-center align-self-center ">
-              <div class="border rounded py-2">
+            <div class="col-sm-4 col-12 text-center align-self-center border rounded ">
+              <!-- <div class="border rounded py-2">
                 <h4 class="text-white">Token No.</h4>
-                <h3 class="text-white toen-no">{{ $getCurrentTocken->token_number }}</h3>
+                <h3 class="text-white toen-no"></h3>
+              </div> -->
+              @if($expert->timing['status'] == 'close')
+              <p class="text-danger mb-0 text-center h5 ">Available soon</p>
+              @elseif($expert->timing['status'] == 'open')
+              @if ($expert->timing['data'])
+              <div class="my-2 mx-3 text-center align-self-center ">
+                <div class=" py-2">
+                  <h4 class="text-white">Token No.</h4>
+                  <h3 class="text-white">{{ $expert->timing['data']->token_number }}</h3>
+                </div>
               </div>
+
+              @else
+              <p class="text-success mb-0 text-center h5">Available</p>
+              @endif
+              @elseif($expert->timing['status'] == 'break')
+              <div class="my-2 mx-3 text-center align-self-center ">
+                <div class="py-2">
+                  <h4 class="text-danger">Break</h4>
+                  @if ($expert->timing['data'])
+                  <p class="text-white">Open at : {{ get_time($expert->timing['data']->start_time) }}</p>
+                  @endif
+                </div>
+              </div>
+              @endif
             </div>
-            @endif
           </div>
           <div>
             <p class=" d-flex align-items-center mb-2 text-4">
@@ -311,7 +333,7 @@
           console.log(states);
           $('#timeslote').html('<option value="">Select Timing</option>');
           $.each(states, function(index, item) {
-            var disable = item.is_booked ? 'disabled' : '';
+            var disable = item.is_booked || item.is_available == false ? 'disabled' : '';
             $('#timeslote').append('<option value="' + item.time + '" ' + disable + '>' + item.time + '</option>');
           });
         },

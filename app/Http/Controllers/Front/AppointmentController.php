@@ -64,9 +64,9 @@ class AppointmentController extends Controller
             $expert->businessSetting = $expert->businessSetting->getBusinessSettingObject();
             $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
 
-            $getCurrentTocken = getCurrentTocken($expert->id);
+            $expert->timing = isExpertAvailable($expert->id);
 
-            return view('front.appointment.expert', compact('expert', 'timeSlots', 'getCurrentTocken'));
+            return view('front.appointment.expert', compact('expert', 'timeSlots'));
         } else {
             return view('404');
         }
