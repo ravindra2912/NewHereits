@@ -128,13 +128,13 @@
               <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
               <p class="text-white mt-3">{{ $expert->description }}</p>
             </div>
-            <div class="col-sm-4 col-12 text-center align-self-center border rounded ">
+            <div class="col-sm-4 col-12 text-center align-content-center border rounded ">
               <!-- <div class="border rounded py-2">
                 <h4 class="text-white">Token No.</h4>
                 <h3 class="text-white toen-no"></h3>
               </div> -->
               @if($expert->timing['status'] == 'close')
-              <p class="text-danger mb-0 text-center h5 ">Available soon</p>
+              <h4 class="text-danger mb-0 text-center ">Close</h4>
               @elseif($expert->timing['status'] == 'open')
               @if ($expert->timing['data'])
               <div class="my-2 mx-3 text-center align-self-center ">
@@ -145,7 +145,7 @@
               </div>
 
               @else
-              <p class="text-success mb-0 text-center h5">Available</p>
+              <h4 class="text-success mb-0 text-center h5">Available</h4>
               @endif
               @elseif($expert->timing['status'] == 'break')
               <div class="my-2 mx-3 text-center align-self-center ">
