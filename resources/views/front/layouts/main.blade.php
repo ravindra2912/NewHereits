@@ -253,6 +253,7 @@
 									</a>
 									<ul class="dropdown-menu">
 										<li><a class="dropdown-item" href="{{ route('account.userprofile') }}">User Info</a></li>
+										<li><a class="dropdown-item" href="{{ route('account.booking') }}">Bookings</a></li>
 										@if (Auth::check() && Auth::user()->role_id == 2)
 										<li><a class="dropdown-item" href="{{ route('business.dashboard') }}">Manage Business</a></li>
 										@endif
