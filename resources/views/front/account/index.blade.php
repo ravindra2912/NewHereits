@@ -24,8 +24,18 @@
 
       <a href="{{ route('account.userprofile') }}" class="row pl-2 pr-2 pb-2" style="border-bottom: 1px solid rgba(0,0,0,.1);">
         <div class=" col-9 pl-4">
-          <p class="text-2 font-weight-600 mb-0">My Profile</p>
+          <p class="text-2 font-weight-600 mb-0">Profile</p>
           <p class="text-1 mb-0">Change Profile Details</p>
+        </div>
+        <div class=" col-3 text-right" style="align-self: center;">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
+      
+      <a href="{{ route('account.booking') }}" class="row pl-2 pr-2 pb-2" style="border-bottom: 1px solid rgba(0,0,0,.1);">
+        <div class=" col-9 pl-4">
+          <p class="text-2 font-weight-600 mb-0">Bookings</p>
+          <p class="text-1 mb-0">Your Bookings</p>
         </div>
         <div class=" col-3 text-right" style="align-self: center;">
           <i class="fas fa-chevron-right"></i>

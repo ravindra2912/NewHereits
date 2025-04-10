@@ -59,6 +59,13 @@ Route::middleware(['web', 'front'])->group(function () {
         Route::post('user-profile/update/{id}', 'userProfileUpdate')->name('userprofile.update');
         Route::get('chnage-password', 'changePassword')->name('changePassword');
         Route::post('chnage-password/update', 'changePasswordUpdate')->name('changePassword.update');
+
+        //booking
+        Route::get('bookings', 'booking')->name('booking');
+        Route::get('get-bookings', 'getBookings')->name('get.booking');
+        Route::get('booking/{id}', 'bookingDetails')->name('booking.details');
+        Route::post('booking/cancel', 'bookingCancel')->name('booking.cancel');
+        
     });
 });
 

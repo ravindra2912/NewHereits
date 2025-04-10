@@ -18,4 +18,9 @@ class AppointmentBooking extends Model
     {
         return $this->belongsTo(Appointmenter::class, 'appointmenter_id', 'id')->select('id', 'appointmenter_name', 'appointmenter_image');
     }
+    
+    public function business()
+    {
+        return $this->belongsTo(Business::class, 'business_id', 'id');
+    }
 }

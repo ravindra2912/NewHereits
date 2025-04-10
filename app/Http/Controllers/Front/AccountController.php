@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\AppointmentBooking;
 
 class AccountController extends Controller
 {
@@ -25,7 +26,7 @@ class AccountController extends Controller
     {
         // dd(getIpDetails());
         $user = User::find(Auth::user()->id);
-        if($user) {
+        if ($user) {
             return view('front.account.profile.user_profile', compact('user'));
         }
         return view('404');
@@ -43,8 +44,8 @@ class AccountController extends Controller
                 'profile' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'first_name' => 'required',
                 'last_name' => 'required',
-                'email' => 'required|email|unique:users,email,'.$id,
-                'contact' => 'required|numeric|unique:users,contact,'.$id,
+                'email' => 'required|email|unique:users,email,' . $id,
+                'contact' => 'required|numeric|unique:users,contact,' . $id,
                 'dob' => 'nullable|date',
                 'gender' => 'nullable',
             ];
@@ -91,9 +92,8 @@ class AccountController extends Controller
 
     public function changePassword(Request $request): View
     {
-       
-            return view('front.account.profile.changepassword');
-      
+
+        return view('front.account.profile.changepassword');
     }
 
     public function changePasswordUpdate(Request $request)
@@ -132,5 +132,72 @@ class AccountController extends Controller
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
 
-    
+    public function booking(): View
+    {
+        return view('front.account.booking.bookings');
+    }
+
+    public function getBookings(Request $request)
+    {
+        $bookings = AppointmentBooking::query()
+            ->with(['business:id,name', 'appontmenter:id,appointmenter_name'])
+            ->orderBy('id', 'desc')
+            // ->where('user_id', Auth::user()->id)
+            ->limit($request->limit)
+            ->skip($request->offset)
+            ->get();
+
+        $data['list'] =  view('front.account.booking.elements.bookingList', compact('bookings'))->render();
+        $data['counts'] =  $bookings->count();
+        return response()->json($data);
+    }
+
+    public function bookingDetails(Request $request, $id): View
+    {
+        $booking = AppointmentBooking::with(['business:id,name', 'appontmenter:id,appointmenter_name'])
+            ->where('id', $id)
+            // ->where('user_id', Auth::user()->id)
+            ->first();
+        if ($booking) {
+            return view('front.account.booking.bookingDetails', compact('booking'));
+        }
+        return view('404');
+    }
+
+    public function bookingCancel(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = '';
+        $data = array();
+
+        try {
+            $rules = [
+                'booking_id' => 'required|exists:appointment_bookings,id',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                // $message = $validator->errors();
+                $message = $validator->errors()->first();
+            } else {
+                $booking = AppointmentBooking::select('id', 'status')
+                    // ->where('user_id', Auth::user()->id)
+                    ->where('id', $request->booking_id)
+                    ->first();
+                if ($booking) {
+                    $booking->status = 'cancel';
+                    $booking->save();
+                    $success = true;
+                    $message = 'Booking Cancel successfully.';
+                }else {
+                    $message = 'Booking not found.';
+                }
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
 }

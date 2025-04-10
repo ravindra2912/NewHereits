@@ -638,7 +638,7 @@
 }
 
 .badge {
-	-webkit-border-radius: 9px;
+	/* -webkit-border-radius: 9px;
 	-moz-border-radius: 9px;
 	border-radius: 9px;
 	font-size: 12px;
@@ -647,7 +647,7 @@
 	padding: 3px 6px;
 	vertical-align: top;
 	margin-left: -10px;
-	margin-bottom: 22px;
+	margin-bottom: 22px; */
 }
 
 /* ======================== location model ===================== */
