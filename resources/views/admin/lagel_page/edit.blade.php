@@ -12,7 +12,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Dashboard</h1>
+        <h1 class="m-0">Lagel Pages</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -49,6 +49,7 @@
                   @foreach (config('const.legal_page_type') as $type)
                   <option value="{{ $type }}" {{ $legalData->page_type  == $type ? 'selected':'' }}>{{ preg_replace('/(?<!\ )[A-Z]/', ' $0', $type) }}</option>
                   @endforeach
+                </select>
               </div>
             </div>
             <div class="col-sm-12">

@@ -28,7 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('area_id')->nullable();
             $table->bigInteger('contact')->unique()->nullable();
             $table->string('business_image', 150)->nullable();
-            $table->enum('status', ['active','in-active', 'baned'])->default('active');
+            $table->enum('status', ['pending', 'active','in-active', 'baned'])->default('pending');
             $table->float('rating', 2, 1)->default(0);
             $table->rememberToken();
             $table->timestamps();

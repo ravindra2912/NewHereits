@@ -132,4 +132,96 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('home');
     }
+
+    public function registerBusinessView(): View
+    {
+        $businessCat = getBusinessCategory();
+        return view('front.auth.businessRegistration', compact('businessCat'));
+    }
+
+
+    public function registerBusiness(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = Route('home');
+        $data = array();
+
+        try {
+            $rules = [
+                'business_image' => 'required|mimes:jpg,jpeg,png,webp|',
+                'business_name' => 'required',
+                'business_contact' => 'required|numeric|digits:10|unique:businesses,contact',
+                'business_category_id' => 'required',
+                'address' => 'required',
+                'state_id' => 'required|exists:states,id',
+                'city_id' => 'required|exists:cities,id',
+                'area_id' => 'required|exists:city_areas,id',
+                'pincode' => 'required',
+            ];
+
+            if(!Auth::check()){
+                $rules['user_email'] = 'required|email|exists:users,email';
+                $rules['password'] = 'required';
+            }
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else {
+                
+                if(!Auth::check()){
+                    $user = User::where('email', $request->user_email)->first();
+                    if ($user && Hash::check($request['password'], $user->password)) {
+                        // Auth::login($user);
+                        $user_id = $user->id;
+                    } else {
+                        $message = 'Invalid Email id and Password!';
+                        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+                    }
+                }else{
+                    $user_id = Auth::user()->id;
+                }
+
+                $insert = new Business();
+
+                $image_name = fileUploadStorage($request->file('business_image'), 'business_images', 500, 500);
+                $insert->business_image = $image_name;
+
+                $insert->owner_id = $user_id;
+                $insert->name = $request->business_name;
+                $insert->contact = $request->business_contact;
+                $insert->slug = generateUniqueSlug(Business::class, $request->business_name);
+                $insert->business_category_id = $request->business_category_id;
+                $insert->address = $request->address;
+                // $insert->latitude = $request->latitude;
+                // $insert->longitude = $request->longitude;
+                $insert->state_id = $request->state_id;
+                $insert->city_id = $request->city_id;
+                $insert->area_id = $request->area_id;
+                $insert->pincode = $request->pincode;
+                $insert->status = 'pending';
+                $insert->save();
+
+                //change user role to seller
+                $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
+                if ($user && ( $user->role_id != 2 || $user->business_id == null)) {
+                    $user->business_id =  $insert->id;
+                    $user->role_id = 2;
+                    $user->save();
+                }
+
+                $success = true;
+                $message = 'User register successfully.';
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            if (isset($image_name) && !empty($image_name)) {
+                fileRemoveStorage($image_name);
+            }
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
 }

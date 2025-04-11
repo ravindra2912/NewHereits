@@ -64,6 +64,9 @@ class LagelPagesController extends Controller
             } else {
 
                 $update = LegalPage::find($id);
+                if(!$update){
+                    $update = new LegalPage();
+                }
                 $update->page_type = $request->type;
                 $update->description = $request->description;
                 $update->save();

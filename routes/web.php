@@ -42,6 +42,10 @@ Route::controller(AppointmentController::class)->group(function () {
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'store')->name('login');
     Route::post('Register', 'register')->name('register');
+
+
+    Route::get('Register-business', 'registerBusinessView')->name('register.business');
+    Route::post('Register-business', 'registerBusiness')->name('register.business.store');
 });
 
 Route::middleware(['web', 'front'])->group(function () {

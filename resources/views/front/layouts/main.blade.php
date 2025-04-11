@@ -316,7 +316,7 @@
 						<ul class="nav flex-column">
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('contactUs') }}" title="Hereits Contact Us">Contact Us</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('aboutUs') }}" title="Hereits About Us">About Us</a></li>
-							<li class="nav-item"> <a target="_blank" class="nav-link" href="Business" title="Hereits For business">Register Your business</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('register.business') }}" title="Hereits For business">Register Your business</a></li>
 							<!-- li class="nav-item"> <a target="_blank" class="nav-link" href="Report" title="">Report</a></li -->
 							<!-- <li class="nav-item"> <a target="_blank" class="nav-link" href="Credits" title="">Credits</a></li> -->
 						</ul>
