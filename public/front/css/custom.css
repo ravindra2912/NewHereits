@@ -580,13 +580,14 @@
 }
 
 .home-menu-icon-container a {
-	font-size: 12px;
+	font-size: 10px;
 	color: #000;
 	padding: 5px 10px;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 }
+
 
 .home-menu-icon-container .active {
 	box-shadow: 0px 0px 5px rgb(0 113 204);
@@ -595,7 +596,7 @@
 }
 
 .home-menu-icon-container a i {
-	font-size: 30px;
+	font-size: 20px;
 }
 
 @media (max-width: 767px) {

@@ -287,15 +287,15 @@
 		<!-- Mobile navigation ============================================= -->
 		<div class="home-menu-icon-container">
 			<div class="mobile-icon-section pt-1 pb-1 pr-2 pl-2">
-				<a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="fas fa-home" style="font-size:25px"></i><span> Home</span></a>
-				<!-- <a href="#" class=""><i class="fab fa-dropbox" style="font-size:25px"></i><span> Products</span></a> -->
-				<a href="{{ route('business') }}" class="{{ request()->routeIs('business') ? 'active' : '' }}"><i class="fas fa-store-alt" style="font-size:25px"></i><span> Stores</span></a>
-				<!-- <a href="#" class=">"><i class="fas fa-list-ul" style="font-size:25px"></i><span> Services</span></a> -->
+				<a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="fas fa-home"></i><span> Home</span></a>
+				<!-- <a href="#" class=""><i class="fab fa-dropbox"></i><span> Products</span></a> -->
+				<a href="{{ route('business') }}" class="{{ request()->routeIs('business') ? 'active' : '' }}"><i class="fas fa-store-alt"></i><span> Stores</span></a>
+				<!-- <a href="#" class=">"><i class="fas fa-list-ul"></i><span> Services</span></a> -->
 
 				@if (Auth::check())
-				<a href="{{ route('account.index') }}" class=""><i class="far fa-user" style="font-size:25px"></i><span> Account</span></a>
+				<a href="{{ route('account.index') }}" class=""><i class="far fa-user"></i><span> Account</span></a>
 				@else
-				<a data-toggle="modal" data-target="#login-modal" href="#"><i class="far fa-user" style="font-size:25px"></i><span> Account</span></a>
+				<a data-toggle="modal" data-target="#login-modal" href="#"><i class="far fa-user"></i><span> Account</span></a>
 				@endif
 
 
