@@ -100,12 +100,13 @@
     .banner-info {
       text-align: center;
       justify-items: center;
-      place-items: anchor-center;
     }
 
     .store-avtar {
       height: 150px;
       width: 150px;
+      object-fit: cover;
+      border-radius: 8px;
     }
   }
 
@@ -128,7 +129,7 @@
     <div class="hero-content">
       <div class="container">
         <div class="row">
-          <div class="col-lg-4 col-12 text-center " style="align-self: center;">
+          <div class="col-lg-4 col-12 text-center align-self-center mt-md-0 mt-3">
             <img class="store-avtar" alt="{{ $business->name }}" src="{{ getImage($business->business_image) }}">
           </div>
           <div class="col-lg-8 col-12 banner-info">
@@ -145,7 +146,7 @@
               <span class="font-weight-600">{{ config('const.business_rating.'.round($business->rating)) }}</span>
               <a class="text-black-50" href="#">(245 reviews)</a>
             </p> -->
-            <p class=" d-flex align-items-center mb-2 text-4">
+            <p class=" d-flex align-items-center justify-content-md-start justify-content-center mb-2 text-4">
 
               <!-- store fevourit -->
               @if (Auth::check())
@@ -229,7 +230,7 @@
           </div>
         </div>
       </div>
-</a>
+    </a>
   </div>
 
   @include('front.appointment.appointmentForm')

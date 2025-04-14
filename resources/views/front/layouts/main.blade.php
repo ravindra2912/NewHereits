@@ -351,18 +351,15 @@
 							<a href="https://play.google.com/store/apps/details?id=com.hereits_business"><img alt="" src="{{ asset('front/images/google-play-store.png') }}" style="border: 1px solid white;"></a>
 							<small class="form-text text-white-50">For Business Download App.</small>
 						</div>
-
 					</div>
-
 				</div>
 			</div>
 			<div class="footer-copyright pt-4 mt-4">
 				<div class="container">
 					<div class="row">
 						<div class="col-lg d-flex align-items-center">
-							<p class="copyright-text text-center text-lg-left mt-0 mb-2 mb-lg-0">Copyright © 2020 <a href="">Hereits.</a>. All Rights Reserved.</p>
+							<p class="copyright-text text-center text-lg-left mt-0 mb-2 mb-lg-0">Copyright © {{ date('Y') }} <a href="">Hereits.</a>. All Rights Reserved.</p>
 						</div>
-
 					</div>
 				</div>
 			</div>

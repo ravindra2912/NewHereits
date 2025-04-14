@@ -48,12 +48,12 @@
 
           <div class="col-12 mb-3">
             @if (Auth::check())
-            <button class="btn btn-primary btn_action">
+            <button class="btn btn-primary btn_action btn-block ">
               <span id="buttonText">Book</span>
               <span id="loader" class="d-none"> Booking ...</span>
             </button>
             @else
-            <button class="btn btn-primary btn_action" type="button" data-toggle="modal" data-target="#login-modal">
+            <button class="btn btn-primary btn_action btn-block" type="button" data-toggle="modal" data-target="#login-modal">
               <span id="buttonText"> Book</span>
             </button>
             @endif

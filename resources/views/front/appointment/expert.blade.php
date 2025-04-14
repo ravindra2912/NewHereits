@@ -81,14 +81,16 @@
     }
 
     .hero-banner.hero-banner-auther .inner .auth-img-wrap img {
-      object-fit: contain;
+      object-fit: cover;
       height: 150px;
-      max-width: unset;
+      width: 150px;
     }
 
     .title-sub h1:after {
       justify-self: center;
       width: 150px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .expert-name {
@@ -118,7 +120,7 @@
   <div class="hero-banner white-content pb-0 hero-banner-auther">
     <div class="container">
       <div class="inner row justify-content-center">
-        <div class="col-12 col-lg-3 col-md-4 mb-md-0 mb-4 auth-img-wrap">
+        <div class="col-12 col-lg-3 col-md-4 mb-md-0 mb-4 auth-img-wrap d-flex justify-content-center">
           <img src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" title="{{ $expert->appointmenter_name }}" class="">
         </div>
         <div class="col-12 col-lg-8 col-md-7 auth-content-wrap banner-info">
@@ -132,12 +134,15 @@
               </span>
               <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
               <!-- <p class="text-white mt-3">{{ $expert->description }}</p> -->
+              <div>
+                <p class=" d-flex align-items-center justify-content-md-start justify-content-center mb-2 text-4">
+                  <a href="javascript:void(0)" id="copylink" data-url="{{ route('expert', $expert->slug) }}" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
+                  <a href="{{ route('expert.board', $expert->slug) }}" target="_blank" data-toggle="tooltip" data-original-title="Board" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-clipboard"></i></a>
+                </p>
+              </div>
             </div>
-            <div class="col-sm-4 col-12 text-center align-content-center border rounded ">
-              <!-- <div class="border rounded py-2">
-                <h4 class="text-white">Token No.</h4>
-                <h3 class="text-white toen-no"></h3>
-              </div> -->
+            <div class="col-sm-4 col-12 text-center mt-md-0 mt-2 align-content-center" style="height: min-content">
+            <div class="border rounded">
               @if($expert->timing['status'] == 'close')
               <h4 class="text-danger mb-0 text-center ">Close</h4>
               @elseif($expert->timing['status'] == 'open')
@@ -163,13 +168,9 @@
               </div>
               @endif
             </div>
+            </div>
           </div>
-          <div>
-            <p class=" d-flex align-items-center mb-2 text-4">
-              <a href="javascript:void(0)" id="copylink" data-url="{{ route('expert', $expert->slug) }}" data-toggle="tooltip" data-original-title="Copy Link To Shere" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-copy"></i></a>
-              <a href="{{ route('expert.board', $expert->slug) }}" target="_blank" data-toggle="tooltip" data-original-title="Board" class="cf border rounded-pill text-3 text-nowrap px-2 text-light mr-2"><i class="far fa-clipboard"></i></a>
-            </p>
-          </div>
+
 
         </div>
       </div>
@@ -239,7 +240,7 @@
 
 
       <!-- <div class="text-center"> <a href="#" class="btn btn-sm btn-outline-dark shadow-none">view more reviews</a> </div> -->
-      
+
     </div>
   </div>
 
