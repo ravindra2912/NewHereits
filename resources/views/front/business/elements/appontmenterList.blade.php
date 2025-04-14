@@ -98,7 +98,7 @@
         @elseif($timing['status'] == 'break')
         <div class="my-2 mx-3 text-center align-self-center ">
           <div class="pt-2">
-            <h4 class="text-danger">Break</h4>
+            <h4 class="text-danger mb-0">Break</h4>
             @if ($timing['data'])
             <p class="mb-0">Open at : {{ get_time($timing['data']->start_time) }}</p>
             @endif

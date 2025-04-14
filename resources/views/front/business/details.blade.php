@@ -176,11 +176,11 @@
     <a href="{{ route('expert', $expert->slug) }}" title="{{ $expert->appointmenter_name }}" class="col-md-7 col-sm-7 col-12 ">
       <div class="bg-white shadow-md rounded p-3 mb-2 list-store">
         <div class="row">
-          <div class="col-md-3 col-3 text-center">
+          <div class="col-md-3 col-5 text-center">
 
             <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" />
           </div>
-          <div class="col-md-5 col-5 pl-3 pl-md-0 mt-3 mt-md-0">
+          <div class="col-md-5 col-7 pl-3 pl-md-0 mt-3 mt-md-0">
             <div class="row no-gutters">
               <div class="col-sm-9">
                 <h4 class="text-dark text-5 store-name">{{ $expert->appointmenter_name }}</h4>
@@ -202,9 +202,9 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4 col-4 pl-3 pl-md-0 mt-3 mt-md-0 d-flex flex-column justify-content-center">
+          <div class="col-md-4 col-12 pl-3 pl-md-0 mt-md-3 mt-0 mt-md-0 d-flex flex-column justify-content-center">
             @if($expert->getLastBooking['status'] == 'close')
-            <p class="text-danger mb-0 text-center h5 ">Available soon</p>
+            <p class="text-danger mb-0 text-center h5 pt-2">Available soon</p>
             @elseif($expert->getLastBooking['status'] == 'open')
             @if ($expert->getLastBooking['data'])
             <div class="my-2 mx-3 text-center align-self-center ">
@@ -215,14 +215,14 @@
             </div>
 
             @else
-            <p class="text-success mb-0 text-center h5">Available</p>
+            <p class="text-success mb-0 text-center h5 pt-2">Available</p>
             @endif
             @elseif($expert->getLastBooking['status'] == 'break')
             <div class="my-2 mx-3 text-center align-self-center ">
               <div class="py-2">
-                <h4 class="text-danger">Break</h4>
+                <h4 class="text-danger mb-0">Break</h4>
                 @if ($expert->getLastBooking['data'])
-                <p>Open at : {{ get_time($expert->getLastBooking['data']->start_time) }}</p>
+                <p class="mb-0">Open at : {{ get_time($expert->getLastBooking['data']->start_time) }}</p>
                 @endif
               </div>
             </div>
