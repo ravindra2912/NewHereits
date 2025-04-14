@@ -100,6 +100,7 @@
     .banner-info {
       text-align: center;
       justify-items: center;
+      place-items: anchor-center;
     }
 
     .store-avtar {
