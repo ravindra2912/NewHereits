@@ -25,7 +25,7 @@ class AppointmentController extends Controller
 {
     public function index(Request $request, $slug): View
     {
-        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
+        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description', 'rating')
             ->with([
                 'business' => function ($q) {
                     return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
@@ -54,11 +54,11 @@ class AppointmentController extends Controller
                 DB::raw('SUM(CASE WHEN rating = "4" THEN 1 ELSE 0 END) as reviewCount4'),
                 DB::raw('SUM(CASE WHEN rating = "5" THEN 1 ELSE 0 END) as reviewCount5'),
                 DB::raw('COUNT(rating) as totalReview'),
-                DB::raw('AVG(rating) as avgRating'),
+                // DB::raw('AVG(rating) as avgRating'),
                 // DB::raw('SELECT * FROM review_and_ratings WHERE business_id = '.$business->id.' AND review_type = "business" AND user_id = '.Auth::user()->id.' as is_reviewed'),
             )
                 ->where('review_on_id', $expert->id)
-                ->where('review_type', 'appointmenter')
+                ->where('review_type', 'professional')
                 ->first();
 
             $expert->businessSetting = $expert->businessSetting->getBusinessSettingObject();
@@ -83,10 +83,10 @@ class AppointmentController extends Controller
         if ($expert) {
             $timing = isExpertAvailable($expert->id);
             $appointmentFirst = null;
-            if($timing['data']){
+            if ($timing['data']) {
                 $appointmentFirst = $timing['data'];
             }
-            
+
             $appointmentList = array();
             if ($appointmentFirst) {
                 $appointmentList = AppointmentBooking::whereDate('booking_date', Carbon::now())
@@ -124,14 +124,34 @@ class AppointmentController extends Controller
                 'booking_date' => 'required|date',
                 'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
                 'expert_id' => 'required',
+                'note' => 'nullable|string|max:250',
             ];
 
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) { // Validation fails
-                // $message = $validator->errors();
-                $message = $validator->errors()->first();
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else if (Auth::check() == false) {
+                $message = 'pease login form book your appointment';
             } else {
+                if (!$businessSetting->is_appointment_book_with_time_slote) {
+                    $appointmenter = Appointmenter::select('id', 'number_of_bookings_per_day')->where('id', $request->expert_id)->first();
+                    if ($appointmenter) {
+                        $getAllbooking = AppointmentBooking::select('id', 'token_number')
+                            ->where('appointmenter_id', $request->expert_id)
+                            ->whereDate('booking_date', Carbon::parse($request->booking_date))
+                            ->where('status', 'pending')
+                            ->where('business_id', $request->business_id)
+                            ->get()
+                            ->count();
+                        if ($appointmenter->number_of_bookings_per_day > 0 && $getAllbooking >= $appointmenter->number_of_bookings_per_day) {
+                            $message = 'Sorry! This expert has already booked the maximum number of booking for this date.';
+                            return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+                        }
+                    }
+                }
+
 
                 $getLastToken = AppointmentBooking::where('appointmenter_id', $request->expert_id)->whereDate('booking_date', Carbon::parse($request->booking_date))->orderBy('token_number', 'desc')->where('business_id', $request->business_id)->first();
                 if ($getLastToken) {
@@ -141,12 +161,14 @@ class AppointmentController extends Controller
                 }
                 $insert = new AppointmentBooking();
                 $insert->business_id  = $request->business_id;
+                $insert->user_id = Auth::user() ? Auth::user()->id : null;
                 $insert->token_number  = $tokenNumber;
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_id = $request->expert_id;
                 $insert->user_name = $request->user_name;
                 $insert->user_contact = $request->user_contact;
                 $insert->booking_date = $request->booking_date;
+                $insert->note = $request->note;
 
                 if ($businessSetting->is_appointment_book_with_time_slote) {
                     $timeslote = explode(' - ', $request->timeslote);

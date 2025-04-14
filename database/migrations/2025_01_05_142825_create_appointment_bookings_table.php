@@ -23,7 +23,9 @@ return new class extends Migration
             $table->dateTime('slot_start_time')->nullable();
             $table->dateTime('slot_end_time')->nullable();
             $table->date('booking_date');
-            $table->enum('status', ['pending', 'complete', 'cancel'])->default('pending');
+            $table->string('note', 250)->nullable();
+            $table->unsignedBigInteger('review_id')->nullable();
+            $table->enum('status', ['pending', 'completed', 'cancel'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
 
@@ -31,6 +33,7 @@ return new class extends Migration
             $table->foreign('business_id')->references('id')->on('businesses')->cascadeOnDelete();
             $table->foreign('department_id')->references('id')->on('appointment_departments')->cascadeOnDelete();
             $table->foreign('appointmenter_id')->references('id')->on('appointmenters')->cascadeOnDelete();
+            $table->foreign('review_id')->references('id')->on('review_and_ratings')->cascadeOnDelete();
         });
     }
 

@@ -116,7 +116,7 @@ class BusinessController extends Controller
                 // DB::raw('SELECT * FROM review_and_ratings WHERE business_id = '.$business->id.' AND review_type = "business" AND user_id = '.Auth::user()->id.' as is_reviewed'),
             )
             ->where('business_id', $business->id)
-            ->where('review_type', 'business')
+            // ->where('review_type', 'business')
             ->first();
 
             // dd($business->ReviewAndRating->toArray());
@@ -138,7 +138,7 @@ class BusinessController extends Controller
             if ($setting->is_appointment_with_department) {
                 $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', $business->id)->get();
             }
-            $appontmenters = Appointmenter::select('id', 'business_id', 'title', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug')
+            $appontmenters = Appointmenter::select('id', 'business_id', 'title', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug', 'rating')
             ->with(['department',
                 'business' => function ($q) {
                         return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');

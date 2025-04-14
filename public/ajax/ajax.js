@@ -6,7 +6,7 @@ $(function () {
 
 		var form = this;
 
-		if($(form).data('scroll') == false){
+		if ($(form).data('scroll') == false) {
 			scrollIntoView = false;
 		}
 
@@ -31,10 +31,10 @@ $(function () {
 				$('.btn_action').prop('disabled', false);
 				remove_error();
 				if (result.success) {
-					if($(form).data('tost') == null || $(form).data('tost') == true){
+					if ($(form).data('tost') == null || $(form).data('tost') == true) {
 						toastr.success(result.message);
 					}
-					
+
 					//cleare form after submite
 					if ($(form).data('reset')) {
 						form.reset();
@@ -66,12 +66,19 @@ $(function () {
 				}
 
 			},
-			error: function (e) {
-				toastr.error('Something Wrong');
-				console.log(e);
-				$('.btn_action #buttonText').removeClass('d-none');
-				$('.btn_action #loader').addClass('d-none');
-				$('.btn_action').prop('disabled', false);
+			error: function (xhr, status, error) {
+				console.log(xhr);
+				if (xhr.status === 419) {
+					toastr.error('Your session has expired, please login again');
+					setTimeout(function () {
+						location.reload();
+					}, 3000);
+				} else {
+					toastr.error('Something Wrong');
+					$('.btn_action #buttonText').removeClass('d-none');
+					$('.btn_action #loader').addClass('d-none');
+					$('.btn_action').prop('disabled', false);
+				}
 			}
 		});
 	}));
@@ -142,12 +149,12 @@ $(function () {
 			}
 
 			if (index == 0) {
-				if(scrollIntoView){
+				if (scrollIntoView) {
 					form.scrollIntoView({
 						behavior: 'smooth'
 					});
 				}
-				
+
 
 				document.getElementsByName(key)[0].focus();
 			}

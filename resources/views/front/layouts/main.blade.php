@@ -139,7 +139,7 @@
 
 						<nav class="login-signup navbar navbar-expand ml-sm-2 pl-sm-2"> <!-- separator -->
 							<ul class="navbar-nav">
-								<li class="profile">
+								<li class="">
 									<a class="pr-0 mr-0 location-contaiter" href="#" data-toggle="modal" data-target="#location-modal">
 										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i> {{ session('hereitsLocation') ? session('hereitsLocation')['fullAddress'] : null }} </span>
 									</a>
@@ -180,9 +180,9 @@
 
 									<!-- Location Modal End -->
 
-									<a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
+									<!-- <a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
 										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
-									</a>
+									</a> -->
 
 									<!-- Search Modal =========================== -->
 									<div id="Search-modal" class="modal fade" role="dialog">
@@ -262,9 +262,7 @@
 								</li>
 								@else
 								<div class="pr-0 mobile-hide align-self-center" style="height: auto;" data-toggle="modal" data-target="#login-modal" href="#" title="Login / Sign up">
-									<!-- <span class="d-none d-sm-inline-block">Login</span> -->
-									<span href="Business" class="btn btn-primary-gradien mobile-hide ml-3 px-2 py-1">Login</span>
-									<!-- <span class="user-icon ml-sm-2"><i class="fas fa-user"></i></span> -->
+									<span href="Business" class="btn btn-outline-danger mobile-hide ml-3 px-2 py-1"><i class="fas fa-user"></i> Login</span>
 								</div>
 								@endif
 

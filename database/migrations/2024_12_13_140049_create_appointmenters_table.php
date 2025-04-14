@@ -17,10 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->string('appointmenter_name');
             $table->string('appointmenter_image')->nullable();
-            $table->integer('timing_per_appointment');
+            $table->integer('timing_per_appointment')->default(0);
+            $table->integer('number_of_bookings_per_day')->default(0);
             $table->string('title')->nullable();
             $table->string('description')->nullable();
             $table->string('slug', 50)->unique();
+            $table->float('rating', 2, 1)->default(0);
             $table->enum('status', ['active','in-active'])->default('active');
             $table->timestamps();
             $table->softDeletes();

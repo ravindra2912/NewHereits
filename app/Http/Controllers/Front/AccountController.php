@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\AppointmentBooking;
-
+use App\Models\ReviewAndRating;
+use Illuminate\Support\Facades\DB;
 class AccountController extends Controller
 {
     public function index(): View
@@ -142,7 +143,7 @@ class AccountController extends Controller
         $bookings = AppointmentBooking::query()
             ->with(['business:id,name', 'appontmenter:id,appointmenter_name'])
             ->orderBy('id', 'desc')
-            // ->where('user_id', Auth::user()->id)
+            ->where('user_id', Auth::user()->id)
             ->limit($request->limit)
             ->skip($request->offset)
             ->get();
@@ -154,9 +155,9 @@ class AccountController extends Controller
 
     public function bookingDetails(Request $request, $id): View
     {
-        $booking = AppointmentBooking::with(['business:id,name', 'appontmenter:id,appointmenter_name'])
+        $booking = AppointmentBooking::with(['business:id,name', 'appontmenter:id,appointmenter_name', 'review:id,rating,review'])
             ->where('id', $id)
-            // ->where('user_id', Auth::user()->id)
+            ->where('user_id', Auth::user()->id)
             ->first();
         if ($booking) {
             return view('front.account.booking.bookingDetails', compact('booking'));
@@ -171,6 +172,7 @@ class AccountController extends Controller
         $redirect = '';
         $data = array();
 
+        DB::beginTransaction();
         try {
             $rules = [
                 'booking_id' => 'required|exists:appointment_bookings,id',
@@ -182,21 +184,104 @@ class AccountController extends Controller
                 // $message = $validator->errors();
                 $message = $validator->errors()->first();
             } else {
-                $booking = AppointmentBooking::select('id', 'status')
-                    // ->where('user_id', Auth::user()->id)
+                
+                $booking = AppointmentBooking::select('id', 'business_id', 'appointmenter_id', 'booking_date', 'token_number', 'status')
+                    ->where('user_id', Auth::user()->id)
                     ->where('id', $request->booking_id)
                     ->first();
-                if ($booking) {
+                if ($booking && $booking->status == 'pending') {
+
+                    // Get all booking with token number greater than current booking
+                    $getAllbooking = AppointmentBooking::select('id', 'token_number')
+                        ->where('appointmenter_id', $booking->appointmenter_id)
+                        ->where('booking_date', $booking->booking_date)
+                        ->where('status', 'pending')
+                        ->where('token_number', '>', $booking->token_number)
+                        ->where('business_id', $booking->business_id)
+                        ->orderBy('token_number', 'asc')
+                        ->get();
+                    if ($getAllbooking) {
+                        // Decrease token number of all booking
+                        foreach ($getAllbooking as $value) {
+                            $value->token_number = $value->token_number - 1;
+                            $value->save();
+                        }
+                    }
+
                     $booking->status = 'cancel';
                     $booking->save();
                     $success = true;
                     $message = 'Booking Cancel successfully.';
+                    DB::commit();
                 }else {
                     $message = 'Booking not found.';
                 }
             }
         } catch (\Exception $e) {
+            $message = $e;
             $message = $e->getMessage();
+            DB::rollBack();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    function bookingReview(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = '';
+        $data = array();
+
+        DB::beginTransaction();
+        try {
+            $rules = [
+                'booking_id' => 'required|exists:appointment_bookings,id',
+                'rating' => 'required|numeric|min:1|max:5',
+                'review' => 'nullable|string|max:500',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                // $message = $validator->errors();
+                $message = $validator->errors()->first();
+            } else {
+                $booking = AppointmentBooking::select('id', 'business_id', 'appointmenter_id', 'status', 'review_id')
+                    ->where('user_id', Auth::user()->id)
+                    ->where('id', $request->booking_id)
+                    ->first();
+                if ($booking) {
+                    if ($booking->status == 'completed') {
+                        if ($booking->review_id == null) {
+
+                            $insert = new ReviewAndRating();
+                            $insert->business_id = $booking->business_id;
+                            $insert->review_on_id = $booking->appointmenter_id;
+                            $insert->user_id = Auth::user()->id;
+                            $insert->rating = $request->rating;
+                            $insert->review = $request->review;
+                            $insert->review_type = 'professional';
+                            $insert->save();
+
+                            $booking->review_id = $insert->id;
+                            $booking->save();
+
+                            $success = true;
+                            $message = 'Review added successfully.';
+                            DB::commit();
+                        } else {
+                            $message = 'You have already added review.';
+                        }
+                    } else {
+                        $message = 'Booking not completed yet.';
+                    }
+                } else {
+                    $message = 'Booking not found.';
+                }
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            DB::rollBack();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }

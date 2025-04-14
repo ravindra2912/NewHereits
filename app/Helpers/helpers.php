@@ -249,18 +249,16 @@ function isExpertAvailable($appointmenter_id = null)
             $data = AppointmentBooking::select('id', 'token_number', 'user_id', 'appointmenter_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'status')
                 ->where('booking_date', Carbon::now()->format('Y-m-d'))
                 ->where('appointmenter_id', $appointmenter_id)
-                ->where('status', 'pending')
-                ;
+                ->where('status', 'pending');
             if ($businessSetting->is_appointment_book_with_time_slote) {
                 $data = $data->orderBy('slot_start_time', 'asc');
             } else {
                 $data = $data->orderBy('token_number', 'asc');
             }
             $data = $data->first();
-            if($data){
+            if ($data) {
                 $res['data'] = $data;
             }
-
         } else {
             $businessTiming = BusinessTiming::select('id', 'start_time')
                 ->where('day', $day)
@@ -324,15 +322,21 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
 {
     $day = Carbon::parse($date)->format('l');
 
-    if ($getBusinessId == null) {
-        $getBusinessId = getBusinessId();
-    }
+    // if ($getBusinessId == null) {
+    //     $getBusinessId = getBusinessId();
+    // }
 
     $interval = 15;
     // get appointmenter interval time
-    $geinterval = Appointmenter::find($id);
+    $geinterval = Appointmenter::select('id', 'business_id', 'timing_per_appointment')->find($id);
     if ($geinterval) {
-        $interval = $geinterval->timing_per_appointment;
+        if ($getBusinessId == null) {
+            $getBusinessId = $geinterval->business_id;
+        }
+
+        if ($geinterval->timing_per_appointment > 0) {
+            $interval = $geinterval->timing_per_appointment;
+        }
     }
 
     $appontmentsData = AppointmentBooking::select('slot_start_time', 'slot_end_time')

@@ -54,20 +54,18 @@
         <div class="row no-gutters">
           <div class="col-sm-9">
             <h4 title="{{ $appontmenter->appointmenter_name }}" class="text-dark text-5 store-name">{{ $appontmenter->appointmenter_name }}</h4>
+            <span class="mr-2">
+              @for ($i = 1; $i <= 5; $i++)
+                <i class="fas fa-star {{ $appontmenter->rating >= $i? 'text-warning':'text-muted' }}"></i>
+                @endfor
+            </span>
             @if (isset($appontmenter->title) && !empty($appontmenter->title))
             <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $appontmenter->title }}</div>
             @endif
             @if (isset($appontmenter->department) && !empty($appontmenter->department->department_name))
             <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $appontmenter->department->department_name }}</div>
             @endif
-            <!-- <span class="mr-2">
-              <i class="fas fa-star text-warning"></i>
-              <i class="fas fa-star text-warning"></i>
-              <i class="fas fa-star text-warning"></i>
-              <i class="fas fa-star text-warning"></i>
-              <i class="fas fa-star text-gray"></i>
-              <i class="text-black-50" href="#">(245 reviews)</i>
-            </span> -->
+
 
             <!-- <p class=" d-flex align-items-center mb-2 text-4">
                      <span class="cf border rounded-pill text-1 text-nowrap px-2">verified</span>

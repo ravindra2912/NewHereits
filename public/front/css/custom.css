@@ -29,16 +29,7 @@
 	padding: 2px 8px 2px 8px;
 }
 
-.btn-primary-gradien {
-	background-image: -webkit-gradient(linear, left top, right top, from(#4a5bc3), color-stop(51%, #2f3c8c), to(#4a5bc3));
-	background-image: linear-gradient(to right, #4a5bc3 0%, #2f3c8c 51%, #4a5bc3 100%);
-	border: none;
-	color: #fff;
-	background-size: auto 200%;
-	-webkit-transition: all 0.3s ease;
-	transition: all 0.3s ease;
-	color: #fff;
-}
+
 
 .btn-primary-gradien:hover {
 	background-size: 50% 100%;
@@ -633,8 +624,6 @@
 	.location {
 		font-size: 17px;
 	}
-
-
 }
 
 .badge {
@@ -648,6 +637,10 @@
 	vertical-align: top;
 	margin-left: -10px;
 	margin-bottom: 22px; */
+}
+
+.login-signup ul.navbar-nav > li:hover > a:not(.btn) {
+	color: black;
 }
 
 /* ======================== location model ===================== */

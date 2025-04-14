@@ -22,12 +22,12 @@ class AuthController extends Controller
      */
     public function index(Request $request): View
     {
-        if (Auth::check()){
+        if (Auth::check()) {
             if (Auth::user()->role_id == 1) {
                 return redirect()->route('admin.login');
-            }elseif (Auth::user()->role_id == 2) {
+            } elseif (Auth::user()->role_id == 2) {
                 return redirect()->route('business.login');
-            }else{
+            } else {
                 return redirect()->route('/');
             }
         }
@@ -55,15 +55,14 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->where('role_id', 2)->first();
         if ($user && Hash::check($request['password'], $user->password)) {
 
-            if($user->business_id == null){
+            if ($user->business_id == null) {
                 $business = Business::select('id')->where('owner_id', $user->id)->first();
-                if($business){
+                if ($business) {
                     $user->business_id = $business->id;
                     $user->save();
-                }else{
+                } else {
                     return redirect()->back()->with('error', 'Business not found!');
                 }
-                
             }
             $request->authenticate();
 
@@ -80,11 +79,15 @@ class AuthController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $data = session()->only(['hereitsLocation']);
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        // Restore
+        session($data);
 
         return redirect()->route('business.login');
     }

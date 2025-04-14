@@ -125,8 +125,13 @@
           <div class="title-sub mb-md-4 mb-3 row">
             <div class="col-sm-8 col-12">
               <h1 class="text-white expert-name">{{ $expert->appointmenter_name }}</h1>
+              <span class="mr-2">
+                @for ($i = 1; $i <= 5; $i++)
+                  <i class="fas fa-star {{ $expert->rating >= $i? 'text-warning':'text-muted' }}"></i>
+                  @endfor
+              </span>
               <h5 class="pb-0 mb-0">{{ $expert->title }}</h5>
-              <p class="text-white mt-3">{{ $expert->description }}</p>
+              <!-- <p class="text-white mt-3">{{ $expert->description }}</p> -->
             </div>
             <div class="col-sm-4 col-12 text-center align-content-center border rounded ">
               <!-- <div class="border rounded py-2">
@@ -182,8 +187,8 @@
       <div class="row">
         <div class="col-sm-4 col-md-3">
           <div id="review-summary" class="bg-primary text-light rounded px-2 py-4 mb-4 mb-sm-0 text-center">
-            <div class="text-10 font-weight-600 line-height-1 d-block">{{ $expert->ReviewAndRating->avgRating > 0 ?$expert->ReviewAndRating->avgRating:0.0 }}</div>
-            <div class="font-weight-500 my-1">{{ config('const.business_rating.'.round($expert->ReviewAndRating->avgRating > 0 ?$expert->ReviewAndRating->avgRating:0)) }}</div>
+            <div class="text-10 font-weight-600 line-height-1 d-block">{{ number_format($expert->rating, 1) }}</div>
+            <div class="font-weight-500 my-1">{{ config('const.business_rating.'.floor($expert->rating)) }}</div>
             <small class="d-block">Based on {{ $expert->ReviewAndRating->totalReview }} reviews</small>
           </div>
         </div>
@@ -223,7 +228,6 @@
             @for ($i = 1; $i <= 5; $i++)
               <i class="fas fa-star {{ $reviews->rating >= $i? 'text-warning':'text-muted opacity-4' }}"></i>
               @endfor
-
           </span>
           <!-- <p class="font-weight-600 mb-1">Excellent hotel with great location</p> -->
           <p>{{ $reviews->review }}</p>
@@ -234,44 +238,8 @@
       @endif
 
 
-      <!-- <div class="text-center"> <a href="#" class="btn btn-sm btn-outline-dark shadow-none">view more reviews</a> </div>
-      <h5 class="mb-3 mt-2">Write a review</h5>
-      <form>
-        <div class="form-group">
-          <label for="yourName">Your Name</label>
-          <input type="email" class="form-control" id="yourName" required="" aria-describedby="yourName" placeholder="Enter your name">
-        </div>
-        <div class="form-group">
-          <label for="yourReview">Your Review</label>
-          <textarea class="form-control" rows="5" id="yourReview" required="" placeholder="Enter Your Review"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Rating</label>
-          <div>
-            <div class="custom-control custom-radio custom-control-inline">
-              <input id="bad" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
-              <label class="custom-control-label" for="bad">Bad</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline">
-              <input id="poor" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
-              <label class="custom-control-label" for="poor">Poor</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline">
-              <input id="fair" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
-              <label class="custom-control-label" for="fair">Fair</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline">
-              <input id="good" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
-              <label class="custom-control-label" for="good">Good</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline">
-              <input id="excellent" name="reviewRating" class="custom-control-input" checked="" required="" type="radio">
-              <label class="custom-control-label" for="excellent">Excellent</label>
-            </div>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form> -->
+      <!-- <div class="text-center"> <a href="#" class="btn btn-sm btn-outline-dark shadow-none">view more reviews</a> </div> -->
+      
     </div>
   </div>
 

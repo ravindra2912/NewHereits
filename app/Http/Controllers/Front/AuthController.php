@@ -27,7 +27,7 @@ class AuthController extends Controller
         try {
             $user = User::where('email', $request->email)->whereIn('role_id', [2, 3])->first();
             if ($user && Hash::check($request['password'], $user->password)) {
-                if($user->role_id == 2 && $user->business_id == null){
+                if ($user->role_id == 2 && $user->business_id == null) {
                     $business = Business::select('id')->where('owner_id', $user->id)->first();
                     $user->business_id = $business->id;
                     $user->save();
@@ -127,9 +127,14 @@ class AuthController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $data = session()->only(['hereitsLocation']);
+
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        // Restore
+        session($data);
         return redirect()->route('home');
     }
 
@@ -160,7 +165,7 @@ class AuthController extends Controller
                 'pincode' => 'required',
             ];
 
-            if(!Auth::check()){
+            if (!Auth::check()) {
                 $rules['user_email'] = 'required|email|exists:users,email';
                 $rules['password'] = 'required';
             }
@@ -171,8 +176,8 @@ class AuthController extends Controller
                 $message = $validator->errors();
                 // $message = $validator->errors()->first();
             } else {
-                
-                if(!Auth::check()){
+
+                if (!Auth::check()) {
                     $user = User::where('email', $request->user_email)->first();
                     if ($user && Hash::check($request['password'], $user->password)) {
                         // Auth::login($user);
@@ -181,7 +186,7 @@ class AuthController extends Controller
                         $message = 'Invalid Email id and Password!';
                         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
                     }
-                }else{
+                } else {
                     $user_id = Auth::user()->id;
                 }
 
@@ -207,7 +212,7 @@ class AuthController extends Controller
 
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
-                if ($user && ( $user->role_id != 2 || $user->business_id == null)) {
+                if ($user && ($user->role_id != 2 || $user->business_id == null)) {
                     $user->business_id =  $insert->id;
                     $user->role_id = 2;
                     $user->save();

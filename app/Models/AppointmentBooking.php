@@ -23,4 +23,8 @@ class AppointmentBooking extends Model
     {
         return $this->belongsTo(Business::class, 'business_id', 'id');
     }
+
+    public function review(){
+        return $this->hasOne(ReviewAndRating::class, 'id', 'review_id');
+    }
 }

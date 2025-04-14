@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('business_id')->index();
             $table->unsignedBigInteger('user_id')->index();
-            $table->BigInteger('review_on_id')->nullable()->comment('appointmenter_id, appointment_booking_id, etc');
-            $table->enum('review_type', ['business', 'appointmenter', 'appointment_booking']);
+            $table->BigInteger('review_on_id')->nullable()->comment('Professional_id, business_id etc');
+            $table->enum('review_type', ['business', 'professional']);
             $table->text('review');
             $table->double('rating', 2,1)->default(0);
             $table->timestamps();

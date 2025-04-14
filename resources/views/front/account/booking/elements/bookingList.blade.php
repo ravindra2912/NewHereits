@@ -9,7 +9,7 @@
                     <span class="badge badge-warning">Pending</span>
                     @elseif($booking->status == 'cancel')
                     <span class="badge badge-danger">Cancelled</span>
-                    @elseif($booking->status == 'complete')
+                    @elseif($booking->status == 'completed')
                     <span class="badge badge-primary">Completed</span>
                     @endif
                 </div>

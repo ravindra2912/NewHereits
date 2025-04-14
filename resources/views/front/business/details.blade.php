@@ -278,8 +278,8 @@
       <div class="row">
         <div class="col-sm-4 col-md-3">
           <div id="review-summary" class="bg-primary text-light rounded px-2 py-4 mb-4 mb-sm-0 text-center">
-            <div class="text-10 font-weight-600 line-height-1 d-block">{{ $business->rating }}</div>
-            <div class="font-weight-500 my-1">{{ config('const.business_rating.'.round($business->rating)) }}</div>
+            <div class="text-10 font-weight-600 line-height-1 d-block">{{ number_format($business->rating, 1) }}</div>
+            <div class="font-weight-500 my-1">{{ config('const.business_rating.'.floor($business->rating)) }}</div>
             <small class="d-block">Based on {{ $business->ReviewAndRating->totalReview }} reviews</small>
           </div>
         </div>

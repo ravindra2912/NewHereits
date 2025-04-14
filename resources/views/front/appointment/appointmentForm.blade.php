@@ -13,13 +13,13 @@
           <input type="hidden" value="{{ $expert->businessSetting['is_appointment_book_with_time_slote'] }}" id="with-timing">
 
           <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="booking_date" class="form-label">Appointment date</label>
+            <label for="booking_date" class="form-label required">Appointment date</label>
             <input type="date" name="booking_date" class="form-control" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
           </div>
 
           @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
           <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="operator" class="form-label">Appointment Time</label>
+            <label for="operator" class="form-label required">Appointment Time</label>
             <select class="form-control" name="timeslote" id="timeslote" required="">
               <option value="">Select Your Appointment Time</option>
               @foreach ($timeSlots as $time)
@@ -30,22 +30,34 @@
           @endif
 
           <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="user_name" class="form-label">Your Name</label>
+            <label for="user_name" class="form-label required">Your Name</label>
             <div class="input-group">
               <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" required="" type="text">
             </div>
           </div>
 
           <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="user_contact" class="form-label">Mobile Number</label>
+            <label for="user_contact" class="form-label required">Mobile Number</label>
             <input type="text" name="user_contact" class="form-control" id="user_contact" required="" placeholder="Enter Mobile Number">
+          </div>
+          
+          <div class="col-12 mb-3">
+            <label for="note" class="form-label">Note (optional)</label>
+            <textarea name="note" class="form-control" id="note" placeholder="Enter... "></textarea>
           </div>
 
           <div class="col-12 mb-3">
-            <button class="btn btn-primary btn_action" href="recharge-order-summary.html">
-              <span id="buttonText"> Appointment Book</span>
+            @if (Auth::check())
+            <button class="btn btn-primary btn_action">
+              <span id="buttonText">Book</span>
               <span id="loader" class="d-none"> Booking ...</span>
             </button>
+            @else
+            <button class="btn btn-primary btn_action" type="button" data-toggle="modal" data-target="#login-modal">
+              <span id="buttonText"> Book</span>
+            </button>
+            @endif
+
           </div>
         </form>
       </div>
