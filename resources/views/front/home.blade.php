@@ -72,10 +72,11 @@
 
       <div class="row ">
         @foreach($businesses as $res)
-        <a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="col-md-2 col-6 p-1">
+        <a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="col-lg-2 col-md-3 col-sm-4 col-6 p-1">
           <div class="card shadow-md border-0 mb-2">
-            <h5 class="store-name text-3 mb-0 text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->name }}</h5>
+            
             <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->name }}"></div>
+            <h5 class="store-name text-3 mb-2 text-center text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->name }}</h5>
           </div>
         </a>
         @endforeach
