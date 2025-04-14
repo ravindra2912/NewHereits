@@ -184,21 +184,17 @@
             <div class="row no-gutters">
               <div class="col-sm-9">
                 <h4 class="text-dark text-5 store-name">{{ $expert->appointmenter_name }}</h4>
+                <span class="mr-2">
+              @for ($i = 1; $i <= 5; $i++)
+                <i class="fas fa-star {{ $expert->rating >= $i? 'text-warning':'text-muted' }}"></i>
+                @endfor
+            </span>
                 @if (isset($expert->title) && !empty($expert->title))
                 <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $expert->title }}</div>
                 @endif
                 @if (isset($expert->department) && !empty($expert->department->department_name))
                 <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $expert->department->department_name }}</div>
                 @endif
-                <!-- <span class="mr-2">
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-warning"></i>
-                  <i class="fas fa-star text-gray"></i>
-                  <i class="text-black-50" href="#">(245 reviews)</i>
-                </span> -->
-
               </div>
             </div>
           </div>
