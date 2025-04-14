@@ -64,7 +64,8 @@
                         @endif
                     </div>
 
-                    @if($booking->status == 'completed' && $booking->review_id == null)
+                    @if($booking->status == 'completed')
+                    @if($booking->review_id == null)
                     <div class="col-12">
                         <h5 class="mb-3 mt-2">Write a review</h5>
                         <form id="appointment-form" action="{{ route('account.booking.review') }}" data-action="reload" data-reset="true" class="formaction">
@@ -113,6 +114,7 @@
                             <p class="mb-0"><b>Review : </b> {{ $booking->review->review }} </p>
                         </div>
                     </div>
+                    @endif
                     @endif
                 </div>
             </div>
