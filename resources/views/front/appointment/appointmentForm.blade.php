@@ -12,6 +12,18 @@
           <input type="hidden" name="department_id" value="{{ $expert->department_id }}">
           <input type="hidden" value="{{ $expert->businessSetting['is_appointment_book_with_time_slote'] }}" id="with-timing">
 
+          <div class="col-12 mb-3">
+            <label for="booking_date" class="form-label required">Appointment For </label></br>
+            <div class="form-check form-check-inline">
+              <input id="Self" value="self" name="appointment_for" class="form-check-input" checked="" type="radio">
+              <label class="form-check-label" for="Self">Self</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input id="Other" value="other" name="appointment_for" class="form-check-input" type="radio">
+              <label class="form-check-label" for="Other">Other</label>
+            </div>
+          </div>
+
           <div class="col-md-6 col-sm-6 col-12 mb-3">
             <label for="booking_date" class="form-label required">Appointment date</label>
             <input type="date" name="booking_date" class="form-control" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
@@ -29,18 +41,16 @@
           </div>
           @endif
 
-          <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="user_name" class="form-label required">Your Name</label>
-            <div class="input-group">
-              <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" required="" type="text">
-            </div>
+          <div class="col-md-6 col-sm-6 col-12 mb-3 appointment-for-other d-none">
+            <label for="user_name" class="form-label required">Name</label>
+              <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name"  type="text">
           </div>
 
-          <div class="col-md-6 col-sm-6 col-12 mb-3">
+          <div class="col-md-6 col-sm-6 col-12 mb-3 appointment-for-other d-none">
             <label for="user_contact" class="form-label required">Mobile Number</label>
-            <input type="text" name="user_contact" class="form-control" id="user_contact" required="" placeholder="Enter Mobile Number">
+            <input type="text" name="user_contact" class="form-control" id="user_contact"  placeholder="Enter Mobile Number">
           </div>
-          
+
           <div class="col-12 mb-3">
             <label for="note" class="form-label">Note (optional)</label>
             <textarea name="note" class="form-control" id="note" placeholder="Enter... "></textarea>
@@ -142,6 +152,15 @@
           alert("There was an error on appointmenter change.");
         }
       });
+    });
+
+    // appointment for other
+    $('input[name="appointment_for"]').on('change', function() {
+      if ($(this).val() == 'other') {
+        $('.appointment-for-other').removeClass('d-none');
+      } else {
+        $('.appointment-for-other').addClass('d-none');
+      }
     });
   });
 </script>

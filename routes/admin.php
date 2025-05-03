@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\DashboarController;
 use App\Http\Controllers\Admin\LagelPagesController;
+use App\Http\Controllers\Admin\LocationMasterController;
 use App\Http\Controllers\Admin\BusinessCategoryController;
 
 Route::name('admin.')->group(function () {
@@ -51,6 +52,14 @@ Route::name('admin.')->group(function () {
         Route::controller(SettingController::class)->group(function () {
             Route::get('setting/profile', 'profile')->name('setting.profile');
             Route::post('setting/profile/{id}', 'profileUpdate')->name('setting.profile.update');
+        });
+        
+        Route::controller(LocationMasterController::class)->group(function () {
+            Route::get('locations/areas', 'getAreas')->name('locations.areas');
+            Route::get('locations/areas/create', 'createArea')->name('locations.areas.create');
+            Route::post('locations/areas/store', 'storeArea')->name('locations.areas.store');
+            Route::get('locations/areas/edit/{id}', 'editArea')->name('locations.areas.edit');
+            Route::PATCH('locations/areas/update/{id}', 'updateArea')->name('locations.areas.update');
         });
 
         Route::controller(AuthController::class)->group(function () {

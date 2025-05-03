@@ -74,7 +74,7 @@
         @foreach($businesses as $res)
         <a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="col-lg-2 col-md-3 col-sm-4 col-6 p-1">
           <div class="card shadow-md border-0 mb-2">
-            
+
             <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->name }}"></div>
             <h5 class="store-name text-3 mb-2 text-center text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->name }}</h5>
           </div>
@@ -117,11 +117,15 @@
           <h1 class="h2 mb-0 text-white mb-2">List Your Business</h1>
           <p class="text-3 text-white" style="line-height: 1.25;">Join our platform today and boost your business visibility. Reach more customers, increase your sales, and grow your brand with us. Simple, effective, and made for success! </p>
           <div class="text-md-left text-center">
-          <button class="btn btn-outline-danger btn-sm list-business-btn"><a href="{{ route('register.business') }}" class="text-white">Register your business</a></button>
+            @if(Auth::check())
+            <button class="btn btn-outline-danger btn-sm list-business-btn"><a href="{{ route('register.business') }}" class="text-white">Register your business</a></button>
+            @else
+            <button class="btn btn-outline-danger btn-sm list-business-btn"><a data-toggle="modal" data-target="#login-modal" href="#" class="text-white">Register your business</a></button>
+            @endif
           </div>
         </div>
         <div class="col-lg-5 col-md-5 col-sm-5 col-12 d-flex text-center justify-content-center align-items-center mb-md-0 mb-2">
-            <img src="{{ asset('front/img/store.webp') }}" height="150"  alt="List Your Business">
+          <img src="{{ asset('front/img/store.webp') }}" height="150" alt="List Your Business">
         </div>
       </div>
     </div>

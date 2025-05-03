@@ -25,6 +25,7 @@ return new class extends Migration
             $table->date('booking_date');
             $table->string('note', 250)->nullable();
             $table->unsignedBigInteger('review_id')->nullable();
+            $table->enum('appointment_for', ['self', 'other'])->default('self');
             $table->enum('status', ['pending', 'completed', 'cancel'])->default('pending');
             $table->timestamps();
             $table->softDeletes();

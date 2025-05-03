@@ -119,8 +119,8 @@ class AppointmentController extends Controller
         try {
             $businessSetting = getBusinessSettings($request->business_id);
             $rules = [
-                'user_name' => 'required',
-                'user_contact' => 'required|numeric',
+                'user_name' => $request->appointment_for == 'other'?'required':'nullable',
+                'user_contact' => ($request->appointment_for == 'other'? 'required':'nullable').'|numeric',
                 'booking_date' => 'required|date',
                 'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
                 'expert_id' => 'required',
@@ -165,8 +165,14 @@ class AppointmentController extends Controller
                 $insert->token_number  = $tokenNumber;
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_id = $request->expert_id;
-                $insert->user_name = $request->user_name;
-                $insert->user_contact = $request->user_contact;
+                if ($request->appointment_for == 'self') {
+                    $insert->user_name = Auth::user()->first_name.' ' . Auth::user()->last_name;
+                    $insert->user_contact = Auth::user()->contact;
+                } else {
+                    $insert->user_name = $request->user_name;
+                    $insert->user_contact = $request->user_contact;
+                }
+                $insert->appointment_for = $request->appointment_for;
                 $insert->booking_date = $request->booking_date;
                 $insert->note = $request->note;
 
