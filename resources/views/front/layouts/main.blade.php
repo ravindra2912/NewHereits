@@ -390,6 +390,8 @@
 							</ul>
 							<p class="text-4 font-weight-300 text-muted text-center mb-4">We are glad to see you again!</p>
 							<p class="text-3 text-center text-danger mb-4" id="login_msg"></p>
+											
+							
 							<form id="loginForm" action="{{ route('login') }}" data-action="reload" class="formaction">
 								@csrf
 								<div class="form-group">
@@ -412,7 +414,7 @@
 									<span id="loader" class="d-none">Login ...</span>
 								</button>
 							</form>
-							<!-- <div class="d-flex align-items-center my-3">
+							<div class="d-flex align-items-center my-3">
 								<hr class="flex-grow-1">
 								<span class="mx-2 text-2 text-muted">Or Login with Social Profile</span>
 								<hr class="flex-grow-1">
@@ -421,7 +423,7 @@
 								<ul class="social-icons social-icons-colored social-icons-circle">
 									<li class="social-icons-google"><a href="#" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
 								</ul>
-							</div> -->
+							</div>
 							<p class="text-2 text-center mb-0">New to Hereits? <a class="btn-link" href="" data-toggle="modal" data-target="#signup-modal" data-dismiss="modal">Sign Up</a></p>
 						</div>
 					</div>

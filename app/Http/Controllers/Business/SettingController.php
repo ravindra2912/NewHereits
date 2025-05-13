@@ -27,7 +27,7 @@ class SettingController extends Controller
      * Display the user's profile form.
      */
     public function profile(Request $request)
-    {   
+    {
         // dd(Auth::user()->getBusinesses);
         $user = User::find(Auth::user()->id);
         return view('business.setting.profile', compact('user'));
@@ -45,8 +45,8 @@ class SettingController extends Controller
                 'profile' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'first_name' => 'required',
                 'last_name' => 'required',
-                'email' => 'required|email|unique:users,email,'.$id,
-                'contact' => 'required|numeric|unique:users,contact,'.$id,
+                'email' => 'required|email|unique:users,email,' . $id,
+                'contact' => 'required|numeric|unique:users,contact,' . $id,
                 'dob' => 'nullable|date',
                 'gender' => 'nullable',
                 'password' => 'nullable|min:6'
@@ -73,10 +73,10 @@ class SettingController extends Controller
                 $update->contact = $request->contact;
                 $update->dob = $request->dob;
                 $update->gender = $request->gender;
-                if(!empty($request->password)){
+                if (!empty($request->password)) {
                     $update->password = Hash::make($request->password);
                 }
-                
+
                 $update->save();
 
                 // Remove old uploaded image if exist
@@ -164,13 +164,13 @@ class SettingController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
-    
+
     public function businessTiming(Request $request)
     {
         // dd(Carbon::now()->addDay(6)->format('l'));
 
         $timing = [];
-        foreach( config('const.week_day_name') as $day){
+        foreach (config('const.week_day_name') as $day) {
             $temp = array();
             $temp['day'] = $day;
             $temp['timing'] = BusinessTiming::where('day', $day)->whereNull('appointmenter_id')->where('business_id', Auth::user()->business_id)->orderBy('start_time', 'asc')->get();
@@ -197,22 +197,39 @@ class SettingController extends Controller
                 $message = $validator->errors();
                 // $message = $validator->errors()->first();
             } else {
-                $insert = new BusinessTiming();
-                $insert->business_id = getBusinessId();
-                $insert->day = $request->day;
-                $insert->start_time = $request->start_time;
-                $insert->end_time = $request->end_time;
-                $insert->save();
 
-                $success = true;
-                $message = 'Time add successfully.';
+                // Check for conflict
+                $conflict = BusinessTiming::where('business_id', getBusinessId())
+                    ->where('day', $request->day)
+                    ->where('appointmenter_id',null)
+                    ->where(function ($query) use ($request) {
+                        $query->where(function ($q) use ($request) {
+                            $q->where('start_time', '<', $request->end_time)
+                                ->where('end_time', '>', $request->start_time);
+                        });
+                    })
+                    ->exists();
+
+                if ($conflict) {
+                    $message = "The selected time overlaps with an existing schedule on {$request->day}.";
+                } else {
+                    $insert = new BusinessTiming();
+                    $insert->business_id = getBusinessId();
+                    $insert->day = $request->day;
+                    $insert->start_time = $request->start_time;
+                    $insert->end_time = $request->end_time;
+                    $insert->save();
+
+                    $success = true;
+                    $message = 'Time add successfully.';
+                }
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
-    
+
     public function businessTimingSestroy(Request $request)
     {
         $success = false;
@@ -221,13 +238,12 @@ class SettingController extends Controller
         $data = array();
 
         try {
-                $timing = BusinessTiming::find($request->id);
-                if($timing){
-                    $timing->delete();
-                }
-                $success = true;
-                $message = 'Time deleted successfully.';
-            
+            $timing = BusinessTiming::find($request->id);
+            if ($timing) {
+                $timing->delete();
+            }
+            $success = true;
+            $message = 'Time deleted successfully.';
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }
@@ -259,13 +275,13 @@ class SettingController extends Controller
                 // $message = $validator->errors()->first();
             } else {
 
-                $update = BusinessSetting::where('business_id',getBusinessId())->first();
-                if(!$update){
+                $update = BusinessSetting::where('business_id', getBusinessId())->first();
+                if (!$update) {
                     $update = new BusinessSetting();
                     $update->business_id = getBusinessId();
                 }
-                $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on'?1:0;
-                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on'?1:0;
+                $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on' ? 1 : 0;
+                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on' ? 1 : 0;
                 $update->save();
 
                 $success = true;
@@ -276,11 +292,11 @@ class SettingController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
-    
+
     public function switchBusiness(Request $request, $business_id)
     {
         $user = User::find(Auth::user()->id);
-        if($user){
+        if ($user) {
             $user->business_id = $business_id;
             $user->save();
         }
@@ -288,5 +304,4 @@ class SettingController extends Controller
         Auth::login($user);
         return redirect()->intended(route('business.dashboard', absolute: false));
     }
-    
 }

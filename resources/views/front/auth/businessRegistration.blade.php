@@ -51,6 +51,8 @@
             <h4 class="mb-4">Fill your business Information</h4>
             <hr class="mx-n4 mb-4">
 
+            @if(Auth::check())
+
             <form id="loginForm" action="{{ route('register.business.store') }}" data-action="reload" class="formaction">
                 @csrf
                 <div class="row">
@@ -66,16 +68,7 @@
                         <input type="file" name="business_image" class="avtar_input" id="profile" accept="image/png, image/webp, image/jpeg" />
                     </div>
 
-                    @if(!Auth::check())
-                    <div class="form-group col-lg-6">
-                        <label for="business_name">Your registered email</label>
-                        <input type="email" class="form-control" id="email" name="user_email" required placeholder="Email">
-                    </div>
-                    <div class="form-group col-lg-6">
-                        <label for="business_name">Your password</label>
-                        <input type="password" class="form-control" id="password" name="password" required placeholder="Password">
-                    </div>
-                    @endif
+                
                     <div class="form-group col-lg-6">
                         <label for="business_name">Business name</label>
                         <input type="text" class="form-control" id="business_name" name="business_name" placeholder="First Name">
@@ -149,6 +142,14 @@
                     <span id="loader" class="d-none">Submiting ...</span>
                 </button>
             </form>
+            @else
+            <div class="alert alert-info text-center mt-4" role="alert">
+                <p class="mb-0">please login to your account to register your business</p>
+                <p>if you don't have an account, please register</p>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#login-modal">Login / Sign up</button>
+            </div>
+            @endif
+
         </div>
     </div>
 </section>

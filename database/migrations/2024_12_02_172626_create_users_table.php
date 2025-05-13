@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('first_name', 20);
             $table->string('last_name', 20);
             $table->string('email', 100)->unique()->index();
-            $table->bigInteger('contact')->unique()->index()->nullable();
+            $table->bigInteger('contact')->unique()->nullable();
+            $table->string('google_key')->unique()->index()->nullable();
             $table->bigInteger('role_id')->unsigned()->default(3);
             $table->string('profile', 150)->nullable();
             $table->date('dob')->nullable();

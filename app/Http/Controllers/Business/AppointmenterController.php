@@ -30,7 +30,7 @@ class AppointmenterController extends Controller
     public function index(Request $request)
     {
         $businessSetting = getBusinessSettings();
-        
+
         if ($request->ajax()) {
             $data = Appointmenter::with(['department' => function ($q) {
                 $q->select('id', 'department_name');
@@ -273,16 +273,33 @@ class AppointmenterController extends Controller
                 $message = $validator->errors();
                 // $message = $validator->errors()->first();
             } else {
-                $insert = new BusinessTiming();
-                $insert->business_id = getBusinessId();
-                $insert->appointmenter_id = $id;
-                $insert->day = $request->day;
-                $insert->start_time = $request->start_time;
-                $insert->end_time = $request->end_time;
-                $insert->save();
 
-                $success = true;
-                $message = 'Time add successfully.';
+                $conflict = BusinessTiming::where('business_id', getBusinessId())
+                    ->where('day', $request->day)
+                    ->where('appointmenter_id', $id)
+                    ->where(function ($query) use ($request) {
+                        $query->where(function ($q) use ($request) {
+                            $q->where('start_time', '<', $request->end_time)
+                                ->where('end_time', '>', $request->start_time);
+                        });
+                    })
+                    ->exists();
+
+                if ($conflict) {
+                    $message = "The selected time overlaps with an existing schedule on {$request->day}.";
+                } else {
+
+                    $insert = new BusinessTiming();
+                    $insert->business_id = getBusinessId();
+                    $insert->appointmenter_id = $id;
+                    $insert->day = $request->day;
+                    $insert->start_time = $request->start_time;
+                    $insert->end_time = $request->end_time;
+                    $insert->save();
+
+                    $success = true;
+                    $message = 'Time add successfully.';
+                }
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();
