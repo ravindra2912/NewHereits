@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Front;
 use App\Models\User;
 use App\Models\Business;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Redirect;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Validator;
-
 
 class AuthController extends Controller
 {
@@ -228,5 +230,73 @@ class AuthController extends Controller
             }
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            // Check if the user already exists
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if ($user) {
+                // Update user's Google ID if not set
+                if (!$user->google_id) {
+                    $user->update([
+                        'google_key' => $googleUser->getId(),
+                    ]);
+                }
+                if ($user->role_id == 2 && $user->business_id == null) {
+                    $business = Business::select('id')->where('owner_id', $user->id)->first();
+                    $user->business_id = $business->id;
+                    $user->save();
+                }
+            } else {
+                $name = explode(' ', $googleUser->getName());
+                // Create a new user
+                $user = new User();
+                if ($googleUser->getAvatar() != null) {
+                    $imageUrl = $googleUser->getAvatar();
+
+                    // Generate a clean image name (or use your own naming logic)
+                    $imageName = Str::random(10) . '.png';
+
+                    // Define the path inside the 'public' disk
+                    $path = 'user_images/' . $imageName;
+
+                    // Get the image content from the URL
+                    $imageContents = file_get_contents($imageUrl);
+
+                    // Store the image in storage/app/public/product-images
+                    Storage::disk('public')->put($path, $imageContents);
+
+                    $user->profile =  $path;
+                }
+
+                
+                $user->first_name = $name[0];
+                $user->last_name = isset($name[1]) != null ? $name[1] : $name[0];
+                $user->email = $googleUser->getEmail();
+                $user->google_key = $googleUser->getId();
+                
+                $user->password = Hash::make(Str::random(8)); // Generate a random 8-character password
+                $user->save();
+            }
+
+            // Log the user in
+            Auth::login($user);
+
+            return redirect()->intended('/');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            // Handle exceptions
+            return redirect('/')->with('error', 'Failed to login with Google.');
+        }
     }
 }

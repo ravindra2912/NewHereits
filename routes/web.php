@@ -43,6 +43,9 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'store')->name('login');
     Route::post('Register', 'register')->name('register');
 
+    Route::get('/auth/google', 'redirectToGoogle')->name('auth.google');
+    Route::get('/auth/google/callback', 'handleGoogleCallback')->name('auth.google.callback');
+
 
     Route::get('Register-business', 'registerBusinessView')->name('register.business');
     Route::post('Register-business', 'registerBusiness')->name('register.business.store');

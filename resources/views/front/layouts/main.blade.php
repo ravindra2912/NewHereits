@@ -421,7 +421,7 @@
 							</div>
 							<div class="d-flex  flex-column align-items-center mb-3">
 								<ul class="social-icons social-icons-colored social-icons-circle">
-									<li class="social-icons-google"><a href="#" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
+									<li class="social-icons-google"><a href="{{ route('auth.google') }}" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
 								</ul>
 							</div>
 							<p class="text-2 text-center mb-0">New to Hereits? <a class="btn-link" href="" data-toggle="modal" data-target="#signup-modal" data-dismiss="modal">Sign Up</a></p>
