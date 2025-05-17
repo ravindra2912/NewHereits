@@ -478,6 +478,17 @@
 								</button>
 							</form>
 
+							<div class="d-flex align-items-center my-3">
+								<hr class="flex-grow-1">
+								<span class="mx-2 text-2 text-muted">Or register with Social Profile</span>
+								<hr class="flex-grow-1">
+							</div>
+							<div class="d-flex  flex-column align-items-center mb-3">
+								<ul class="social-icons social-icons-colored social-icons-circle">
+									<li class="social-icons-google"><a href="{{ route('auth.google') }}" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
+								</ul>
+							</div>
+
 							<p class="text-2 text-center mb-0">Already have an account? <a class="btn-link" href="" data-toggle="modal" data-target="#login-modal" data-dismiss="modal">Log In</a></p>
 						</div>
 					</div>
