@@ -250,7 +250,7 @@ function isExpertAvailable($appointmenter_id = null)
             $data = AppointmentBooking::select('id', 'token_number', 'user_id', 'appointmenter_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'status')
                 ->where('booking_date', Carbon::now()->format('Y-m-d'))
                 ->where('appointmenter_id', $appointmenter_id)
-                ->where('status', 'pending');
+                ->where('status', 'confirmed');
             if ($businessSetting->is_appointment_book_with_time_slote) {
                 $data = $data->orderBy('slot_start_time', 'asc');
             } else {

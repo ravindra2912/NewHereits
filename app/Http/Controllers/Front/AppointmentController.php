@@ -95,7 +95,7 @@ class AppointmentController extends Controller
                 $appointmentList = AppointmentBooking::whereDate('booking_date', Carbon::now())
                     ->where('appointmenter_id', $expert->id)
                     ->where('id', '!=', $appointmentFirst->id)
-                    ->where('status', 'pending')
+                    ->where('status', 'confirmed')
                     ->orderBy('token_number', 'asc')
                     ->limit(5)
                     ->get();
