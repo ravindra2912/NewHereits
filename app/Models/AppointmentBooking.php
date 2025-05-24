@@ -16,7 +16,7 @@ class AppointmentBooking extends Model
     
     public function appontmenter()
     {
-        return $this->belongsTo(Appointmenter::class, 'appointmenter_id', 'id')->select('id', 'appointmenter_name', 'appointmenter_image');
+        return $this->belongsTo(Appointmenter::class, 'appointmenter_id', 'id');
     }
     
     public function business()
@@ -26,5 +26,10 @@ class AppointmentBooking extends Model
 
     public function review(){
         return $this->hasOne(ReviewAndRating::class, 'id', 'review_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

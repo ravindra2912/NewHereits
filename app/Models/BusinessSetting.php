@@ -16,6 +16,7 @@ class BusinessSetting extends Model
             'is_appointment_system' => $this->is_appointment_system == '1'? true : false,
             'is_appointment_book_with_time_slote' => $this->is_appointment_book_with_time_slote == '1'? true : false,
             'is_appointment_with_department' => $this->is_appointment_with_department == '1'? true : false,
+            'is_need_booking_confirmetion' => $this->is_need_booking_confirmetion == '1'? true : false,
         ];
         
         return $data;

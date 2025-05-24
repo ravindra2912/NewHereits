@@ -282,6 +282,7 @@ class SettingController extends Controller
                 }
                 $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on' ? 1 : 0;
                 $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on' ? 1 : 0;
+                $update->is_need_booking_confirmetion = isset($request->is_need_booking_confirmetion) && $request->is_need_booking_confirmetion == 'on' ? 1 : 0;
                 $update->save();
 
                 $success = true;

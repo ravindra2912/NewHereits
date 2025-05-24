@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\AppointmentBooking;
 use App\Models\ReviewAndRating;
+use App\Models\User;
+use App\Observers\AppointmentBookingObserver;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\ReviewAndRatingObserver;
+use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         ReviewAndRating::observe(ReviewAndRatingObserver::class);
+        User::observe(UserObserver::class);
+        AppointmentBooking::observe(AppointmentBookingObserver::class);
     }
 }

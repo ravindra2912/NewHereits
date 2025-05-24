@@ -19,7 +19,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Mail\AppointmentConfirmationMail;
+use App\Mail\TokenConfirmationMail;
 use Cart;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -119,8 +122,8 @@ class AppointmentController extends Controller
         try {
             $businessSetting = getBusinessSettings($request->business_id);
             $rules = [
-                'user_name' => $request->appointment_for == 'other'?'required':'nullable',
-                'user_contact' => ($request->appointment_for == 'other'? 'required':'nullable').'|numeric',
+                'user_name' => $request->appointment_for == 'other' ? 'required' : 'nullable',
+                'user_contact' => ($request->appointment_for == 'other' ? 'required' : 'nullable') . '|numeric',
                 'booking_date' => 'required|date',
                 'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
                 'expert_id' => 'required',
@@ -166,7 +169,7 @@ class AppointmentController extends Controller
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_id = $request->expert_id;
                 if ($request->appointment_for == 'self') {
-                    $insert->user_name = Auth::user()->first_name.' ' . Auth::user()->last_name;
+                    $insert->user_name = Auth::user()->first_name . ' ' . Auth::user()->last_name;
                     $insert->user_contact = Auth::user()->contact;
                 } else {
                     $insert->user_name = $request->user_name;
@@ -181,7 +184,7 @@ class AppointmentController extends Controller
                     $insert->slot_start_time = Carbon::parse($request->booking_date . ' ' . $timeslote[0]);
                     $insert->slot_end_time = Carbon::parse($request->booking_date . ' ' . $timeslote[1]);
                 }
-
+                $insert->status =  $businessSetting->is_need_booking_confirmetion ? 'pending' : 'confirmed';
                 $insert->save();
 
                 $success = true;

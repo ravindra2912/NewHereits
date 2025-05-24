@@ -203,6 +203,7 @@ function getBusinessSettings($business_id = null)
             'is_appointment_system' => false,
             'is_appointment_book_with_time_slote' => false,
             'is_appointment_with_department' => false,
+            'is_need_booking_confirmetion' => false,
         ];
     }
     return (object)$data;

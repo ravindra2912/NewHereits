@@ -22,6 +22,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Mail\AppointmentCancelledMail;
+use App\Mail\AppointmentComplitedMail;
+use App\Mail\AppointmentConfirmationMail;
+use App\Mail\TokenCancelledMail;
+use App\Mail\TokenComplitedMail;
+use App\Mail\TokenConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentBookingController extends Controller
 {
@@ -240,13 +247,11 @@ class AppointmentBookingController extends Controller
                 $insert->user_contact = $request->user_contact;
                 $insert->booking_date = $request->booking_date;
                 $insert->status = $request->status;
-
                 if ($businessSetting->is_appointment_book_with_time_slote) {
                     $timeslote = explode(' - ', $request->timeslote);
                     $insert->slot_start_time = Carbon::parse($request->booking_date . ' ' . $timeslote[0]);
                     $insert->slot_end_time = Carbon::parse($request->booking_date . ' ' . $timeslote[1]);
                 }
-
                 $insert->save();
 
                 $success = true;

@@ -36,7 +36,7 @@ return [
 
     "week_day_name" => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 'Sunday'],
 
-    "appointment_status" => ["pending", "completed", "cancel"],
+    "appointment_status" => ["pending",'confirmed', "completed", "cancel"],
 
     "faq_type" => ['General', 'Business', 'Appointment', 'Services', 'Product'],
 

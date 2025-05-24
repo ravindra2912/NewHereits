@@ -16,6 +16,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Mail\UserWelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -24,6 +26,9 @@ class HomeController extends Controller
      */
     public function index(Request $request): View
     {
+
+        // Mail::to('goswamirvi@gmail.com')->send(new UserWelcomeMail(Auth::user()));
+
         // session()->forget('hereitsLocation');
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
