@@ -460,10 +460,10 @@ function getAddressOnLatLong($latitude, $longitude)
             'User-Agent' => 'hereits/1.0 (hereits@gmail.com)'
         ])->get("https://nominatim.openstreetmap.org/reverse", [
             'format' => 'json',
-            'lat' => 21.2797773,
-            'lon' => 72.9482690,
-            // 'lat' => $latitude,
-            // 'lon' => $longitude,
+            // 'lat' => 21.2797773,
+            // 'lon' => 72.9482690,
+            'lat' => $latitude,
+            'lon' => $longitude,
         ]);
 
         if ($response->successful()) {

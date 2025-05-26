@@ -145,13 +145,13 @@
 /* banner */
 
 .hero-wrap:before {
-    content: "";
-    background: url("../img/shape-12.webp");
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    opacity: 0.06;
-  }
+	content: "";
+	background: url("../img/shape-12.webp");
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	opacity: 0.06;
+}
 
 .banner-taxt-container {
 	padding-top: 60px;
@@ -237,11 +237,23 @@
 	font-size: 19px;
 }
 
+.store-distance {
+	bottom: 2px;
+	font-size: 12px;
+	padding: 0px 3px;
+}
+
 @media (max-width: 767px) {
 	.store-fav {
 		padding: 6px 5px 5px 5px;
 		font-size: 23px;
 		/* right: 10px; */
+	}
+
+	.store-distance {
+		bottom: 2px;
+		font-size: 10px;
+		padding: 0px 3px;
 	}
 
 	.p-cart-btn {
@@ -640,7 +652,7 @@
 	margin-bottom: 22px; */
 }
 
-.login-signup ul.navbar-nav > li:hover > a:not(.btn) {
+.login-signup ul.navbar-nav>li:hover>a:not(.btn) {
 	color: black;
 }
 

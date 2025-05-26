@@ -699,6 +699,8 @@
 		function successLatlong(position) {
 			locationData['locationType'] = 'currentLocation';
 			locationData['city'] = locationData['area'] = '';
+			locationData['lat'] = 21.2797773;
+			locationData['long'] = 72.9482690;
 			locationData['lat'] = position.coords.latitude;
 			locationData['long'] = position.coords.longitude;
 			setLocationData();

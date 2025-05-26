@@ -74,7 +74,9 @@
         @foreach($businesses as $res)
         <a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="col-lg-2 col-md-3 col-sm-4 col-6 p-1">
           <div class="card shadow-md border-0 mb-2">
-
+            @if(isset($res->distance) && !empty($res->distance))
+            <span class="cf store-fav store-distance border rounded-pill text-nowrap" style="top:3px; left:3px; bottom:unset;" >{{ round($res->distance, 2) }} km</span>
+            @endif
             <div class="pt-2 pl-2 pr-2"><img src="{{ getImage($res->business_image) }}" class="card-img-top d-block store-img pb-2" alt="{{ $res->name }}"></div>
             <h5 class="store-name text-3 mb-2 text-center text-black-500" style="padding: 2px 10px 2px 10px;">{{ $res->name }}</h5>
           </div>

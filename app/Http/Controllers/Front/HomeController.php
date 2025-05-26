@@ -32,31 +32,35 @@ class HomeController extends Controller
         // session()->forget('hereitsLocation');
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id');
-        if($userLocationInfo){
-            if($userLocationInfo['locationType'] == 'manual'){
-                if($userLocationInfo['area'] != ''){
+        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude');
+        if ($userLocationInfo) {
+            if ($userLocationInfo['locationType'] == 'manual') {
+                if ($userLocationInfo['area'] != '') {
                     $businesses = $businesses->where('area_id', $userLocationInfo['area']);
                 }
-                if($userLocationInfo['city'] != ''){
+                if ($userLocationInfo['city'] != '') {
                     $businesses = $businesses->where('city_id', $userLocationInfo['city']);
                 }
-                
+            } else if ($userLocationInfo['locationType'] == 'currentLocation') {
+                if ($userLocationInfo['lat'] != '' && $userLocationInfo['long'] != '') {
+                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], 5); // 5 KM radius
+
+                }
             }
         }
         $businesses = $businesses->where('status', 'active')->limit(8)->get();
         $businessCategory = getBusinessCategory();
         // $businessCategory = BusinessCategory::select('id', 'name', 'image', 'slug')->where('status', 'active')->limit(8)->get();
-       
+
         if (Auth::check() && Auth::user()->role_id != 1) {
             $fevoriteBusinesses = Favorite::select('id', 'business_id')
-            ->with(['business' => function($q){
-               return $q->select('id', 'name', 'slug', 'business_image');
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->where('favorite_type', 'business')
-            ->limit(8)
-            ->get();
+                ->with(['business' => function ($q) {
+                    return $q->select('id', 'name', 'slug', 'business_image');
+                }])
+                ->where('user_id', Auth::user()->id)
+                ->where('favorite_type', 'business')
+                ->limit(8)
+                ->get();
         }
 
         // dd($businesses->toArray(), $businessCategory->toArray());
@@ -71,17 +75,17 @@ class HomeController extends Controller
         });
         return view('front.faq', compact('faqs'));
     }
-    
+
     public function aboutUs(Request $request): View
     {
         return view('front.about-us');
     }
-    
+
     public function contactUs(Request $request): View
     {
         return view('front.contact-us');
     }
-    
+
     public function privacyPolicy(Request $request): View
     {
         $privacy = Cache::rememberForever('PrivacyPolicy', function () { // 1440/60 = 1 day
@@ -97,7 +101,7 @@ class HomeController extends Controller
         });
         return view('front.term-and-condition', compact('term'));
     }
-    
+
     public function CopyRight(Request $request): View
     {
         $CopyRight = Cache::rememberForever('CopyRight', function () { // 1440/60 = 1 day

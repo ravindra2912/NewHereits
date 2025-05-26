@@ -30,7 +30,8 @@ class BusinessController extends Controller
     public function getBusiness(Request $request)
     {
         $userLocationInfo = getUserLocationInfo();
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'rating', 'pincode')
+        $businesses = Business::query()
+            ->select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'rating', 'pincode', 'latitude', 'longitude')
             ->with([
                 'businessCategory',
                 'country',
@@ -40,17 +41,21 @@ class BusinessController extends Controller
             ])
             ->where('status', 'active');
 
-            if($userLocationInfo){
-                if($userLocationInfo['locationType'] == 'manual'){
-                    if($userLocationInfo['area'] != ''){
-                        $businesses = $businesses->where('area_id', $userLocationInfo['area']);
-                    }
-                    if($userLocationInfo['city'] != ''){
-                        $businesses = $businesses->where('city_id', $userLocationInfo['city']);
-                    }
-                    
+        if ($userLocationInfo) {
+            if ($userLocationInfo['locationType'] == 'manual') {
+                if ($userLocationInfo['area'] != '') {
+                    $businesses = $businesses->where('area_id', $userLocationInfo['area']);
+                }
+                if ($userLocationInfo['city'] != '') {
+                    $businesses = $businesses->where('city_id', $userLocationInfo['city']);
+                }
+            } else if ($userLocationInfo['locationType'] == 'currentLocation') {
+                if ($userLocationInfo['lat'] != '' && $userLocationInfo['long'] != '') {
+                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], 5); // 5 KM radius
+
                 }
             }
+        }
         if (isset($request->category) && !empty($request->category)) {
             $cat = BusinessCategory::where('slug', $request->category)->first('id');
             if ($cat) {
@@ -75,7 +80,8 @@ class BusinessController extends Controller
             }
         }
 
-        $data['list'] =  view('front.business.elements.storeList', compact('businesses'))->render();
+        $userLocationInfos = getUserLocationInfo();
+        $data['list'] =  view('front.business.elements.storeList', compact('businesses', 'userLocationInfos'))->render();
         $data['counts'] =  $businesses->count();
         return response()->json($data);
     }
@@ -95,14 +101,14 @@ class BusinessController extends Controller
                                 $query->select('id', 'first_name', 'last_name', 'profile');
                             }
                         ])
-                    ->select('id', 'business_id', 'user_id', 'rating', 'review', 'created_at')
-                    ->limit(6);
+                        ->select('id', 'business_id', 'user_id', 'rating', 'review', 'created_at')
+                        ->limit(6);
                 }
             ],)
             ->where('slug', $slug)
             ->where('status', 'active')
             ->first();
-            
+
         if ($business) {
             // review and rating count
             $business->ReviewAndRating = ReviewAndRating::select(
@@ -115,9 +121,9 @@ class BusinessController extends Controller
                 // DB::raw('AVG(rating) as avgRating'),
                 // DB::raw('SELECT * FROM review_and_ratings WHERE business_id = '.$business->id.' AND review_type = "business" AND user_id = '.Auth::user()->id.' as is_reviewed'),
             )
-            ->where('business_id', $business->id)
-            // ->where('review_type', 'business')
-            ->first();
+                ->where('business_id', $business->id)
+                // ->where('review_type', 'business')
+                ->first();
 
             // dd($business->ReviewAndRating->toArray());
 
@@ -139,24 +145,25 @@ class BusinessController extends Controller
                 $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', $business->id)->get();
             }
             $appontmenters = Appointmenter::select('id', 'business_id', 'title', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug', 'rating')
-            ->with(['department',
-                'business' => function ($q) {
+                ->with([
+                    'department',
+                    'business' => function ($q) {
                         return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
                     },
                     'businessSetting'
-            ])
-            ->where('business_id', $business->id)
-            ->where('status', 'active')
-            ->get();
+                ])
+                ->where('business_id', $business->id)
+                ->where('status', 'active')
+                ->get();
 
             $expert = array();
             $timeSlots = array();
             $appontmentersHtml = '';
-            if(count( $appontmenters) == 1){
+            if (count($appontmenters) == 1) {
                 $expert = $appontmenters[0];
                 $expert->getLastBooking = isExpertAvailable($expert->id);
                 $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
-            }else{
+            } else {
                 $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();
             }
 
