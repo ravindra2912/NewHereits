@@ -31,9 +31,8 @@ class CommonController extends Controller
     {
         $areas = getCitieArea($request->city_id);
         return response()->json($areas);
-
     }
-    
+
     //*************** for front location Start******************* */
     public function getAreas(Request $request)
     {
@@ -89,7 +88,7 @@ class CommonController extends Controller
 
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
-    
+
     public function getLocationInfo(Request $request)
     {
         $success = false;
@@ -108,28 +107,59 @@ class CommonController extends Controller
                 $message = $validator->errors()->first();
             } else {
                 $data = $request->data;
-                if($data['locationType'] == 'manual'){
-                    if($data['area'] != null){
-                        $areaData = CityArea::select('id', 'city_id', 'area_name', 'pincode', 'latitude','longitude')
-                            ->with(['city' => function($e){
+                // dd($data);
+                if ($data['locationType'] == 'manual') {
+                    if ($data['area'] != null) {
+                        $areaData = CityArea::select('id', 'city_id', 'area_name', 'pincode', 'latitude', 'longitude')
+                            ->with(['city' => function ($e) {
                                 $e->select('id', 'name');
-                            }])    
+                            }])
                             ->find($data['area']);
-                        
-                        if($areaData){
-                            $data['fullAddress'] =  $areaData->area_name .", ". $areaData->city->name;
-                        }
 
-                    }else if($data['city'] != null){
+                        if ($areaData) {
+                            $data['fullAddress'] =  $areaData->area_name . ", " . $areaData->city->name;
+                            $data['city'] =  $areaData->city_id;
+                        }
+                    } else if ($data['city'] != null) {
                         $cityData = City::select('id', 'name')->find($data['city']);
-                        if($cityData){
+                        if ($cityData) {
                             $data['fullAddress'] =  $cityData->name;
                         }
                     }
+                } else if ($data['locationType'] == 'currentLocation') {
+                    $data['fullAddress'] = getAddressOnLatLong($data['lat'], $data['long']);
                 }
 
-                session()->put('hereitsLocation', $data);
-                
+                // dd($data);
+                // session()->forget('hereitsLocation');
+                // $expiration = now()->addDays(7);
+                // session()->put('hereitsLocation', [
+                //     'data' => $data,
+                //     'expires_at' => $expiration,
+                // ]);
+
+                // Retrieve the existing session data
+                $location = session('hereitsLocation');
+
+                // Check if the session data exists
+                if ($location) {
+                    // Update the 'data' field
+                    $location['data'] = $data;
+
+                    // Store the updated array back into the session
+                    session()->put('hereitsLocation', $location);
+                } else {
+                    // If the session data doesn't exist, you can initialize it
+                    session()->put('hereitsLocation', [
+                        'data' => $data,
+                        'expires_at' => now()->addMinutes(10), // Set your desired expiration
+                    ]);
+                }
+
+                // $data = getUserLocationInfo();
+                // dd($data);
+                // session()->put('hereitsLocation', $data);
+
                 $success = true;
                 $message = 'success';
             }

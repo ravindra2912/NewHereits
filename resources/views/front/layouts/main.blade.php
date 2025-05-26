@@ -141,7 +141,7 @@
 							<ul class="navbar-nav">
 								<li class="">
 									<a class="pr-0 mr-0 location-contaiter" href="#" data-toggle="modal" data-target="#location-modal">
-										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i> {{ session('hereitsLocation') ? session('hereitsLocation')['fullAddress'] : null }} </span>
+										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i> {{ getUserLocationInfo() ? getUserLocationInfo()['fullAddress'] : null }} </span>
 									</a>
 
 									<!-- Location Modal =========================== -->
@@ -152,25 +152,47 @@
 													<button type="button" class="close position-absolute location-close-btn d-none" style="right: 15px; top: 15px; z-index: 10;" data-dismiss="modal" aria-label="Close">
 														<span aria-hidden="true">&times;</span>
 													</button>
-													<div class="row">
-														<div class="col-11 col-md-10 mx-auto city-selection">
-															<h5>Cities</h5>
-															<div class="d-flex overflow-auto">
-																@foreach(getAvailableCities() as $val)
-																<div class="mr-2">
-																	<input type="radio" name="location_city" value="{{$val->id}}" id="city-{{$val->id}}" onchange="getArea()" />
-																	<label class="radio-lable" for="city-{{$val->id}}">{{$val->name}}</label>
-																</div>
-																@endforeach
-															</div>
-
-														</div>
-														<div class="col-11 col-md-10 mx-auto search-input-line d-none">
-															<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area (Optional)">
-															<?php $cites = array() ?>
-															<ul class="p-0" id="location-area-list">
+													<div class="row container">
+														<div class="col-12">
+															<ul class="nav nav-tabs" id="myTab" role="tablist">
+																<li class="nav-item">
+																	<a class="nav-link active" id="locationbase-tab" data-toggle="tab" href="#locationbase" role="tab" aria-controls="locationbase" aria-selected="true">Loaction</a>
+																</li>
+																<li class="nav-item">
+																	<a class="nav-link" id="manual-tab" data-toggle="tab" href="#manual" role="tab" aria-controls="manual" aria-selected="false">manual</a>
+																</li>
 															</ul>
+															<div class="tab-content my-3" id="myTabContent">
+																<div class="tab-pane fade show active" id="locationbase" role="tabpanel" aria-labelledby="locationbase-tab">
+																	<button class="btn btn-outline-danger btn-block" onclick="setLocation('currentLocation','')"><i class="fas fa-map-marker-alt pr-1"></i> Your current location</button>
+																</div>
+																<div class="tab-pane fade" id="manual" role="tabpanel" aria-labelledby="manual-tab">
+																	<div class="row">
+																		<div class="col-11 mx-auto city-selection">
+																			<h5>Cities</h5>
+																			<div class="d-flex overflow-auto">
+																				@foreach(getAvailableCities() as $val)
+																				<div class="mr-2">
+																					<input type="radio" name="location_city" value="{{$val->id}}" id="city-{{$val->id}}" onchange="getArea()" />
+																					<label class="radio-lable" for="city-{{$val->id}}">{{$val->name}}</label>
+																				</div>
+																				@endforeach
+																			</div>
+
+																		</div>
+																		<div class="col-11 col-md-11 mx-auto search-input-line d-none">
+																			<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area (Optional)">
+																			<?php $cites = array() ?>
+																			<ul class="p-0" id="location-area-list">
+																			</ul>
+																		</div>
+																	</div>
+																</div>
+															</div>
 														</div>
+
+
+
 													</div>
 												</div>
 											</div>
@@ -390,8 +412,8 @@
 							</ul>
 							<p class="text-4 font-weight-300 text-muted text-center mb-4">We are glad to see you again!</p>
 							<p class="text-3 text-center text-danger mb-4" id="login_msg"></p>
-											
-							
+
+
 							<form id="loginForm" action="{{ route('login') }}" data-action="reload" class="formaction">
 								@csrf
 								<div class="form-group">
@@ -575,16 +597,18 @@
 		// ********* location model Start ******************
 
 		$(document).ready(function() {
-			if (locationData == null || locationData == '') {
+			var pathname = window.location.pathname;
+			if ((locationData == null || locationData == '') && (pathname == '/' || pathname == '/businesses')) {
 				$('#location-modal').modal('show');
 			} else {
-				if (locationData['city'] != '') {
-					$('input[name="location_city"][value="' + locationData['city'] + '"]').prop("checked", true);
-					$('.search-input-line').removeClass('d-none')
-					$('.location-close-btn').removeClass('d-none');
-					
+				if (locationData.locationType == 'manual') {
+					$('#manual-tab').click();
+					if (locationData['city'] != '') {
+						$('input[name="location_city"][value="' + locationData['city'] + '"]').prop("checked", true);
+						$('.search-input-line').removeClass('d-none')
+						$('.location-close-btn').removeClass('d-none');
+					}
 				}
-
 			}
 
 		});
@@ -656,8 +680,57 @@
 				locationData['locationType'] = 'currentLocation';
 				locationData['city'] = '';
 				locationData['area'] = '';
+
+				//get current latitude and longitude
+
+				if (navigator.geolocation) {
+					document.getElementById("preloader").style.display = "block";
+					navigator.geolocation.watchPosition(successLatlong, errorLatlong);
+				} else {
+					alert("Geolocation is not supported by this browser.")
+				}
+				return;
 			}
 
+			setLocationData(locationData, type);
+
+			$('.location-close-btn').on('click', function() {
+				if (is_city_changes) {
+					window.location.reload();
+				}
+			});
+		}
+
+		function successLatlong(position) {
+			locationData['locationType'] = 'currentLocation';
+			locationData['city'] = locationData['area'] = '';
+			locationData['lat'] = position.coords.latitude;
+			locationData['long'] = position.coords.longitude;
+			setLocationData();
+		}
+
+		function errorLatlong(error) {
+			switch (error.code) {
+				case error.PERMISSION_DENIED:
+					alert("User denied the request for Geolocation.")
+					break;
+				case error.POSITION_UNAVAILABLE:
+					alert("Location information is unavailable.")
+					break;
+				case error.TIMEOUT:
+					alert("The request to get user location timed out.")
+					break;
+				case error.UNKNOWN_ERROR:
+					alert("An unknown error occurred.")
+					break;
+			}
+			document.getElementById("preloader").style.display = "none";
+		}
+
+		function setLocationData(newlocationData = '', type = '') {
+			if (newlocationData != '') {
+				locationData = newlocationData;
+			}
 			$.ajax({
 				type: "get",
 				url: "{{ route('getLocationInfo') }}",
@@ -673,9 +746,15 @@
 				},
 				success: function(res) {
 					if (res.success) {
-						if (type == 'area') {
+						console.log(res.data)
+						if (res.data.locationType == 'manual') {
+							if (type == 'area') {
+								window.location.reload();
+							}
+						} else {
 							window.location.reload();
 						}
+
 						$('.location-close-btn').removeClass('d-none');
 					} else {
 						toastr.error(res.message);
@@ -686,12 +765,6 @@
 					console.error("Error: " + error);
 					alert("There was an error fetching areas.");
 					document.getElementById("preloader").style.display = "none";
-				}
-			});
-
-			$('.location-close-btn').on('click', function() {
-				if(is_city_changes){
-					window.location.reload();
 				}
 			});
 		}

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 
@@ -371,7 +372,11 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
 
 function getUserLocationInfo()
 {
-    return session('hereitsLocation');
+    $data = session('hereitsLocation');
+    if ($data && $data['data'] != null) {
+        return $data['data'];
+    }
+    return null;
 }
 
 function getIpDetails()
@@ -437,18 +442,39 @@ function getAddressOnLatLong($latitude, $longitude)
     $client = new Client();
 
     if (empty($apiKey)) {
-        $response = $client->get('https://nominatim.openstreetmap.org/reverse', [
-            'query' => [
-                'lat' => $latitude,
-                'lon' => $longitude,
-                'format' => 'json',
-            ],
+        // $response = $client->get('https://nominatim.openstreetmap.org/reverse', [
+        //     'query' => [
+        //         'lat' => $latitude,
+        //         'lon' => $longitude,
+        //         'format' => 'json',
+        //     ],
+        // ]);
+
+        // $data = json_decode($response->getBody(), true);
+
+        // if (!empty($data)) {
+        //     return $data['display_name'];
+        // }
+
+        $response = Http::withHeaders([
+            'User-Agent' => 'hereits/1.0 (hereits@gmail.com)'
+        ])->get("https://nominatim.openstreetmap.org/reverse", [
+            'format' => 'json',
+            'lat' => 21.2797773,
+            'lon' => 72.9482690,
+            // 'lat' => $latitude,
+            // 'lon' => $longitude,
         ]);
 
-        $data = json_decode($response->getBody(), true);
-
-        if (!empty($data)) {
-            return $data['display_name'];
+        if ($response->successful()) {
+            $data = $response->json();
+            if($data['address']){
+                return $data['address']['village']. ', '. $data['address']['state_district'];
+            }
+            return null;
+        } else {
+            return null;
+            // return 'Error: Unable to retrieve address.';
         }
     } else {
         $response = $client->get('https://api.opencagedata.com/geocode/v1/json', [
