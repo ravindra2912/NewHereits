@@ -677,12 +677,7 @@
 			} else if (type == 'area') {
 				locationData['area'] = val;
 			} else if (type == 'currentLocation') {
-				locationData['locationType'] = 'currentLocation';
-				locationData['city'] = '';
-				locationData['area'] = '';
-
 				//get current latitude and longitude
-
 				if (navigator.geolocation) {
 					document.getElementById("preloader").style.display = "block";
 					navigator.geolocation.watchPosition(successLatlong, errorLatlong);
