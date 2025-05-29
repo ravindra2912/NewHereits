@@ -10,6 +10,10 @@ use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\BusinessController;
 use App\Http\Controllers\Front\AppointmentController;
 
+Route::get('test-map', function(){
+    return view('testmap');
+});
+
 Route::controller(CommonController::class)->group(function () {
     Route::get('get-areas', 'getAreas')->name('getAreas');
     Route::get('get-location-info', 'getLocationInfo')->name('getLocationInfo');
