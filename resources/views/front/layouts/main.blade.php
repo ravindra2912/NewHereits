@@ -165,6 +165,8 @@
 															<div class="tab-content my-3" id="myTabContent">
 																<div class="tab-pane fade show active" id="locationbase" role="tabpanel" aria-labelledby="locationbase-tab">
 																	<button class="btn btn-outline-danger btn-block" onclick="setLocation('currentLocation','')"><i class="fas fa-map-marker-alt pr-1"></i> Your current location</button>
+																	<h4>OR</h4>
+																	
 																</div>
 																<div class="tab-pane fade" id="manual" role="tabpanel" aria-labelledby="manual-tab">
 																	<div class="row">
@@ -417,7 +419,7 @@
 							<form id="loginForm" action="{{ route('login') }}" data-action="reload" class="formaction">
 								@csrf
 								<div class="form-group">
-									<input type="email" class="form-control" id="email" name="email" required placeholder="Email">
+									<input type="email" class="form-control" id="login-email" name="email" required placeholder="Email">
 								</div>
 								<div class="form-group">
 									<input type="password" class="form-control" id="password" name="password" required placeholder="Password">
@@ -483,10 +485,10 @@
 									<input type="number" class="form-control border-2" id="contact" name="contact" placeholder="Contact">
 								</div>
 								<div class="form-group">
-									<input type="email" class="form-control border-2" id="email" name="email" placeholder="Email Id">
+									<input type="email" class="form-control border-2" id="up-email" name="email" placeholder="Email Id">
 								</div>
 								<div class="form-group">
-									<input type="password" class="form-control border-2" id="password" name="password" placeholder="Password">
+									<input type="password" class="form-control border-2" id="up-password" name="password" placeholder="Password">
 								</div>
 								<div class="form-group my-4">
 									<div class="form-check text-2 custom-control custom-checkbox">
@@ -536,7 +538,7 @@
 							<p class="text-3 text-center mb-4" id="forgot_msg"></p>
 							<form id="forgotForm" class="form-border" method="post">
 								<div class="form-group">
-									<input type="text" class="form-control border-2" id="email" name="email" required placeholder="Enter Email">
+									<input type="text" class="form-control border-2" id="forgot-email" name="email" required placeholder="Enter Email">
 								</div>
 								<button class="btn btn-primary btn-block my-4" type="submit">Continue</button>
 							</form>
@@ -592,6 +594,12 @@
 	</script>
 
 	@stack('js')
+
+
+
+	<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDH6OcgfnirI5a7pmMSUInirj3ZwoOlGU&libraries=places"></script> -->
+
+	
 
 	<script>
 		// ********* location model Start ******************
@@ -765,6 +773,8 @@
 				}
 			});
 		}
+
+
 
 		// ********* location model End ******************
 
