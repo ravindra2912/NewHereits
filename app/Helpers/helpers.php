@@ -438,6 +438,7 @@ function getLatLongOnAddress($address)
 
 function getAddressOnLatLong($latitude, $longitude)
 {
+    // $apiKey = 'AIzaSyBDH6OcgfnirI5a7pmMSUInirj3ZwoOlGU'; //get your api key from https://opencagedata.com/
     $apiKey = ''; //get your api key from https://opencagedata.com/
     $client = new Client();
 
@@ -460,16 +461,21 @@ function getAddressOnLatLong($latitude, $longitude)
             'User-Agent' => 'hereits/1.0 (hereits@gmail.com)'
         ])->get("https://nominatim.openstreetmap.org/reverse", [
             'format' => 'json',
-            // 'lat' => 21.2797773,
-            // 'lon' => 72.9482690,
+            // 'lat' => 21.085221,
+            // 'lon' => 71.771351,
             'lat' => $latitude,
             'lon' => $longitude,
         ]);
 
         if ($response->successful()) {
             $data = $response->json();
-            if($data['address']){
-                return $data['address']['village']. ', '. $data['address']['state_district'];
+            if ($data['address']) {
+                if(isset($data['address']['village'])){
+                    return $data['address']['village'] . ', ' . $data['address']['state_district'];
+                }else{
+                    return $data['address']['town'];
+                }
+                
             }
             return null;
         } else {
@@ -477,15 +483,14 @@ function getAddressOnLatLong($latitude, $longitude)
             // return 'Error: Unable to retrieve address.';
         }
     } else {
-        $response = $client->get('https://api.opencagedata.com/geocode/v1/json', [
-            'query' => [
-                'q' => $latitude . ',' . $longitude,
-                'key' => $apiKey,
-            ],
-        ]);
+        $apiKey = env('GOOGLE_MAPS_API_KEY');
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$apiKey}";
 
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get($url);
         $data = json_decode($response->getBody(), true);
 
+        dd($data);
         if (!empty($data['results'])) {
             return $data['results'][0]['formatted'];
         }
