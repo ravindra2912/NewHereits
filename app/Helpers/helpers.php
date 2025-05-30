@@ -468,10 +468,13 @@ function getAddressOnLatLong($latitude, $longitude)
         ]);
 
         if ($response->successful()) {
+            
             $data = $response->json();
             if ($data['address']) {
                 if(isset($data['address']['village'])){
                     return $data['address']['village'] . ', ' . $data['address']['state_district'];
+                }if(isset($data['address']['county'])){
+                    return $data['address']['county'] . ', ' . $data['address']['state_district'];
                 }else{
                     return $data['address']['town'];
                 }

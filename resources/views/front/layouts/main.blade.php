@@ -717,8 +717,8 @@
 			}
 			locationData['locationType'] = 'currentLocation';
 			locationData['city'] = locationData['area'] = '';
-			locationData['lat'] = 21.0823701;
-			locationData['long'] = 71.7713301;
+			// locationData['lat'] = 21.0823701; //mahuva 
+			// locationData['long'] = 71.7713301;
 			// locationData['lat'] = 21.2797773; //surat
 			// locationData['long'] = 72.9482690;
 			locationData['lat'] = position.coords.latitude;
