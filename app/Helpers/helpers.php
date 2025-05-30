@@ -373,7 +373,7 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
 function getUserLocationInfo()
 {
     $data = session('hereitsLocation');
-    if ($data && $data['data'] != null) {
+    if ($data && isset($data['data']) != null) {
         return $data['data'];
     }
     return null;
@@ -460,7 +460,7 @@ function getAddressOnLatLong($latitude, $longitude)
         $response = Http::withHeaders([
             'User-Agent' => 'hereits/1.0 (hereits@gmail.com)'
         ])->get("https://nominatim.openstreetmap.org/reverse", [
-            'format' => 'json',
+            'format' => 'json', //jsonv2
             // 'lat' => 21.085221,
             // 'lon' => 71.771351,
             'lat' => $latitude,
