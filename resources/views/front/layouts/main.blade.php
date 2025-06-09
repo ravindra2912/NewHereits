@@ -644,8 +644,12 @@
 			}
 			const place = autocomplete.getPlace();
 
+			// console.log(place.address_components);
+			// return;
+
 			var address = '';
 			var administrative_area_level_3 = '';
+			var administrative_area_level_1 = '';
 			var neighborhood = '';
 			var locality = '';
 			for (const component of place.address_components) {
@@ -655,23 +659,52 @@
 					case "neighborhood": {
 						neighborhood = component.long_name
 						break;
+					}case "sublocality_level_1": {
+						neighborhood = component.long_name
+						break;
+					}
+					case "sublocality": {
+						neighborhood = component.long_name
+						break;
 					}
 					case "locality": {
 						locality = component.short_name;
 						break;
-					}case "administrative_area_level_3": {
+					}
+					case "administrative_area_level_3": {
 						administrative_area_level_3 = component.short_name;
+						break;
+					}
+					case "administrative_area_level_1": {
+						administrative_area_level_1 = component.short_name;
 						break;
 					}
 				}
 			}
 
-			if(neighborhood != ''){
-				address = neighborhood +', '+locality;
-			}else{
-				address = locality +', '+administrative_area_level_3;
+			// if(neighborhood != ''){
+			// 	address = neighborhood +', '+locality;
+			// }else{
+			// 	address = locality +', '+administrative_area_level_3;
+			// }
+
+
+			// Check and assign area
+			if (neighborhood && neighborhood !== '') {
+				address = neighborhood;
 			}
 
+			// Append locality or administrative_area_level_3
+			if (locality && locality !== '') {
+				address += address === '' ? locality : ', ' + locality;
+			} else {
+				address += address === '' ? administrative_area_level_3 : ', ' + administrative_area_level_3;
+			}
+
+			// Append administrative_area_level_1 if locality equals administrative_area_level_3
+			if (neighborhood == '' && locality === administrative_area_level_3) {
+				address += address === '' ? administrative_area_level_1 : ', ' + administrative_area_level_1;
+			}
 
 			// ✅ Get Latitude and Longitude
 			if (place.geometry && place.geometry.location) {
@@ -715,7 +748,8 @@
 						$('.search-input-line').removeClass('d-none')
 						$('.location-close-btn').removeClass('d-none');
 					}
-				}if (locationData.locationType == 'currentLocation') {
+				}
+				if (locationData.locationType == 'currentLocation') {
 					$('.location-close-btn').removeClass('d-none');
 				}
 			}
