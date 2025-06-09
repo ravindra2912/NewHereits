@@ -147,70 +147,6 @@
 										<span class="location ml-sm-2"><i class="fas fa-map-marker-alt pr-1"></i> {{ getUserLocationInfo() ? getUserLocationInfo()['fullAddress'] : null }} </span>
 									</a>
 
-									<!-- Location Modal =========================== -->
-									<div id="location-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-										<div class="modal-dialog modal-lg h-75 modal-dialog-centered" role="document">
-											<div class="modal-content h-75 border-0">
-												<div class="modal-body py-4 px-0">
-													<button type="button" class="close position-absolute location-close-btn d-none" style="right: 15px; top: 15px; z-index: 10;" data-dismiss="modal" aria-label="Close">
-														<span aria-hidden="true">&times;</span>
-													</button>
-													<div class="row container">
-														<div class="col-12">
-															<ul class="nav nav-tabs" id="myTab" role="tablist">
-																<li class="nav-item">
-																	<a class="nav-link active" id="locationbase-tab" data-toggle="tab" href="#locationbase" role="tab" aria-controls="locationbase" aria-selected="true">Loaction</a>
-																</li>
-																<li class="nav-item">
-																	<a class="nav-link" id="manual-tab" data-toggle="tab" href="#manual" role="tab" aria-controls="manual" aria-selected="false">manual</a>
-																</li>
-															</ul>
-															<div class="tab-content my-3" id="myTabContent">
-																<div class="tab-pane fade show active" id="locationbase" role="tabpanel" aria-labelledby="locationbase-tab">
-																	<button class="btn btn-outline-danger btn-block" onclick="setLocation('currentLocation','')"><i class="fas fa-map-marker-alt pr-1"></i> Your current location</button>
-																	<h4 class="text-center my-3">OR</h4>
-																	<input
-																		class="form-control"
-																		id="locationSearch"
-																		placeholder="Enter your address"
-																		autocomplete="off" />
-																</div>
-																<div class="tab-pane fade" id="manual" role="tabpanel" aria-labelledby="manual-tab">
-																	<div class="row">
-																		<div class="col-11 mx-auto city-selection">
-																			<h5>Cities</h5>
-																			<div class="d-flex overflow-auto">
-																				@foreach(getAvailableCities() as $val)
-																				<div class="mr-2">
-																					<input type="radio" name="location_city" value="{{$val->id}}" id="city-{{$val->id}}" onchange="getArea()" />
-																					<label class="radio-lable" for="city-{{$val->id}}">{{$val->name}}</label>
-																				</div>
-																				@endforeach
-																			</div>
-
-																		</div>
-																		<div class="col-11 col-md-11 mx-auto search-input-line d-none">
-																			<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area (Optional)">
-																			<?php $cites = array() ?>
-																			<ul class="p-0" id="location-area-list">
-																			</ul>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</div>
-
-
-
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-
-
-									<!-- Location Modal End -->
-
 									<!-- <a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
 										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
 									</a> -->
@@ -404,7 +340,69 @@
 ============================================= -->
 	<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
 
+	<!-- Location Modal =========================== -->
+	<div id="location-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-lg h-75 modal-dialog-centered" role="document">
+			<div class="modal-content h-75 border-0">
+				<div class="modal-body py-4 px-0">
+					<button type="button" class="close position-absolute location-close-btn d-none" style="right: 15px; top: 15px; z-index: 10;" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<div class="row container">
+						<div class="col-12">
+							<ul class="nav nav-tabs" id="myTab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="locationbase-tab" data-toggle="tab" href="#locationbase" role="tab" aria-controls="locationbase" aria-selected="true">Loaction</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="manual-tab" data-toggle="tab" href="#manual" role="tab" aria-controls="manual" aria-selected="false">manual</a>
+								</li>
+							</ul>
+							<div class="tab-content my-3" id="myTabContent">
+								<div class="tab-pane fade show active" id="locationbase" role="tabpanel" aria-labelledby="locationbase-tab">
+									<button class="btn btn-outline-danger btn-block" onclick="setLocation('currentLocation','')"><i class="fas fa-map-marker-alt pr-1"></i> Your current location</button>
+									<h4 class="text-center my-3">OR</h4>
+									<input
+										class="form-control"
+										id="locationSearch"
+										placeholder="Enter your address"
+										autocomplete="off" />
+								</div>
+								<div class="tab-pane fade" id="manual" role="tabpanel" aria-labelledby="manual-tab">
+									<div class="row">
+										<div class="col-11 mx-auto city-selection">
+											<h5>Cities</h5>
+											<div class="d-flex overflow-auto">
+												@foreach(getAvailableCities() as $val)
+												<div class="mr-2">
+													<input type="radio" name="location_city" value="{{$val->id}}" id="city-{{$val->id}}" onchange="getArea()" />
+													<label class="radio-lable" for="city-{{$val->id}}">{{$val->name}}</label>
+												</div>
+												@endforeach
+											</div>
 
+										</div>
+										<div class="col-11 col-md-11 mx-auto search-input-line d-none">
+											<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area (Optional)">
+											<?php $cites = array() ?>
+											<ul class="p-0" id="location-area-list">
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Location Modal End -->
 
 	<!-- Login Modal =========================== -->
 	<div id="login-modal" class="modal fade" role="dialog" aria-hidden="true">
@@ -659,7 +657,8 @@
 					case "neighborhood": {
 						neighborhood = component.long_name
 						break;
-					}case "sublocality_level_1": {
+					}
+					case "sublocality_level_1": {
 						neighborhood = component.long_name
 						break;
 					}
