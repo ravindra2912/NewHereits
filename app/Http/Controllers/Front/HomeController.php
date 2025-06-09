@@ -32,7 +32,8 @@ class HomeController extends Controller
         // session()->forget('hereitsLocation');
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude');
+        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude')
+        ->where('subscription_expiry_date', '>=', now());
         if ($userLocationInfo) {
             if ($userLocationInfo['locationType'] == 'manual') {
                 if ($userLocationInfo['area'] != '') {
@@ -55,7 +56,8 @@ class HomeController extends Controller
         if (Auth::check() && Auth::user()->role_id != 1) {
             $fevoriteBusinesses = Favorite::select('id', 'business_id')
                 ->with(['business' => function ($q) {
-                    return $q->select('id', 'name', 'slug', 'business_image');
+                    return $q->select('id', 'name', 'slug', 'business_image')
+                    ->where('subscription_expiry_date', '>=', now());
                 }])
                 ->where('user_id', Auth::user()->id)
                 ->where('favorite_type', 'business')

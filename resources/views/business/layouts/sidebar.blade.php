@@ -108,6 +108,13 @@
                 <p>System Setting</p>
               </a>
             </li>
+            
+            <li class="nav-item">
+              <a href="{{ route('business.setting.business.plan') }}" class="nav-link {{ request()->routeIs('business.setting.business.plan') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Plan</p>
+              </a>
+            </li>
 
           </ul>
         </li>

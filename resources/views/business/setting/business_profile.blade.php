@@ -124,6 +124,13 @@
 
             <div class="col-md-4">
               <div class="form-group">
+                <label>Listing expiry date </label>
+                <input type="date" class="form-control" value="{{ $business->subscription_expiry_date }}" disabled />
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="form-group">
                 <label>Address <span class="error">*</span></label>
                 <input type="text" class="form-control" value="{{ $business->address }}" name="address" placeholder="Address" />
               </div>

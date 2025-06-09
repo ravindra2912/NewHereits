@@ -29,6 +29,7 @@ return new class extends Migration
             $table->bigInteger('contact')->unique()->nullable();
             $table->string('business_image', 150)->nullable();
             $table->enum('status', ['pending', 'active','in-active', 'baned'])->default('pending');
+            $table->date('subscription_expiry_date')->nullable();
             $table->float('rating', 2, 1)->default(0);
             $table->rememberToken();
             $table->timestamps();

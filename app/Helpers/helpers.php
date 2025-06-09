@@ -439,7 +439,7 @@ function getLatLongOnAddress($address)
 function getAddressOnLatLong($latitude, $longitude)
 {
     // $apiKey = 'AIzaSyBDH6OcgfnirI5a7pmMSUInirj3ZwoOlGU'; //get your api key from https://opencagedata.com/
-    $apiKey = ''; //get your api key from https://opencagedata.com/
+    $apiKey = env('GOOGLE_MAP_KEY'); //get your api key from https://opencagedata.com/
     $client = new Client();
 
     if (empty($apiKey)) {
@@ -468,17 +468,17 @@ function getAddressOnLatLong($latitude, $longitude)
         ]);
 
         if ($response->successful()) {
-            
+
             $data = $response->json();
             if ($data['address']) {
-                if(isset($data['address']['village'])){
+                if (isset($data['address']['village'])) {
                     return $data['address']['village'] . ', ' . $data['address']['state_district'];
-                }if(isset($data['address']['county'])){
+                }
+                if (isset($data['address']['county'])) {
                     return $data['address']['county'] . ', ' . $data['address']['state_district'];
-                }else{
+                } else {
                     return $data['address']['town'];
                 }
-                
             }
             return null;
         } else {
@@ -486,19 +486,66 @@ function getAddressOnLatLong($latitude, $longitude)
             // return 'Error: Unable to retrieve address.';
         }
     } else {
-        $apiKey = env('GOOGLE_MAPS_API_KEY');
         $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$apiKey}";
 
         $client = new \GuzzleHttp\Client();
         $response = $client->get($url);
         $data = json_decode($response->getBody(), true);
 
-        dd($data);
         if (!empty($data['results'])) {
-            return $data['results'][0]['formatted'];
+            $address_components = $data['results'][0]['address_components'];
+
+            $area = '';
+            $locality = '';
+            $admin_area_level_3 = '';
+            $administrative_area_level_1 = '';
+            $address = '';
+
+            // dd($address_components);
+
+            // Parse components
+            foreach ($address_components as $component) {
+                $types = $component['types'];
+
+                if (in_array('sublocality', $types) || in_array('sublocality_level_1', $types)) {
+                    $area = $component['long_name'];
+                }
+
+                if (in_array('locality', $types)) {
+                    $locality = $component['short_name'];
+                }
+
+                if (in_array('administrative_area_level_3', $types)) {
+                    $admin_area_level_3 = $component['short_name'];
+                }
+                
+                if (in_array('administrative_area_level_1', $types)) {
+                    $administrative_area_level_1 = $component['short_name'];
+                }
+            }
+
+            // dd($area, $locality, $admin_area_level_3, $administrative_area_level_1);
+
+            // Construct address
+            if (!empty($area)) {
+                $address = $area;
+            }
+            if (!empty($locality)) {
+                $address .= $address == '' ? $locality : ', ' . $locality;
+            } else {
+                $address .= $address == '' ? $admin_area_level_3 : ', ' . $admin_area_level_3;
+            }
+
+            if($locality == $admin_area_level_3){
+                $address .= $address == '' ? $administrative_area_level_1 : ', ' . $administrative_area_level_1;
+            }
+        }
+        if (!empty($address)) {
+            return $address;
         }
     }
-    return 'Unable to fetch address';
+    // return 'Unable to fetch address';
+    return null;
 }
 
 // =============== geo location info functions end ================

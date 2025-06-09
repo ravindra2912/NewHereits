@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(LegalPageSeeder::class);
         $this->call(BusinessSeeder::class);
+        $this->call(SiteSettingSeeder::class);
         // User::factory(10)->create();
 
         // User::factory()->create([

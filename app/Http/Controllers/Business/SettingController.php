@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\BusinessSetting;
 use App\Models\BusinessTiming;
+use App\Models\SiteSetting;
+use App\Models\Subscription;
+use App\Models\Transactions;
+use Cart;
+use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
 {
@@ -201,7 +206,7 @@ class SettingController extends Controller
                 // Check for conflict
                 $conflict = BusinessTiming::where('business_id', getBusinessId())
                     ->where('day', $request->day)
-                    ->where('appointmenter_id',null)
+                    ->where('appointmenter_id', null)
                     ->where(function ($query) use ($request) {
                         $query->where(function ($q) use ($request) {
                             $q->where('start_time', '<', $request->end_time)
@@ -300,9 +305,77 @@ class SettingController extends Controller
         if ($user) {
             $user->business_id = $business_id;
             $user->save();
+            $user->getBusinessDetails = Business::select('id', 'owner_id', 'name', 'business_image', 'subscription_expiry_date')->find($business_id);
         }
         Auth::logout();
         Auth::login($user);
         return redirect()->intended(route('business.dashboard', absolute: false));
+    }
+
+    public function businessPlan()
+    {
+        $info = SiteSetting::first('yearly_subscription_price');
+        $history = Subscription::where('business_id', getBusinessId())
+        ->with(['transaction'])
+        ->orderBy('id', 'desc')
+        ->get();
+        return view('business.setting.businessPlan', compact('info', 'history'));
+    }
+
+    public function businessPlanBuy()
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = Route('business.setting.systemsetting');
+        $data = array();
+
+        try {
+            DB::beginTransaction();
+            $business = Business::select('id', 'subscription_expiry_date')->find(getBusinessId());
+            if (!$business) {
+                $message = 'Business not found.';
+            } else {
+                $startData = Carbon::now();
+                $endData = Carbon::parse($startData)->addYear();
+                if ($business->subscription_expiry_date != null && $business->subscription_expiry_date > Carbon::now()) {
+                    $day = round(Carbon::now()->diffInDays(Carbon::parse($business->subscription_expiry_date)));
+                    $startData = Carbon::parse($business->subscription_expiry_date);
+                    $endData = Carbon::parse($startData)->addYear();
+                    if ($day > 7) {
+                        $message = 'You can not buy subscription now, your subscription is not expired yet.';
+                        goto exits;
+                    }
+                }
+
+
+                $info = SiteSetting::first('yearly_subscription_price');
+                $insert = new Transactions();
+                $insert->amount = $info->yearly_subscription_price;
+                $insert->payment_type = 'cash';
+                $insert->transaction_date = Carbon::now();
+                $insert->status = 'completed';
+                $insert->save();
+
+                $binsert = new Subscription();
+                $binsert->business_id = getBusinessId();
+                $binsert->transation_id = $insert->id;
+                $binsert->start_date =  $startData;
+                $binsert->end_date = $endData;
+                $binsert->save();
+
+
+                $business->subscription_expiry_date = $binsert->end_date;
+                $business->save();
+
+                $success = true;
+                $message = 'Play purchase successfully.';
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $message = $e->getMessage();
+        }
+        exits:
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
 }

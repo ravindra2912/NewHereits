@@ -1,122 +1,83 @@
-<!doctype html>
-<!--
- @license
- Copyright 2025 Google LLC. All Rights Reserved.
- SPDX-License-Identifier: Apache-2.0
--->
-
 <html>
 
 <head>
-    <title>Place Autocomplete element</title>
+    <title>Place Autocomplete Address Form</title>
 
-    <style>
-        /**
- * @license
- * Copyright 2025 Google LLC. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-
-        /* 
- * Always set the map height explicitly to define the size of the div element
- * that contains the map. 
- */
-        #map {
-            height: 100%;
-        }
-
-        /* 
- * Optional: Makes the sample page fill the window. 
- */
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        p {
-            font-family: Roboto, sans-serif;
-            font-weight: bold;
-        }
-    </style>
-    <script type="module">
-        "use strict";
-        /*
-         * @license
-         * Copyright 2025 Google LLC. All Rights Reserved.
-         * SPDX-License-Identifier: Apache-2.0
-         */
-
-        async function initMap() {
-
-            // Request needed libraries.
-            await google.maps.importLibrary("places");
-            // Create the input HTML element, and append it.
-            //@ts-ignore
-            const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
-            //@ts-ignore
-            document.body.appendChild(placeAutocomplete);
-
-            // Inject HTML UI.
-            const selectedPlaceTitle = document.createElement('p');
-            selectedPlaceTitle.textContent = '';
-            document.body.appendChild(selectedPlaceTitle);
-            const selectedPlaceInfo = document.createElement('pre');
-            selectedPlaceInfo.textContent = '';
-            document.body.appendChild(selectedPlaceInfo);
-
-            // Add the gmp-placeselect listener, and display the results.
-            //@ts-ignore
-            placeAutocomplete.addEventListener('gmp-select', async ({
-                placePrediction
-            }) => {
-                const place = placePrediction.toPlace();
-                await place.fetchFields({
-                    fields: ['displayName', 'formattedAddress', 'location']
-                });
-                selectedPlaceTitle.textContent = 'Selected Place:';
-                selectedPlaceInfo.textContent = JSON.stringify(place.toJSON(), /* replacer */ null, /* space */ 2);
-            });
-
-        }
-        initMap();
-    </script>
 </head>
 
 <body>
-    <p style="font-family: roboto, sans-serif">Search for a place here:</p>
 
-    <!-- prettier-ignore -->
+    <p class="title">Sample address form india</p>
+    <label class="full-field">
+        <!-- Avoid the word "address" in id, name, or label text to avoid browser autofill from conflicting with Place Autocomplete. Star or comment bug https://crbug.com/587466 to request Chromium to honor autocomplete="off" attribute. -->
+        <span class="form-label">Deliver to*</span>
+        <input
+            id="locationSearch"
+            placeholder="Enter your address"
+            autocomplete="off" />
+    </label>
+
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_MAP_KEY')}}&callback=initAutocomplete&libraries=places&v=weekly"
+        defer></script>
+
+
     <script>
-        (g => {
-            var h, a, k, p = "The Google Maps JavaScript API",
-                c = "google",
-                l = "importLibrary",
-                q = "__ib__",
-                m = document,
-                b = window;
-            b = b[c] || (b[c] = {});
-            var d = b.maps || (b.maps = {}),
-                r = new Set,
-                e = new URLSearchParams,
-                u = () => h || (h = new Promise(async (f, n) => {
-                    await (a = m.createElement("script"));
-                    e.set("libraries", [...r] + "");
-                    for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]);
-                    e.set("callback", c + ".maps." + q);
-                    a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
-                    d[q] = f;
-                    a.onerror = () => h = n(Error(p + " could not load."));
-                    a.nonce = m.querySelector("script[nonce]")?.nonce || "";
-                    m.head.append(a)
-                }));
-            d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n))
-        })
-        ({
-            key: "AIzaSyBDH6OcgfnirI5a7pmMSUInirj3ZwoOlGU",
-            v: "weekly"
-        });
+        let autocomplete;
+        let address1Field;
+
+        function initAutocomplete() {
+            address1Field = document.querySelector("#locationSearch");
+            // Create the autocomplete object, restricting the search predictions to
+            // addresses in India.
+            autocomplete = new google.maps.places.Autocomplete(address1Field, {
+                componentRestrictions: {
+                    country: ["in"]
+                },
+                fields: ["address_components", "geometry"],
+                types: ["address"],
+            });
+            // address1Field.focus();
+            // When the user selects an address from the drop-down, populate the
+            // address fields in the form.
+            autocomplete.addListener("place_changed", fillInAddress);
+        }
+
+        function fillInAddress() {
+            const place = autocomplete.getPlace();
+
+            for (const component of place.address_components) {
+                // @ts-ignore remove once typings fixed
+                const componentType = component.types[0];
+                var address = '';
+                switch (componentType) {
+                    case "neighborhood": {
+                        address = component.long_name
+                        break;
+                    }
+
+                    case "locality": {
+                        address += ', '+component.short_name;
+                        break;
+                    }
+                }
+            }
+
+            // ✅ Get Latitude and Longitude
+            if (place.geometry && place.geometry.location) {
+                const lat = place.geometry.location.lat();
+                const lng = place.geometry.location.lng();
+
+                console.log("Latitude:", lat);
+                console.log("Longitude:", lng);
+                console.log("address:", address);
+            } else {
+                console.error("No geometry found for the selected place.");
+            }
+        }
+
+        window.initAutocomplete = initAutocomplete;
     </script>
 </body>
 

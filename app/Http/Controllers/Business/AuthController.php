@@ -52,14 +52,16 @@ class AuthController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        $user = User::where('email', $request->email)->where('role_id', 2)->first();
+        $user = User::with('getBusinessDetails:id,owner_id,name,business_image,subscription_expiry_date')->where('email', $request->email)->where('role_id', 2)->first();
         if ($user && Hash::check($request['password'], $user->password)) {
 
             if ($user->business_id == null) {
-                $business = Business::select('id')->where('owner_id', $user->id)->first();
+                $business = Business::select('id', 'owner_id','name','business_image','subscription_expiry_date')->where('owner_id', $user->id)->first();
                 if ($business) {
                     $user->business_id = $business->id;
                     $user->save();
+
+                    $user->getBusinessDetails = $business;
                 } else {
                     return redirect()->back()->with('error', 'Business not found!');
                 }

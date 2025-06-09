@@ -128,6 +128,8 @@ class CommonController extends Controller
                     }
                 } else if ($data['locationType'] == 'currentLocation') {
                     $data['fullAddress'] = getAddressOnLatLong($data['lat'], $data['long']);
+                }else if ($data['locationType'] == 'searchLocation') {
+                    $data['locationType'] = 'currentLocation';
                 }
 
                 // dd($data);

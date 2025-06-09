@@ -50,6 +50,9 @@ Route::name('business.')->group(function () {
             Route::get('setting/business/system-setting', 'systemSetting')->name('setting.systemsetting');
             Route::post('setting/business/system-setting', 'systemSettingUpdate')->name('setting.systemsetting.update');
             Route::get('switch-business/{id}', 'switchBusiness')->name('switchBusiness');
+
+            Route::get('setting/business/plan', 'businessPlan')->name('setting.business.plan');
+            Route::post('setting/business/plan/buy', 'businessPlanBuy')->name('setting.business.plan.buy');
         });
 
         Route::controller(AuthController::class)->group(function () {

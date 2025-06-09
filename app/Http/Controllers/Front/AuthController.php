@@ -27,12 +27,13 @@ class AuthController extends Controller
         $data = array();
 
         try {
-            $user = User::where('email', $request->email)->whereIn('role_id', [2, 3])->first();
+            $user = User::with('getBusinessDetails:id,owner_id,name,business_image,subscription_expiry_date')->where('email', $request->email)->whereIn('role_id', [2, 3])->first();
             if ($user && Hash::check($request['password'], $user->password)) {
                 if ($user->role_id == 2 && $user->business_id == null) {
-                    $business = Business::select('id')->where('owner_id', $user->id)->first();
+                    $business = Business::select('id', 'owner_id', 'name', 'business_image', 'subscription_expiry_date')->where('owner_id', $user->id)->first();
                     $user->business_id = $business->id;
                     $user->save();
+                    $user->getBusinessDetails = $business;
                 }
                 $request->authenticate();
                 $request->session()->regenerate();
@@ -279,12 +280,12 @@ class AuthController extends Controller
                     $user->profile =  $path;
                 }
 
-                
+
                 $user->first_name = $name[0];
                 $user->last_name = isset($name[1]) != null ? $name[1] : $name[0];
                 $user->email = $googleUser->getEmail();
                 $user->google_key = $googleUser->getId();
-                
+
                 $user->password = Hash::make(Str::random(8)); // Generate a random 8-character password
                 $user->save();
             }

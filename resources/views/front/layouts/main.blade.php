@@ -80,9 +80,12 @@
 
 	@stack('style')
 
-	<script>
-
-	</script>
+	<style>
+		.pac-container {
+			z-index: 1051 !important;
+			/* higher than Bootstrap modal (1050) */
+		}
+	</style>
 
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
@@ -165,8 +168,12 @@
 															<div class="tab-content my-3" id="myTabContent">
 																<div class="tab-pane fade show active" id="locationbase" role="tabpanel" aria-labelledby="locationbase-tab">
 																	<button class="btn btn-outline-danger btn-block" onclick="setLocation('currentLocation','')"><i class="fas fa-map-marker-alt pr-1"></i> Your current location</button>
-																	<h4>OR</h4>
-																	
+																	<h4 class="text-center my-3">OR</h4>
+																	<input
+																		class="form-control"
+																		id="locationSearch"
+																		placeholder="Enter your address"
+																		autocomplete="off" />
 																</div>
 																<div class="tab-pane fade" id="manual" role="tabpanel" aria-labelledby="manual-tab">
 																	<div class="row">
@@ -597,9 +604,101 @@
 
 
 
-	<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDH6OcgfnirI5a7pmMSUInirj3ZwoOlGU&libraries=places"></script> -->
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_MAP_KEY')}}&callback=initAutocomplete&libraries=places&v=weekly&loading=async"
+		defer></script>
 
-	
+	<!-- location search with google -->
+	<script>
+		let autocomplete;
+		let address1Field;
+
+		function initAutocomplete() {
+			address1Field = document.querySelector("#locationSearch");
+			// Create the autocomplete object, restricting the search predictions to
+			// addresses in India.
+			autocomplete = new google.maps.places.Autocomplete(address1Field, {
+				componentRestrictions: {
+					country: ["in"]
+				},
+				fields: ["address_components", "geometry"],
+				types: ["geocode"],
+			});
+			// address1Field.focus();
+			// When the user selects an address from the drop-down, populate the
+			// address fields in the form.
+			autocomplete.addListener("place_changed", fillInAddress);
+		}
+
+		function fillInAddress() {
+			var locationData = @json(getUserLocationInfo());
+			if (locationData == null || locationData == '') {
+				var locationData = {
+					'locationType': '',
+					'city': '',
+					'area': '',
+					'fullAddress': '',
+					'lat': '',
+					'long': '',
+				}
+			}
+			const place = autocomplete.getPlace();
+
+			var address = '';
+			var administrative_area_level_3 = '';
+			var neighborhood = '';
+			var locality = '';
+			for (const component of place.address_components) {
+				// @ts-ignore remove once typings fixed
+				const componentType = component.types[0];
+				switch (componentType) {
+					case "neighborhood": {
+						neighborhood = component.long_name
+						break;
+					}
+					case "locality": {
+						locality = component.short_name;
+						break;
+					}case "administrative_area_level_3": {
+						administrative_area_level_3 = component.short_name;
+						break;
+					}
+				}
+			}
+
+			if(neighborhood != ''){
+				address = neighborhood +', '+locality;
+			}else{
+				address = locality +', '+administrative_area_level_3;
+			}
+
+
+			// ✅ Get Latitude and Longitude
+			if (place.geometry && place.geometry.location) {
+				const lat = place.geometry.location.lat();
+				const lng = place.geometry.location.lng();
+
+
+
+				locationData['locationType'] = 'searchLocation';
+				locationData['city'] = locationData['area'] = '';
+				locationData['lat'] = lat;
+				locationData['long'] = lng;
+				locationData['fullAddress'] = address;
+
+				console.log("Latitude:", lat);
+				console.log("Longitude:", lng);
+				console.log("address:", address);
+
+				setLocationData(locationData);
+			} else {
+				console.error("No geometry found for the selected place.");
+			}
+		}
+
+		window.initAutocomplete = initAutocomplete;
+	</script>
+
 
 	<script>
 		// ********* location model Start ******************
@@ -616,6 +715,8 @@
 						$('.search-input-line').removeClass('d-none')
 						$('.location-close-btn').removeClass('d-none');
 					}
+				}if (locationData.locationType == 'currentLocation') {
+					$('.location-close-btn').removeClass('d-none');
 				}
 			}
 
@@ -705,7 +806,7 @@
 		}
 
 		function successLatlong(position) {
-			if(locationData == undefined){
+			if (locationData == undefined) {
 				var locationData = {
 					'locationType': '',
 					'city': '',

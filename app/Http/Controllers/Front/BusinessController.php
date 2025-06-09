@@ -32,6 +32,7 @@ class BusinessController extends Controller
         $userLocationInfo = getUserLocationInfo();
         $businesses = Business::query()
             ->select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'rating', 'pincode', 'latitude', 'longitude')
+            ->where('subscription_expiry_date', '>=', now())
             ->with([
                 'businessCategory',
                 'country',
