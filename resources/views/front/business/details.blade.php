@@ -186,10 +186,10 @@
               <div class="col-sm-9">
                 <h4 class="text-dark text-5 store-name">{{ $expert->appointmenter_name }}</h4>
                 <span class="mr-2">
-              @for ($i = 1; $i <= 5; $i++)
-                <i class="fas fa-star {{ $expert->rating >= $i? 'text-warning':'text-muted' }}"></i>
-                @endfor
-            </span>
+                  @for ($i = 1; $i <= 5; $i++)
+                    <i class="fas fa-star {{ $expert->rating >= $i? 'text-warning':'text-muted' }}"></i>
+                    @endfor
+                </span>
                 @if (isset($expert->title) && !empty($expert->title))
                 <div class="text-black-50 mb-0 mb-sm-2 order-3 d-sm-block">{{ $expert->title }}</div>
                 @endif
@@ -236,7 +236,15 @@
   <div class="mt-5 mb-5 mx-3">
     <div class="row">
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">
-        <p class="text-center"> for advertisement </p>
+        <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-5560225028494268"
+          data-ad-slot="7534125021"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
       <div class="col-lg-8 mt-1 mt-lg-0">
         @if ($setting->is_appointment_with_department)
