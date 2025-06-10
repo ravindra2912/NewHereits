@@ -115,6 +115,13 @@
                 <p>Plan</p>
               </a>
             </li>
+            
+            <li class="nav-item">
+              <a href="{{ route('business.setting.business.credit') }}" class="nav-link {{ request()->routeIs('business.setting.business.credit') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Credit</p>
+              </a>
+            </li>
 
           </ul>
         </li>

@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\BusinessCredit;
 use App\Models\BusinessSetting;
 use App\Models\BusinessTiming;
 use App\Models\SiteSetting;
@@ -369,6 +370,66 @@ class SettingController extends Controller
 
                 $success = true;
                 $message = 'Play purchase successfully.';
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $message = $e->getMessage();
+        }
+        exits:
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function businessCredit()
+    {
+        $business = Business::select('id', 'credit')
+        ->with([
+            'businessCredits' => function ($q) {
+                $q->with('transaction')->orderBy('id', 'desc');
+            }
+        ])->find(getBusinessId());
+
+        $price = 1.3;
+        return view('business.setting.businessCredit', compact('business', 'price'));
+    }
+
+    public function businessCreditBuy(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = Route('business.setting.systemsetting');
+        $data = array();
+
+        try {
+            DB::beginTransaction();
+            $business = Business::select('id', 'credit')->find(getBusinessId());
+            if (!$business) {
+                $message = 'Business not found.';
+            }else if($request->credit < 1){
+                $message = 'Invalid credit amount.';
+            } else {
+                $price = 1.3;
+
+
+                $insert = new Transactions();
+                $insert->amount = $price * $request->credit;
+                $insert->payment_type = 'cash';
+                $insert->transaction_date = Carbon::now();
+                $insert->status = 'completed';
+                $insert->save();
+
+                $binsert = new BusinessCredit();
+                $binsert->business_id = getBusinessId();
+                $binsert->transation_id = $insert->id;
+                $binsert->credit =  $request->credit;
+                $binsert->save();
+
+
+                $business->credit = $business->credit + $request->credit;
+                $business->save();
+
+                $success = true;
+                $message = 'Credit purchase successfully.';
                 DB::commit();
             }
         } catch (\Exception $e) {

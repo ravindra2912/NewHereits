@@ -181,6 +181,20 @@
 
             <div class="col-md-4">
               <div class="form-group">
+                <label>Subscription expiry date </label>
+                <input type="date" class="form-control" data-min="today" value="{{ $business->subscription_expiry_date }}" name="subscription_expiry_date" placeholder="Subscription expiry date" />
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Credit </label>
+                <input type="number" class="form-control" value="{{ $business->credit }}" name="credit" placeholder="Credit" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
                 <label>Business Type <span class="error">*</span></label>
                 <select class="form-control" name="business_type">
                   <option value="">Select Business Type</option>
@@ -212,6 +226,69 @@
 
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <div class="card card-outline card-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            Subscription Detail
+          </h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <table class="table table-bordered table-striped">
+            <tr>
+              <th>Plan</th>
+              <th>Amount</th>
+              <th>Start date</th>
+              <th>End date</th>
+              <th>Date</th>
+            </tr>
+            @foreach ($business->subscriptions as $val)
+            <tr>
+              <td>Yearly plan</td>
+              <td>Rs. {{ $val->transaction->amount }}</td>
+              <td>{{ $val->start_date }}</td>
+              <td>{{ $val->end_date }}</td>
+              <td>{{ get_date($val->created_at) }}</td>
+            </tr>
+            @endforeach
+            <tr>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-12">
+      <div class="card card-outline card-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            Credit history
+          </h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <h3>Available Credits : <b>{{ $business->credit }}</b></h3>
+          <table class="table table-bordered table-striped mt-3">
+            <tr>
+              <th>Credit</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+            @foreach ($business->businessCredits as $val)
+            <tr>
+              <td>{{ $val->credits }}</td>
+              <td>Rs. {{ $val->transaction->amount }}</td>
+              <td>{{ get_date($val->created_at) }}</td>
+            </tr>
+            @endforeach
+            <tr>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -253,6 +330,14 @@
                 <input type="checkbox" name="is_appointment_book_with_time_slote" {{ $setting->is_appointment_book_with_time_slote ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
               </div>
             </div>
+
+            <div class="col-md-2 col-4 text-center"> 
+              <div class="form-group">
+                <label>Appointment booking confirmetion</label><br>
+                <input type="checkbox" name="is_need_booking_confirmetion" {{ $setting->is_need_booking_confirmetion ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
+              </div>
+            </div>
+            
             <div class="col-sm-12 text-right">
               <button class="btn btn-danger" type="button" onclick="history.back()">Back</button>
               <button class="btn btn-primary btn_action" type="submit">
@@ -273,6 +358,13 @@
 
 <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('input[type="date"][data-min="today"]').forEach(function(input) {
+      const today = new Date().toISOString().split('T')[0];
+      input.min = today;
+    });
+  });
+
   $("input[data-bootstrap-switch]").each(function() {
     $(this).bootstrapSwitch('state', $(this).prop('checked'));
   })

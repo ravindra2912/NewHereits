@@ -43,12 +43,12 @@
 
           <div class="col-md-6 col-sm-6 col-12 mb-3 appointment-for-other d-none">
             <label for="user_name" class="form-label required">Name</label>
-              <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name"  type="text">
+            <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" type="text">
           </div>
 
           <div class="col-md-6 col-sm-6 col-12 mb-3 appointment-for-other d-none">
             <label for="user_contact" class="form-label required">Mobile Number</label>
-            <input type="text" name="user_contact" class="form-control" id="user_contact"  placeholder="Enter Mobile Number">
+            <input type="text" name="user_contact" class="form-control" id="user_contact" placeholder="Enter Mobile Number">
           </div>
 
           <div class="col-12 mb-3">
@@ -57,6 +57,7 @@
           </div>
 
           <div class="col-12 mb-3">
+            @if($expert->business->credit > 0)
             @if (Auth::check())
             <button class="btn btn-primary btn_action btn-block ">
               <span id="buttonText">Book</span>
@@ -65,6 +66,11 @@
             @else
             <button class="btn btn-primary btn_action btn-block" type="button" data-toggle="modal" data-target="#login-modal">
               <span id="buttonText"> Book</span>
+            </button>
+            @endif
+            @else
+            <button class="btn btn-secondary disabled btn-block" type="button" >
+              <span> Unable to book</span>
             </button>
             @endif
 

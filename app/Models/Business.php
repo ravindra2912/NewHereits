@@ -40,6 +40,16 @@ class Business extends Model
         return $this->hasMany(ReviewAndRating::class, 'business_id', 'id')->where('review_type', 'business');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'business_id', 'id');
+    }
+    
+    public function businessCredits()
+    {
+        return $this->hasMany(BusinessCredit::class, 'business_id', 'id');
+    }
+
     public function businessSetting()
     {
         return $this->hasOne(BusinessSetting::class, 'business_id', 'id');

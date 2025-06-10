@@ -362,11 +362,35 @@
 								<div class="tab-pane fade show active" id="locationbase" role="tabpanel" aria-labelledby="locationbase-tab">
 									<button class="btn btn-outline-danger btn-block" onclick="setLocation('currentLocation','')"><i class="fas fa-map-marker-alt pr-1"></i> Your current location</button>
 									<h4 class="text-center my-3">OR</h4>
-									<input
-										class="form-control"
-										id="locationSearch"
-										placeholder="Enter your address"
-										autocomplete="off" />
+									<div>
+										<input
+											class="form-control"
+											id="locationSearch"
+											placeholder="Enter your address"
+											autocomplete="off" />
+										<h5 class="mt-3">Radius</h5>
+										<div class="row">
+											<div class="col-md-2 col-4">
+												<input type="radio" name="radius" value="5" id="5redias" style="opacity: 0; position:absolute;" />
+												<label for="5redias" class="btn btn-outline-primary w-100 d-flex justify-content-center">5KM</label>
+											</div>
+
+											<div class="col-md-2 col-4">
+												<input type="radio" name="radius" value="10" id="10redias" style="opacity: 0; position:absolute;" />
+												<label for="10redias" class="btn btn-outline-primary w-100 d-flex justify-content-center">10KM</label>
+											</div>
+
+											<div class="col-md-2 col-4">
+												<input type="radio" name="radius" value="15" id="15redias" style="opacity: 0; position:absolute;" />
+												<label for="15redias" class="btn btn-outline-primary w-100 d-flex justify-content-center">15KM</label>
+											</div>
+
+											<div class="col-md-2 col-4">
+												<input type="radio" name="radius" value="20" id="20redias" style="opacity: 0; position:absolute;" />
+												<label for="20redias" class="btn btn-outline-primary w-100 d-flex justify-content-center">20KM</label>
+											</div>
+										</div>
+									</div>
 								</div>
 								<div class="tab-pane fade" id="manual" role="tabpanel" aria-labelledby="manual-tab">
 									<div class="row">
@@ -380,7 +404,6 @@
 												</div>
 												@endforeach
 											</div>
-
 										</div>
 										<div class="col-11 col-md-11 mx-auto search-input-line d-none">
 											<input type="text" class="form-control" name="location_area_search" onkeyup="getArea()" placeholder="Search Area (Optional)">
@@ -392,9 +415,6 @@
 								</div>
 							</div>
 						</div>
-
-
-
 					</div>
 				</div>
 			</div>
@@ -638,6 +658,7 @@
 					'fullAddress': '',
 					'lat': '',
 					'long': '',
+					'radius': '',
 				}
 			}
 			const place = autocomplete.getPlace();
@@ -750,10 +771,18 @@
 				}
 				if (locationData.locationType == 'currentLocation') {
 					$('.location-close-btn').removeClass('d-none');
+					if (locationData['radius'] == '' || locationData['radius'] == null) {
+						locationData['radius'] = 5;
+					}
+					document.querySelector('input[name="radius"][value="' + locationData['radius'] + '"]').checked = true;
 				}
 			}
-
+			$('input[name="radius"]').on('change', function() {
+				locationData['radius'] = $(this).val();
+				setLocationData(locationData);
+			})
 		});
+
 		var lastAjax = null;
 		var is_city_changes = false;
 
@@ -808,6 +837,7 @@
 					'fullAddress': '',
 					'lat': '',
 					'long': '',
+					'radius': '',
 				}
 			}
 
@@ -847,6 +877,7 @@
 					'fullAddress': '',
 					'lat': '',
 					'long': '',
+					'radius': '',
 				}
 			}
 			locationData['locationType'] = 'currentLocation';
@@ -882,6 +913,8 @@
 			if (newlocationData != '') {
 				locationData = newlocationData;
 			}
+
+			locationData['radius'] = $('input[name="radius"]:checked').val() || 5;
 			$.ajax({
 				type: "get",
 				url: "{{ route('getLocationInfo') }}",

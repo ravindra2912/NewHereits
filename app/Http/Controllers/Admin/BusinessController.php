@@ -7,10 +7,11 @@ use App\Models\Business;
 use App\Models\UserRole;
 use App\Models\LegalPage;
 use Illuminate\View\View;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Models\BusinessSetting;
-use App\Models\BusinessCategory;
 
+use App\Models\BusinessCategory;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\BusinessCredit;
 
 class BusinessController extends Controller
 {
@@ -126,7 +128,7 @@ class BusinessController extends Controller
 
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($request->owner_id);
-                if ($user && ( $user->role_id != 2 || $user->business_id == null)) {
+                if ($user && ($user->role_id != 2 || $user->business_id == null)) {
                     $user->business_id =  $insert->id;
                     $user->role_id = 2;
                     $user->save();
@@ -154,7 +156,14 @@ class BusinessController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $business = Business::find($id);
+        $business = Business::with([
+            'subscriptions' => function ($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'businessCredits' => function ($q) {
+                $q->orderBy('id', 'desc');
+            }
+        ])->find($id);
         $businessCat = getBusinessCategory();
         $setting = getBusinessSettings($id);
         return view('admin.business.edit', compact('business', 'businessCat', 'setting'));
@@ -180,6 +189,8 @@ class BusinessController extends Controller
                 'city_id' => 'required|exists:cities,id',
                 'area_id' => 'required|exists:city_areas,id',
                 'pincode' => 'required',
+                'subscription_expiry_date' => 'required',
+                'credit' => 'required|numeric',
                 'status' => 'required',
             ];
 
@@ -201,7 +212,7 @@ class BusinessController extends Controller
                 if ($update->owner_id != $request->owner_id) {
                     //change user role to seller
                     $user = User::select('id', 'role_id', 'business_id')->find($request->owner_id);
-                    if ($user && ( $user->role_id != 2 || $user->business_id == null)) {
+                    if ($user && ($user->role_id != 2 || $user->business_id == null)) {
                         $user->business_id = $id;
                         $user->role_id = 2;
                         $user->save();
@@ -220,6 +231,8 @@ class BusinessController extends Controller
                 $update->area_id = $request->area_id;
                 $update->pincode = $request->pincode;
                 $update->status = $request->status;
+                $update->subscription_expiry_date = $request->subscription_expiry_date;
+                $update->credit = $request->credit;
                 $update->save();
 
 
@@ -293,6 +306,7 @@ class BusinessController extends Controller
                 $update->is_appointment_system = isset($request->is_appointment_system) && $request->is_appointment_system == 'on' ? 1 : 0;
                 $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on' ? 1 : 0;
                 $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on' ? 1 : 0;
+                $update->is_need_booking_confirmetion = isset($request->is_need_booking_confirmetion) && $request->is_need_booking_confirmetion == 'on' ? 1 : 0;
                 $update->save();
 
                 $success = true;

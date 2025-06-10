@@ -53,6 +53,9 @@ Route::name('business.')->group(function () {
 
             Route::get('setting/business/plan', 'businessPlan')->name('setting.business.plan');
             Route::post('setting/business/plan/buy', 'businessPlanBuy')->name('setting.business.plan.buy');
+
+            Route::get('setting/business/credit', 'businessCredit')->name('setting.business.credit');
+            Route::post('setting/business/credit/buy', 'businessCreditBuy')->name('setting.business.credit.buy');
         });
 
         Route::controller(AuthController::class)->group(function () {

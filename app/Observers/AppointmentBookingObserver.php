@@ -2,14 +2,15 @@
 
 namespace App\Observers;
 
+use App\Models\Business;
+use App\Mail\TokenCancelledMail;
+use App\Mail\TokenComplitedMail;
+use App\Models\AppointmentBooking;
+use App\Mail\TokenConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\AppointmentCancelledMail;
 use App\Mail\AppointmentComplitedMail;
 use App\Mail\AppointmentConfirmationMail;
-use App\Mail\TokenCancelledMail;
-use App\Mail\TokenComplitedMail;
-use App\Mail\TokenConfirmationMail;
-use App\Models\AppointmentBooking;
-use Illuminate\Support\Facades\Mail;
 
 class AppointmentBookingObserver
 {
@@ -43,6 +44,8 @@ class AppointmentBookingObserver
                 }
             }
         }
+
+        Business::find($appointment_details->business_id)->decrement('credit', 1);
     }
 
     /**

@@ -31,7 +31,7 @@ class AppointmentController extends Controller
         $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description', 'rating')
             ->with([
                 'business' => function ($q) {
-                    return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
+                    return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image', 'credit');
                 },
                 'reviews' => function ($q) {
                     $q->select('id', 'business_id', 'user_id', 'review_on_id', 'rating', 'review', 'created_at')

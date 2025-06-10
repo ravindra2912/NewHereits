@@ -52,7 +52,7 @@ class BusinessController extends Controller
                 }
             } else if ($userLocationInfo['locationType'] == 'currentLocation') {
                 if ($userLocationInfo['lat'] != '' && $userLocationInfo['long'] != '') {
-                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], 5); // 5 KM radius
+                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], $userLocationInfo['radius']); // 5 KM radius
 
                 }
             }
@@ -89,7 +89,7 @@ class BusinessController extends Controller
 
     public function businessDetails(Request $request, $slug): View
     {
-        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id', 'rating', 'pincode')
+        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id', 'rating', 'pincode', 'credit')
             ->with([
                 'businessCategory',
                 'country',
@@ -149,7 +149,7 @@ class BusinessController extends Controller
                 ->with([
                     'department',
                     'business' => function ($q) {
-                        return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image');
+                        return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image', 'credit');
                     },
                     'businessSetting'
                 ])

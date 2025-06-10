@@ -44,8 +44,7 @@ class HomeController extends Controller
                 }
             } else if ($userLocationInfo['locationType'] == 'currentLocation') {
                 if ($userLocationInfo['lat'] != '' && $userLocationInfo['long'] != '') {
-                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], 5); // 5 KM radius
-
+                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], $userLocationInfo['radius']); // 5 KM radius
                 }
             }
         }
