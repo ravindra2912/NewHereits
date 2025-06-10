@@ -470,7 +470,7 @@
                 </tr>
                 @foreach ($business->businessCredits as $data)
                 <tr>
-                  <td>{{ $data->transaction->amount }}</td>
+                  <td>Rs. {{ $data->transaction->amount }}</td>
                   <td>{{ $data->credit }}</td>
                   <td>{{ get_date($data->created_at) }}</td>
                 </tr>

@@ -76,6 +76,9 @@
 
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/css/custom.css') }}" />
 
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5560225028494268"
+     crossorigin="anonymous"></script>
+
 	<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
 
 	@stack('style')
