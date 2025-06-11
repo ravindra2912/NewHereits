@@ -11,15 +11,7 @@
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">
       <!-- <p class="text-center"> for advertisement </p> -->
       <div class="ad-container">
-        <ins class="adsbygoogle"
-          style="display:block"
-          data-ad-client="ca-pub-5560225028494268"
-          data-ad-slot="7534125021"
-          data-ad-format="auto"
-          data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+        <x-ad-banner />
       </div>
     </div>
     <div class="col-lg-8 mt-1 mt-lg-0">
@@ -51,15 +43,7 @@
 
     </div>
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">
-      <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-5560225028494268"
-        data-ad-slot="7534125021"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      <x-ad-banner />
     </div>
   </div>
 </section>
