@@ -76,25 +76,27 @@
 
 	<link rel="stylesheet" type="text/css" href="{{ asset('front/css/custom.css') }}" />
 
+	<!-- google ads -->
+	@if (env('SHOW_ADS'))
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5560225028494268"
-     crossorigin="anonymous"></script>
+		crossorigin="anonymous"></script>
+	@endif
 
+	<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+	<script>
+		window.OneSignalDeferred = window.OneSignalDeferred || [];
+		OneSignalDeferred.push(async function(OneSignal) {
+			await OneSignal.init({
+				appId: "d83fbdc0-3398-4cfa-b085-623c846bae13",
+				safari_web_id: "web.onesignal.auto.11181d92-f3cb-414e-9b3e-6471e643153c",
+				notifyButton: {
+					enable: true,
+				},
+			});
+		});
+	</script>
 
 	@stack('style')
-
-	<style>
-		.pac-container {
-			z-index: 1051 !important;
-			/* higher than Bootstrap modal (1050) */
-		}
-	</style>
-
-	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
-
-	<!-- <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script> -->
-
-
 </head>
 
 <body id="top">
