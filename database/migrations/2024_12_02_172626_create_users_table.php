@@ -23,6 +23,7 @@ return new class extends Migration
             $table->bigInteger('role_id')->unsigned()->default(3);
             $table->string('profile', 150)->nullable();
             $table->date('dob')->nullable();
+            $table->string('notification_token')->nullable();
             $table->enum('gender', ['Male', 'Female'])->nullable();
             $table->enum('status', ['active','in-active'])->default('active');
             $table->string('password');

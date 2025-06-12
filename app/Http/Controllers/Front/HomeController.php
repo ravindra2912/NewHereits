@@ -9,15 +9,17 @@ use App\Models\LegalPage;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 
+use App\Mail\UserWelcomeMail;
 use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\PuhsNotificationToAllUser;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Mail\UserWelcomeMail;
-use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -26,14 +28,21 @@ class HomeController extends Controller
      */
     public function index(Request $request): View
     {
+        // $data = [
+        //     'include_player_ids' => ['c1cb0123-6427-49f7-98af-8bce3aa4e8eb'],
+        //     'title' => 'Hello all users',
+        //     'message' => 'New offer for you',
+        //     // 'data' => [],
+        //     'url' => 'business/clinic',
+        //     // 'schedule' => now()->addMinutes(1)
+        // ];
 
-        // Mail::to('goswamirvi@gmail.com')->send(new UserWelcomeMail(Auth::user()));
+        // PuhsNotificationToAllUser::dispatch($data);
 
-        // session()->forget('hereitsLocation');
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
         $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude')
-        ->where('subscription_expiry_date', '>=', now());
+            ->where('subscription_expiry_date', '>=', now());
         if ($userLocationInfo) {
             if ($userLocationInfo['locationType'] == 'manual') {
                 if ($userLocationInfo['area'] != '') {
@@ -56,7 +65,7 @@ class HomeController extends Controller
             $fevoriteBusinesses = Favorite::select('id', 'business_id')
                 ->with(['business' => function ($q) {
                     return $q->select('id', 'name', 'slug', 'business_image')
-                    ->where('subscription_expiry_date', '>=', now());
+                        ->where('subscription_expiry_date', '>=', now());
                 }])
                 ->where('user_id', Auth::user()->id)
                 ->where('favorite_type', 'business')

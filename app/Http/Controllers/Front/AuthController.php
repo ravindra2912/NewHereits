@@ -29,12 +29,18 @@ class AuthController extends Controller
         try {
             $user = User::with('getBusinessDetails:id,owner_id,name,business_image,subscription_expiry_date')->where('email', $request->email)->whereIn('role_id', [2, 3])->first();
             if ($user && Hash::check($request['password'], $user->password)) {
+                if (isset($request->notification_token)) {
+                    $user->notification_token = $request->notification_token;
+                    $user->save();
+                }
                 if ($user->role_id == 2 && $user->business_id == null) {
                     $business = Business::select('id', 'owner_id', 'name', 'business_image', 'subscription_expiry_date')->where('owner_id', $user->id)->first();
                     $user->business_id = $business->id;
                     $user->save();
                     $user->getBusinessDetails = $business;
                 }
+
+
                 $request->authenticate();
                 $request->session()->regenerate();
                 $success = true;

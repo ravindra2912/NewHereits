@@ -84,15 +84,31 @@
 
 	<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 	<script>
+		var NotificationUserId = null;
 		window.OneSignalDeferred = window.OneSignalDeferred || [];
 		OneSignalDeferred.push(async function(OneSignal) {
 			await OneSignal.init({
-				appId: "d83fbdc0-3398-4cfa-b085-623c846bae13",
-				safari_web_id: "web.onesignal.auto.11181d92-f3cb-414e-9b3e-6471e643153c",
-				notifyButton: {
-					enable: true,
-				},
+				appId: window.location.hostname == 'hereits.com' ? "08672fa6-d212-4b28-8946-9cc22f2030a0" : "5ea2682e-14bb-4e60-8771-42fb8d650240",
 			});
+
+			const isSupported = await OneSignal.Notifications.isPushSupported();
+			if (!isSupported) {
+				console.warn("Push not supported");
+				return;
+			}
+
+			// ✅ Check current permission status
+			const permission = await OneSignal.Notifications.permission;
+			// console.log("Notification permission:", permission); // values: 'default', 'granted', 'denied'
+
+			if (permission !== "granted") {
+				// ✅ Prompt user for notification permission
+				await OneSignal.Notifications.requestPermission();
+			}
+
+			NotificationUserId = await OneSignal.User.PushSubscription.id;
+			$('#notification_token').val(NotificationUserId);
+			console.log(NotificationUserId);
 		});
 	</script>
 
@@ -447,6 +463,7 @@
 
 							<form id="loginForm" action="{{ route('login') }}" data-action="reload" class="formaction">
 								@csrf
+								<input type="hidden" name="notification_token" id="notification_token" />
 								<div class="form-group">
 									<input type="email" class="form-control" id="login-email" name="email" required placeholder="Email">
 								</div>
