@@ -97,25 +97,15 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Business Type <span class="error">*</span></label>
-                    <select class="form-control" name="business_type">
-                      <option value="">Select Business Type</option>
-                      @foreach ( config('const.business_type') as $type)
-                      <option value="{{ $type }}" {{ $business->business_type == $type ? 'selected':'' }}>{{ $type }}</option>
-                      @endforeach
-                    </select>
+                    <label>Business Type </label>
+                    <input type="text" class="form-control" value="{{ $business->business_type }}" readonly />
                   </div>
                 </div>
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Business Category <span class="error">*</span></label>
-                    <select class="form-control" name="business_category_id">
-                      <option value="">Select Business Category</option>
-                      @foreach ( $businessCat as $cat)
-                      <option value="{{ $cat->id }}" {{ $business->business_category_id == $cat->id ? 'selected':'' }}>{{ $cat->name }}</option>
-                      @endforeach
-                    </select>
+                    <label>Business Category </label>
+                    <input type="text" class="form-control" value="{{ isset($business->businessCategory) ? $business->businessCategory->name :'' }}" readonly />
                   </div>
                 </div>
 
@@ -128,15 +118,13 @@
                 <input type="date" class="form-control" value="{{ $business->subscription_expiry_date }}" disabled />
               </div>
             </div>
-            
+
             <div class="col-md-4">
               <div class="form-group">
                 <label>Address <span class="error">*</span></label>
                 <input type="text" class="form-control" value="{{ $business->address }}" name="address" placeholder="Address" />
               </div>
             </div>
-
-
 
             <div class="col-md-4">
               <div class="form-group">
@@ -162,6 +150,18 @@
               </div>
             </div>
 
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Area <span class="error">*</span></label>
+                <select class="form-control" name="area_id" id="area_id">
+                  <option value="">Select Area</option>
+                  @foreach ( getCitieArea($business->city_id) as $area)
+                  <option value="{{ $area->id }}" {{ $area->id == $business->area_id ?'selected':'' }}>{{ $area->area_name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
 
 
             <div class="col-sm-12 text-right">
@@ -177,7 +177,41 @@
       </div>
     </div>
     <!-- /.col-->
-  </div>
+
+    <div class="col-md-12">
+      <div class="card card-outline card-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            Share
+          </h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 col-12">
+              <label>QR code</label><br>
+              
+              <div class="text-center">
+                <canvas id="qrcode"></canvas><br>
+              <button id="downloadqrbtn" class="btn btn-sm btn-outline-primary">Download QR</button>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label>Link</label>
+                <div class="input-group mb-3">
+                  <input type="text" id="qrText" class="form-control" value="{{ route('business-details', $business->slug) }}">
+                  <div class="input-group-append" id="copylink" data-url="{{ route('business-details', $business->slug) }}">
+                    <span class="input-group-text">Copy</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 </section>
 <!-- /.content -->
 
@@ -197,17 +231,46 @@
       },
       beforeSend: function() {
         $('#city_id').html('<option value="">Loading ...</option>');
+        $('#area_id').html('<option value="">Select Area</option>');
       },
       success: function(states) {
-        $('#city_id').html('<option value="">Select CitY</option>');
+        $('#city_id').html('<option value="">Select City</option>');
         $.each(states, function(index, item) {
           $('#city_id').append('<option value="' + item.id + '">' + item.name + '</option>');
         });
       },
       error: function(xhr, status, error) {
         console.error("Error: " + error);
-        $('#city_id').html('<option value="">Select CitY</option>');
+        $('#city_id').html('<option value="">Select City</option>');
         alert("There was an error state chnage.");
+      }
+    });
+  });
+
+  $('#city_id').on('change', function(event) {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('admin.getCitieArea') }}",
+      data: {
+        city_id: $(this).val()
+      },
+      dataType: "json",
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      beforeSend: function() {
+        $('#area_id').html('<option value="">Loading ...</option>');
+      },
+      success: function(states) {
+        $('#area_id').html('<option value="">Select Area</option>');
+        $.each(states, function(index, item) {
+          $('#area_id').append('<option value="' + item.id + '">' + item.area_name + '</option>');
+        });
+      },
+      error: function(xhr, status, error) {
+        console.error("Error: " + error);
+        $('#area_id').html('<option value="">Select Area</option>');
+        alert("There was an error city change.");
       }
     });
   });
@@ -223,6 +286,47 @@
       reader.readAsDataURL(input.files[0]);
     }
   })
+</script>
+
+<!-- for share section -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+  function generateQR() {
+    const canvas = document.getElementById('qrcode');
+    const text = document.getElementById('qrText').value;
+
+    // Clear previous QR
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Generate QR
+    QRCode.toCanvas(canvas, text, {
+      width: 200
+    }, function(error) {
+      if (error) console.error(error);
+      console.log('QR code generated!');
+    });
+  }
+
+  $('#downloadqrbtn').on('click', function() {
+    const canvas = document.getElementById('qrcode');
+    const link = document.createElement('a');
+    link.download = 'qrcode.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+  generateQR();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    $('#copylink').click(function() {
+      var $temp = $("<input>");
+      $("body").append($temp);
+      $temp.val($(this).data('url')).select();
+      document.execCommand("copy");
+      $temp.remove();
+      alert("Link copied to clipboard");
+    });
+  });
 </script>
 
 @endpush

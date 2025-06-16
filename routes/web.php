@@ -53,6 +53,10 @@ Route::controller(AuthController::class)->group(function () {
 
     Route::get('Register-business', 'registerBusinessView')->name('register.business');
     Route::post('Register-business', 'registerBusiness')->name('register.business.store');
+
+    Route::post('forgot-password', 'forgotPassword')->name('forgot.password');
+    Route::get('password-reset/{token}/{email}', 'ResetPasswordForm')->name('password.reset');
+    Route::post('password-reset', 'ResetPassword')->name('password.reset.update');
 });
 
 Route::middleware(['web', 'front'])->group(function () {

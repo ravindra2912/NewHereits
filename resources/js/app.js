@@ -1,3 +1,4 @@
+import route from 'ziggy-js';
 import './bootstrap';
 
 import Alpine from 'alpinejs';

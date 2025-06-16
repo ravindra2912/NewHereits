@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Front;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Business;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\ResetPasswordEmail;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
@@ -19,6 +23,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    public $forgotPasswordTimeLimite = 110; // in minutes
+    function __construct() {}
+
     public function store(LoginRequest $request)
     {
         $success = false;
@@ -101,32 +109,111 @@ class AuthController extends Controller
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = '';
         $data = array();
+        $redirect = '';
 
-        try {
-            $rules = [
-                'email' => 'required|email',
-            ];
+        $rules = [
+            'email' => 'required|email',
+        ];
 
-            $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-            if ($validator->fails()) { // Validation fails
-                $message = $validator->errors();
-                // $message = $validator->errors()->first();
-            } else {
-                $user = User::where('email', $request->email)->first();
-                if ($user) {
-                    $user->password = Hash::make('123456');
-                    $user->save();
+        if ($validator->fails()) { // Validation fails
+            // $message = $validator->errors();
+            $message = $validator->errors()->first();
+        } else {
+            try {
+                $User = User::select('id', 'email', 'first_name')->where('email', $request->email)->first();
+                if ($User) {
+
+                    //Check  if token exist then delete first
+                    if ($request->email) {
+                        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+                    }
+                    $token = Str::random(64);
+                    DB::table('password_reset_tokens')->insert([
+                        'email' => $request->email,
+                        'token' => $token,
+                        'created_at' => Carbon::now()
+                    ]);
+                    $maildata = [
+                        'username' => $User->first_name,
+                        'token' => $token,
+                        'url' => route('password.reset', [$token, $request->email])
+                    ];
+
+                    Mail::to($request->email)->send(new ResetPasswordEmail($maildata));
                     $success = true;
-                    $message = 'Password reset successfully.';
+                    $message =  'Successfully varification code send from you email address, please check your email';
                 } else {
-                    $message = 'Email not found.';
+                    $message =  'Please enter registered email address';
                 }
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
             }
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    function ResetPasswordForm($token, $email)
+    {
+        $data = DB::table('password_reset_tokens')->where('email', $email)->where('token', $token)->first();
+        if ($data) {
+            $to = Carbon::parse($data->created_at);
+            $from = Carbon::now();
+            $diffInMinutes = $to->diffInMinutes($from);
+            if ($diffInMinutes <= $this->forgotPasswordTimeLimite) {
+                return view('front.auth.resetPassword', compact('token', 'email'));
+            }
+        }
+        exit('Invalid Token');
+    }
+
+    public function ResetPassword(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $data = array();
+        $redirect = Route('home');
+
+        $rules = [
+            'password' => 'required|min:6',
+            'confirm_password' => 'required|min:6|same:password',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) { // Validation fails
+            $message = $validator->errors();
+            // $message = $validator->errors()->first();
+        } else {
+            try {
+                $data = DB::table('password_reset_tokens')->where('email', $request->email)->where('token', $request->token)->first();
+                if ($data) {
+                    $User = User::where('email', $request->email)->first();
+                    $to = Carbon::parse($data->created_at);
+                    $from = Carbon::now();
+                    $diffInMinutes = $to->diffInMinutes($from);
+                    if ($diffInMinutes <= $this->forgotPasswordTimeLimite) {
+                        $User = User::select('id', 'email', 'password')->where('email', $request->email)->first();
+                        if ($User) {
+                            $User->password = Hash::make($request->password);
+                            $User->save();
+
+                            $success = true;
+                            $message =  'Password reset successfully.';
+                        } else {
+                            $message = 'Invalid Token';
+                        }
+                    } else {
+                        $message = 'Token expired, please try again.';
+                    }
+                } else {
+                    $message = 'Invalid Token';
+                }
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+            }
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
@@ -174,27 +261,18 @@ class AuthController extends Controller
                 'pincode' => 'required',
             ];
 
-            if (!Auth::check()) {
-                $rules['user_email'] = 'required|email|exists:users,email';
-                $rules['password'] = 'required';
-            }
 
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) { // Validation fails
                 $message = $validator->errors();
                 // $message = $validator->errors()->first();
+            } else if ($request->latitude == null || $request->longitude == null) {
+                $message = 'Pleaase select location on map';
             } else {
 
                 if (!Auth::check()) {
-                    $user = User::where('email', $request->user_email)->first();
-                    if ($user && Hash::check($request['password'], $user->password)) {
-                        // Auth::login($user);
-                        $user_id = $user->id;
-                    } else {
-                        $message = 'Invalid Email id and Password!';
-                        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
-                    }
+                    $message = 'Session expired, please login again.';
                 } else {
                     $user_id = Auth::user()->id;
                 }
@@ -210,8 +288,8 @@ class AuthController extends Controller
                 $insert->slug = generateUniqueSlug(Business::class, $request->business_name);
                 $insert->business_category_id = $request->business_category_id;
                 $insert->address = $request->address;
-                // $insert->latitude = $request->latitude;
-                // $insert->longitude = $request->longitude;
+                $insert->latitude = $request->latitude;
+                $insert->longitude = $request->longitude;
                 $insert->state_id = $request->state_id;
                 $insert->city_id = $request->city_id;
                 $insert->area_id = $request->area_id;

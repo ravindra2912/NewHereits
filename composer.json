@@ -12,6 +12,7 @@
         "laravel/socialite": "^5.20",
         "laravel/tinker": "^2.9",
         "lcobucci/jwt": "^4.3 || ^5.0",
+        "tightenco/ziggy": "^2.5",
         "torann/geoip": "^3.0",
         "yajra/laravel-datatables": "^11.0"
     },

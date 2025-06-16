@@ -106,9 +106,9 @@ class SettingController extends Controller
     {
         // dd(Carbon::now()->addDay(6)->format('l'));
 
-        $business = Business::find(Auth::user()->business_id);
-        $businessCat = BusinessCategory::get();
-        return view('business.setting.business_profile', compact('business', 'businessCat'));
+        $business = Business::with('businessCategory')->find(Auth::user()->business_id);
+        // $businessCat = BusinessCategory::get();
+        return view('business.setting.business_profile', compact('business'));
     }
 
     public function businessUpdate(Request $request, $id)
@@ -122,12 +122,13 @@ class SettingController extends Controller
             $rules = [
                 'business_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'name' => 'required',
-                'business_category_id' => 'required',
+                // 'business_category_id' => 'required',
                 'business_type' => 'required',
                 'address' => 'required',
                 'contact' => 'required|numeric|unique:businesses,contact,' . $id,
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
+                'area_id' => 'required|exists:city_areas,id',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -146,12 +147,13 @@ class SettingController extends Controller
                 }
 
                 $update->name = $request->name;
-                $update->business_category_id = $request->business_category_id;
+                // $update->business_category_id = $request->business_category_id;
                 $update->business_type = $request->business_type;
                 $update->address = $request->address;
                 $update->contact = $request->contact;
                 $update->state_id = $request->state_id;
                 $update->city_id = $request->city_id;
+                $update->area_id = $request->area_id;
                 $update->save();
 
                 // Remove old uploaded image if exist

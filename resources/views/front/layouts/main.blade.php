@@ -56,6 +56,9 @@
 	<meta itemprop="description" content="">
 	@endif
 
+	@routes
+    @vite('resources/js/app.js')
+
 
 	<!-- Web Fonts
 		============================================= -->
@@ -81,36 +84,6 @@
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5560225028494268"
 		crossorigin="anonymous"></script>
 	@endif
-
-	<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-	<script>
-		var NotificationUserId = null;
-		window.OneSignalDeferred = window.OneSignalDeferred || [];
-		OneSignalDeferred.push(async function(OneSignal) {
-			await OneSignal.init({
-				appId: window.location.hostname == 'hereits.com' ? "08672fa6-d212-4b28-8946-9cc22f2030a0" : "5ea2682e-14bb-4e60-8771-42fb8d650240",
-			});
-
-			const isSupported = await OneSignal.Notifications.isPushSupported();
-			if (!isSupported) {
-				console.warn("Push not supported");
-				return;
-			}
-
-			// ✅ Check current permission status
-			const permission = await OneSignal.Notifications.permission;
-			// console.log("Notification permission:", permission); // values: 'default', 'granted', 'denied'
-
-			if (permission !== "granted") {
-				// ✅ Prompt user for notification permission
-				await OneSignal.Notifications.requestPermission();
-			}
-
-			NotificationUserId = await OneSignal.User.PushSubscription.id;
-			$('#notification_token').val(NotificationUserId);
-			console.log(NotificationUserId);
-		});
-	</script>
 
 	@stack('style')
 </head>
@@ -582,6 +555,7 @@
 							<p class="text-center text-3 text-muted">Enter your Email and we’ll help you reset your password.</p>
 							<p class="text-3 text-center mb-4" id="forgot_msg"></p>
 							<form id="forgotForm" class="form-border" method="post">
+								@csrf
 								<div class="form-group">
 									<input type="text" class="form-control border-2" id="forgot-email" name="email" required placeholder="Enter Email">
 								</div>
@@ -608,32 +582,19 @@
 	<!-- <script src="{{ asset('front/vendor/daterangepicker/moment.min.js') }}"></script> -->
 	<!-- <script src="{{ asset('front/vendor/daterangepicker/daterangepicker.js') }}"></script> -->
 	<script src="{{ asset('front/js/theme.js') }}"></script>
+	<!-- onesignal -->
+	<script src="{{ asset('front/js/onesignal.js') }}"></script>
+	<script src="{{ asset('front/js/common.js') }}"></script>
 
 	<!--Toastr -->
 	<script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js')}}"></script>
-
+ 
 	<script src="{{ asset('ajax/ajax.js') }}"></script>
 
 	<script>
-		function loader(state) {
-			if (state) {
-				document.getElementById("preloader").style.display = "block";
-			} else {
-				document.getElementById("preloader").style.display = "none";
-			}
+		
 
-		}
-
-		document.addEventListener('DOMContentLoaded', function() {
-			$('#copylink').click(function() {
-				var $temp = $("<input>");
-				$("body").append($temp);
-				$temp.val($(this).data('url')).select();
-				document.execCommand("copy");
-				$temp.remove();
-				alert("Link copied to clipboard");
-			});
-		});
+		
 
 		var locationData = @json(getUserLocationInfo());
 	</script>
@@ -642,12 +603,32 @@
 
 
 
-	<script
+	<!-- <script
 		src="https://maps.googleapis.com/maps/api/js?key={{env('GOOGLE_MAP_KEY')}}&callback=initAutocomplete&libraries=places&v=weekly&loading=async"
-		defer></script>
+		defer></script> -->
 
 	<!-- location search with google -->
 	<script>
+		function loadGoogleMapsWhenNeeded() {
+			const apiKey = "{{ env('GOOGLE_MAP_KEY') }}"; // This will be rendered by Blade
+			const scriptId = 'google-maps-script';
+
+			// Prevent loading again if already loaded
+			if (document.getElementById(scriptId)) return;
+
+			const script = document.createElement('script');
+			script.id = scriptId;
+			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initAutocomplete&libraries=places&v=weekly&loading=async`;
+			script.defer = true;
+			script.async = true;
+
+			script.onerror = () => {
+				console.error("Failed to load Google Maps script");
+			};
+
+			document.head.appendChild(script);
+		}
+
 		let autocomplete;
 		let address1Field;
 
@@ -722,13 +703,6 @@
 				}
 			}
 
-			// if(neighborhood != ''){
-			// 	address = neighborhood +', '+locality;
-			// }else{
-			// 	address = locality +', '+administrative_area_level_3;
-			// }
-
-
 			// Check and assign area
 			if (neighborhood && neighborhood !== '') {
 				address = neighborhood;
@@ -801,6 +775,11 @@
 				locationData['radius'] = $(this).val();
 				setLocationData(locationData);
 			})
+
+			$('#location-modal').on('shown.bs.modal', function() {
+				// Call your function here
+				loadGoogleMapsWhenNeeded(); // for example
+			});
 		});
 
 		var lastAjax = null;
@@ -979,39 +958,7 @@
 
 
 
-		//new forgotForm
-		$("#forgotForm").on('submit', (function(e) {
-			e.preventDefault();
-			$.ajax({
-				url: url + 'Login/user_forgot',
-				type: "POST",
-				data: new FormData(this),
-				dataType: 'json',
-				contentType: false,
-				cache: false,
-				processData: false,
-				beforeSend: function() {
-					document.getElementById("preloader").style.display = "block";
-				},
-				success: function(data) {
-					//alert(data);
-					console.log(data);
-					if (data.status == 1) {
-						$('#forgot_msg').html('<span class="text-success">' + data.Message + '</span>');
-					} else {
-						$('#forgot_msg').html('<span class="text-danger">' + data.Message + '</span>');
-					}
-					var elmnt = document.getElementById("forgot_msg");
-					elmnt.scrollIntoView();
-					document.getElementById("preloader").style.display = "none";
-				},
-				error: function(e) {
-					alert('Somthing Wron');
-					console.log(e);
-					document.getElementById("preloader").style.display = "none";
-				}
-			});
-		}));
+		
 	</script>
 </body>
 
