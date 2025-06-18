@@ -79,7 +79,7 @@
 
             @if(Auth::check())
 
-            <form id="loginForm2" action="{{ route('register.business.store') }}" data-action="reload" class="formaction">
+            <form id="loginForm2" action="{{ route('register.business.store') }}" data-action="redirect" class="formaction">
                 @csrf
                 <div class="row">
 
@@ -117,6 +117,15 @@
                         </div>
                     </div>
 
+                    <div class="col-md-12 mt-2 mb-3">
+                        <h5>Set Your business location</h5>
+                        <div class="place-autocomplete-card" id="place-autocomplete-card">
+                        </div>
+                        <div id="map"></div>
+                        <input type="hidden" name="latitude" id="lat" />
+                        <input type="hidden" name="longitude" id="lng" />
+                    </div>
+
                     <div class="form-group col-lg-6">
                         <label for="address">Address</label>
                         <input type="text" class="form-control" id="address" name="address" placeholder="Address">
@@ -146,12 +155,19 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <div class="form-group">
                             <label>Area <span class="error">*</span></label>
                             <select class="form-control" name="area_id" id="area_id">
                                 <option value="">Select Area</option>
                             </select>
+                        </div>
+                    </div> -->
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Area <span class="error">*</span></label>
+                            <input type="text" class="form-control" name="area" placeholder="Area" />
                         </div>
                     </div>
 
@@ -162,21 +178,13 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12 mt-2 mb-3">
-                        <h5>Set Your business location</h5>
-                        <div class="place-autocomplete-card" id="place-autocomplete-card">
-                        </div>
-                        <div id="map"></div>
-                        <input type="hidden" name="latitude" id="lat" />
-                        <input type="hidden" name="longitude" id="lng" />
 
-                    </div>
                 </div>
                 <div class="col-12 text-right">
-                <button class="btn btn-primary btn_action" type="submit">
-                    <span id="buttonText">Submit</span>
-                    <span id="loader" class="d-none">Submiting ...</span>
-                </button>
+                    <button class="btn btn-primary btn_action" type="submit">
+                        <span id="buttonText">Submit</span>
+                        <span id="loader" class="d-none">Submiting ...</span>
+                    </button>
                 </div>
             </form>
             @else
@@ -227,6 +235,11 @@
 </script>
 
 <script>
+    let map_state = '';
+    let map_city = '';
+    let map_area = '';
+    let map_pincode = '';
+
     let map;
     let marker;
     let infoWindow;
@@ -248,10 +261,11 @@
         // Initialize the map.
         map = new google.maps.Map(document.getElementById('map'), {
             center,
-            zoom: 5,
+            zoom: 15,
             mapId: '4504f8b37365c3d0',
             mapTypeControl: false,
         });
+
         //@ts-ignore
         const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
         //@ts-ignore
@@ -270,9 +284,8 @@
         // Click to place marker
         map.addListener('click', (e) => {
             const clickedLocation = e.latLng;
-
             marker.position = clickedLocation;
-            setLatLong(clickedLocation.lat(), clickedLocation.lng());
+            setAddress(clickedLocation);
             // updateInfoWindow("Selected Location", clickedLocation);
         });
 
@@ -287,7 +300,8 @@
             await place.fetchFields({
                 fields: ['displayName', 'formattedAddress', 'location']
             });
-            setLatLong(place.location.lat(), place.location.lng())
+            setAddress(place.location);
+
             // If the place has a geometry, then present it on a map.
             if (place.viewport) {
                 map.fitBounds(place.viewport);
@@ -314,9 +328,62 @@
         });
     }
 
-    function setLatLong(lat, lng) {
+    function getAddressPart(components, type, legacy = false) {
+        const component = components.find(c => c.types.includes(type));
+        return component ? (legacy ? component.long_name : component.longText) : '';
+    }
+
+    function setAddress(data) {
+        const geocoder = new google.maps.Geocoder();
+
+        // ✅ Get lat/lng from `data`
+        const lat = typeof data.lat === 'function' ? data.lat() : data.lat;
+        const lng = typeof data.lng === 'function' ? data.lng() : data.lng;
         $('#lat').val(lat);
         $('#lng').val(lng);
+
+        geocoder.geocode({
+            location: data
+        }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+                const components = results[0].address_components;
+
+                map_state = getAddressPart(components, 'administrative_area_level_1', true);
+                map_city = getAddressPart(components, 'locality', true);
+                map_area = getAddressPart(components, 'sublocality_level_1', true) || getAddressPart(components, 'neighborhood', true);
+                map_pincode = getAddressPart(components, 'postal_code', true);
+
+                // console.log('State: ', map_state);
+                // console.log('city: ', map_city);
+                // console.log('area: ', map_area);
+                // console.log('pin: ', map_pincode);
+
+                // Set your form values or dropdowns if needed
+                selectOptionByText('state_id', map_state);
+            } else {
+                console.error('Geocoder failed due to:', status);
+            }
+        });
+    }
+
+    function selectOptionByText(elementId, text) {
+        const selectElement = document.getElementById(elementId);
+        // Get all options as an array
+        const options = Array.from(selectElement.options);
+
+        // Loop through and print value and text
+        options.forEach(option => {
+            if (option.text.toLowerCase() === text.toLowerCase()) {
+                option.selected = true;
+
+                // 🔔 Trigger change event
+                const event = new Event('change', {
+                    bubbles: true
+                });
+                selectElement.dispatchEvent(event);
+            }
+            // console.log('Value:', option.value, 'Text:', option.text);
+        });
     }
 
     initMap();
@@ -343,6 +410,10 @@
                 $.each(states, function(index, item) {
                     $('#city_id').append('<option value="' + item.id + '">' + item.name + '</option>');
                 });
+
+                if (map_city !== '') {
+                    selectOptionByText('city_id', map_city);
+                }
             },
             error: function(xhr, status, error) {
                 console.error("Error: " + error);
@@ -353,31 +424,18 @@
     });
 
     $('#city_id').on('change', function(event) {
-        $.ajax({
-            type: "POST",
-            url: "{{ route('admin.getCitieArea') }}",
-            data: {
-                city_id: $(this).val()
-            },
-            dataType: "json",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            beforeSend: function() {
-                $('#area_id').html('<option value="">Loading ...</option>');
-            },
-            success: function(states) {
-                $('#area_id').html('<option value="">Select area</option>');
-                $.each(states, function(index, item) {
-                    $('#area_id').append('<option value="' + item.id + '">' + item.area_name + '</option>');
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error: " + error);
-                $('#area_id').html('<option value="">Select area</option>');
-                alert("There was an error state chnage.");
-            }
-        });
+        if (map_area !== '') {
+            $('input[name="area"]').val(map_area).prop('readonly', true);
+        } else {
+            $('input[name="area"]').val('').prop('readonly', false);
+
+        }
+
+        if (map_pincode !== '') {
+            $('input[name="pincode"]').val(map_pincode).prop('readonly', true)
+        } else {
+            $('input[name="pincode"]').val('').prop('readonly', false)
+        }
     });
 
     $('.avtar_input').on('change', function(event) {

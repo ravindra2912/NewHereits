@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\CityArea;
 use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Validator;
@@ -245,7 +246,7 @@ class AuthController extends Controller
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = Route('home');
+        $redirect = Route('business.dashboard');
         $data = array();
 
         try {
@@ -257,7 +258,6 @@ class AuthController extends Controller
                 'address' => 'required',
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
-                'area_id' => 'required|exists:city_areas,id',
                 'pincode' => 'required',
             ];
 
@@ -292,21 +292,45 @@ class AuthController extends Controller
                 $insert->longitude = $request->longitude;
                 $insert->state_id = $request->state_id;
                 $insert->city_id = $request->city_id;
-                $insert->area_id = $request->area_id;
+
                 $insert->pincode = $request->pincode;
                 $insert->status = 'pending';
+
+                if ($request->area != null && $request->area != '') {
+                    $areaDetail = CityArea::where('city_id', $request->city_id)
+                        // ->where('area_name', strtolower($request->area))
+                        ->whereRaw('LOWER(area_name) = ?', [strtolower($request->area)])
+                        ->first();
+                    if ($areaDetail) {
+                        $insert->area_id = $areaDetail->id;
+                    } else {
+                        $inserArea = new CityArea();
+                        $inserArea->pincode = $request->pincode;
+                        $inserArea->city_id = $request->city_id;
+                        $inserArea->area_name = strtolower($request->area);
+                        $inserArea->save();
+                        $insert->area_id = $inserArea->id;
+                    }
+                }
+
                 $insert->save();
 
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
                 if ($user && ($user->role_id != 2 || $user->business_id == null)) {
-                    $user->business_id =  $insert->id;
                     $user->role_id = 2;
-                    $user->save();
                 }
+                $user->business_id =  $insert->id;
+                $user->save();
+
+                if ($user) {
+                    $user->getBusinessDetails = Business::select('id', 'owner_id', 'name', 'business_image', 'subscription_expiry_date')->find($insert->id);
+                }
+                Auth::logout();
+                Auth::login($user);
 
                 $success = true;
-                $message = 'User register successfully.';
+                $message = 'Business register successfully.';
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();

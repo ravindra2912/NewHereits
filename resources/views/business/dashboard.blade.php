@@ -5,20 +5,9 @@
 <div class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
-      @if(round(Carbon\Carbon::now()->diffInDays(Carbon\Carbon::parse(Auth::user()->getBusinessDetails->subscription_expiry_date))) <= 7)
       <div class="col-sm-12">
-        <div class="alert alert-danger row">
-          <h4 class="col-12"><i class="icon fas fa-ban "></i> Subscription Expire!</h4>
-          <div class="col-7">
-            <p class="mb-0">We regret to inform you that your business plan expire on {{ get_date(auth()->user()->getBusinessDetails->subscription_expiry_date) }}.</p>
-            <p>To continue using our services, please renew your subscription.</p>
-          </div>
-          <div class="col-5 text-right">
-            <a href="{{ route('business.setting.business.plan')}}" class="btn btn-outline-warning">Renew Subscription</a>
-          </div>
-        </div>
+        <x-business-alert/>
       </div>
-      @endif
       <div class="col-sm-6">
         <h1 class="m-0">Dashboard</h1>
       </div><!-- /.col -->

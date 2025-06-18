@@ -121,11 +121,8 @@
           <h1 class="h2 mb-0 text-white mb-2">List Your Business</h1>
           <p class="text-3 text-white" style="line-height: 1.25;">Join our platform today and boost your business visibility. Reach more customers, increase your sales, and grow your brand with us. Simple, effective, and made for success! </p>
           <div class="text-md-left text-center">
-            @if(Auth::check())
             <button class="btn btn-outline-danger btn-sm list-business-btn"><a href="{{ route('register.business') }}" class="text-white">Register your business</a></button>
-            @else
-            <button class="btn btn-outline-danger btn-sm list-business-btn"><a data-toggle="modal" data-target="#login-modal" href="#" class="text-white">Register your business</a></button>
-            @endif
+            
           </div>
         </div>
         <div class="col-lg-5 col-md-5 col-sm-5 col-12 d-flex text-center justify-content-center align-items-center mb-md-0 mb-2">
