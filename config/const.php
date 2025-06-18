@@ -4,11 +4,11 @@
 return [
 
     "site_setting" => [
-        "name" => "Test site",
+        "name" => "Hereits",
         //  "logo" => asset('admin/images/logo.png'),
-        "logo" => env('APP_URL') . '/admin/images/logo.png',
+        "logo" => env('APP_URL') . '/front/img/logo.png',
         "small_logo" => env('APP_URL') . '/admin/images/small_logo.png',
-        "fevicon" => env('APP_URL') . '/admin/images/small_logo.png',
+        "fevicon" => env('APP_URL') . '/front/img/fevicon-icon.png',
     ],
 
     "common_status" => ["active", "in-active"],

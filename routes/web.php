@@ -10,6 +10,10 @@ use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\BusinessController;
 use App\Http\Controllers\Front\AppointmentController;
 
+Route::get('test', function(){
+    updatePoster();
+});
+
 Route::get('test-map', function(){
     return view('testmap');
 });

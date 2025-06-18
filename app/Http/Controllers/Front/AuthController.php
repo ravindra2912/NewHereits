@@ -249,6 +249,8 @@ class AuthController extends Controller
         $redirect = Route('business.dashboard');
         $data = array();
 
+        DB::beginTransaction();
+
         try {
             $rules = [
                 'business_image' => 'required|mimes:jpg,jpeg,png,webp|',
@@ -331,12 +333,14 @@ class AuthController extends Controller
 
                 $success = true;
                 $message = 'Business register successfully.';
+                DB::commit();
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();
             if (isset($image_name) && !empty($image_name)) {
                 fileRemoveStorage($image_name);
             }
+            DB::rollBack();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }

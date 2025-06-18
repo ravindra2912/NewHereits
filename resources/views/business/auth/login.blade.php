@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ config('const.site_setting.name') }} | Log in</title>
 
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{{ config('const.site_setting.fevicon') }}">
+
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->

@@ -669,3 +669,39 @@ function getAvailableCities()
 // ==============================================
 //      Frontend functions end 
 // ==============================================
+
+
+function updatePoster()
+{
+    // Load the background image
+    $background = Image::make(public_path('poster.png')); // replace with your image path
+
+    // Load QR code image (white QR)
+    $qrCode = Image::make(public_path('qr.png')) // your uploaded QR code
+                   ->resize(300, 300) // resize QR to fit nicely
+                   ->opacity(100); // keep it fully visible
+
+    // Get dimensions to center QR code
+    $bgWidth = $background->width();
+    $bgHeight = $background->height();
+
+    $qrX = intval(($bgWidth - $qrCode->width()) / 2);
+    $qrY = intval(($bgHeight - $qrCode->height()) / 2);
+
+    // Insert QR code into center
+    $background->insert($qrCode, 'top-left', $qrX, $qrY);
+
+    // Add "Hereits business" text below "We Are Online"
+    $background->text('Hereits business', 380, 90, function ($font) {
+        $font->file(public_path('fonts/arial.ttf')); // change to your desired font
+        $font->size(36);
+        $font->color('#FFFFFF');
+        $font->align('center');
+    });
+
+    // Save to public folder or return to browser
+    $outputPath = public_path('images/output-poster.png');
+    $background->save($outputPath);
+
+    return response()->download($outputPath);
+}
