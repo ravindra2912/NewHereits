@@ -11,6 +11,7 @@ use App\Http\Controllers\Front\BusinessController;
 use App\Http\Controllers\Front\AppointmentController;
 
 Route::get('test', function(){
+    // generateQRCode('sdsddsd');
     updatePoster();
 });
 

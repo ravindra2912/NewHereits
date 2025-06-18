@@ -190,10 +190,10 @@
           <div class="row">
             <div class="col-md-6 col-12">
               <label>QR code</label><br>
-              
+
               <div class="text-center">
-                <canvas id="qrcode"></canvas><br>
-              <button id="downloadqrbtn" class="btn btn-sm btn-outline-primary">Download QR</button>
+                <img src="{{ $BusinessSticker }}" height="400" />
+                <a href="{{ $BusinessSticker }}" class="btn btn-sm btn-outline-primary" download>Download QR</a>
               </div>
             </div>
             <div class="col-md-6 col-12">
@@ -289,34 +289,7 @@
 </script>
 
 <!-- for share section -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script>
-  function generateQR() {
-    const canvas = document.getElementById('qrcode');
-    const text = document.getElementById('qrText').value;
-
-    // Clear previous QR
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Generate QR
-    QRCode.toCanvas(canvas, text, {
-      width: 200
-    }, function(error) {
-      if (error) console.error(error);
-      console.log('QR code generated!');
-    });
-  }
-
-  $('#downloadqrbtn').on('click', function() {
-    const canvas = document.getElementById('qrcode');
-    const link = document.createElement('a');
-    link.download = 'qrcode.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  });
-  generateQR();
-
   document.addEventListener('DOMContentLoaded', function() {
     $('#copylink').click(function() {
       var $temp = $("<input>");

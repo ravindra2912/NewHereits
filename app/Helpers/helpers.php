@@ -11,18 +11,22 @@ use App\Models\CityArea;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Str;
 use App\Models\Appointmenter;
+use chillerlan\QRCode\QRCode;
 use App\Models\BusinessTiming;
 use App\Models\BusinessSetting;
 use App\Models\BusinessCategory;
+use chillerlan\QRCode\QROptions;
 use App\Models\AppointmentBooking;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use chillerlan\QRCode\Common\EccLevel;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
+use chillerlan\QRCode\Output\QROutputInterface;
 
 
 function apiResponce($statuscode, $status, $message, $data = [])
@@ -518,7 +522,7 @@ function getAddressOnLatLong($latitude, $longitude)
                 if (in_array('administrative_area_level_3', $types)) {
                     $admin_area_level_3 = $component['short_name'];
                 }
-                
+
                 if (in_array('administrative_area_level_1', $types)) {
                     $administrative_area_level_1 = $component['short_name'];
                 }
@@ -536,7 +540,7 @@ function getAddressOnLatLong($latitude, $longitude)
                 $address .= $address == '' ? $admin_area_level_3 : ', ' . $admin_area_level_3;
             }
 
-            if($locality == $admin_area_level_3){
+            if ($locality == $admin_area_level_3) {
                 $address .= $address == '' ? $administrative_area_level_1 : ', ' . $administrative_area_level_1;
             }
         }
@@ -670,38 +674,93 @@ function getAvailableCities()
 //      Frontend functions end 
 // ==============================================
 
-
-function updatePoster()
+function generateQRCodeBase64($data)
 {
-    // Load the background image
-    $background = Image::make(public_path('poster.png')); // replace with your image path
+    // $options = new QROptions([
+    //     'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+    //     'eccLevel' => QRCode::ECC_L,
+    //     'scale' => 10,
+    // ]);
 
-    // Load QR code image (white QR)
-    $qrCode = Image::make(public_path('qr.png')) // your uploaded QR code
-                   ->resize(300, 300) // resize QR to fit nicely
-                   ->opacity(100); // keep it fully visible
+    $myOptions = new QROptions([
+        'version'    => 10,
+        'outputType' => QROutputInterface::GDIMAGE_PNG,
+        'eccLevel'   => EccLevel::H,
+    ]);
 
-    // Get dimensions to center QR code
-    $bgWidth = $background->width();
-    $bgHeight = $background->height();
+    $qrPng = (new QRCode($myOptions))->render($data);
+    return $qrPng;
+    // echo "<img src='$qrPng' />";
+}
 
-    $qrX = intval(($bgWidth - $qrCode->width()) / 2);
-    $qrY = intval(($bgHeight - $qrCode->height()) / 2);
 
-    // Insert QR code into center
-    $background->insert($qrCode, 'top-left', $qrX, $qrY);
+function businessSticker($qrdata, $text)
+{
+    $baseImagePath = public_path('front/stiker/poster.png');
+    $qrImagePath = public_path('front/stiker/qr.png');
 
-    // Add "Hereits business" text below "We Are Online"
-    $background->text('Hereits business', 380, 90, function ($font) {
-        $font->file(public_path('fonts/arial.ttf')); // change to your desired font
-        $font->size(36);
-        $font->color('#FFFFFF');
-        $font->align('center');
-    });
+    // Load base and QR images
+    $base = imagecreatefrompng($baseImagePath);
+    // $qr = imagecreatefrompng($qrImagePath);
 
-    // Save to public folder or return to browser
-    $outputPath = public_path('images/output-poster.png');
-    $background->save($outputPath);
+    $qr = imagecreatefromstring(base64_decode(str_replace('data:image/png;base64,', '', generateQRCodeBase64($qrdata))));
 
-    return response()->download($outputPath);
+    // Resize QR to 700x700
+    $qrResized = imagecreatetruecolor(700, 700);
+    imagealphablending($qrResized, false);
+    imagesavealpha($qrResized, true);
+    imagecopyresampled($qrResized, $qr, 0, 0, 0, 0, 700, 700, imagesx($qr), imagesy($qr));
+
+    // Center QR
+    $bgWidth = imagesx($base);
+    $qrX = intval(($bgWidth - 700) / 2);
+    $qrY = 750; // Adjust vertically
+    imagecopy($base, $qrResized, $qrX, $qrY, 0, 0, 700, 700);
+
+    //add text
+    $fontPath = public_path('front/stiker/Roboto-ExtraBold.ttf'); // Must exist
+    $maxFontSize = 110;
+    $minFontSize = 10;
+
+    $imageWidth = imagesx($base);
+    $imageHeight = imagesy($base);
+
+    $textColor = imagecolorallocate($base, 255, 255, 255); // Set text color
+
+    // Start with max size and shrink if needed
+    $fontSize = $maxFontSize;
+
+    do {
+        $bbox = imagettfbbox($fontSize, 0, $fontPath, $text);
+        $textWidth = abs($bbox[2] - $bbox[0]);
+        $textHeight = abs($bbox[7] - $bbox[1]);
+        if ($textWidth <= $imageWidth - 40) {
+            break;
+        }
+        $fontSize -= 2;
+    } while ($fontSize >= $minFontSize);
+
+    // Final X/Y position (centered)
+    $textX = intval(($imageWidth - $textWidth) / 2);
+    $textY = 320; // Adjust based on your design layout
+
+    // Draw text
+    imagettftext($base, $fontSize, 0, $textX, $textY, $textColor, $fontPath, $text);
+
+    // Convert to base64
+    ob_start();
+    imagepng($base);
+    $imageData = ob_get_clean();
+    $base64 = base64_encode($imageData);
+    $base64Image = 'data:image/png;base64,' . $base64;
+    // echo "<img src='$base64Image' height='600' />";
+    // dd($base64Image);
+
+    // Cleanup
+    imagedestroy($base);
+    imagedestroy($qr);
+    imagedestroy($qrResized);
+
+    // Return as JSON or use directly in a view
+    return $base64Image;
 }

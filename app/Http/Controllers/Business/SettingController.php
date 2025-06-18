@@ -108,7 +108,8 @@ class SettingController extends Controller
 
         $business = Business::with('businessCategory')->find(Auth::user()->business_id);
         // $businessCat = BusinessCategory::get();
-        return view('business.setting.business_profile', compact('business'));
+        $BusinessSticker = businessSticker(route('business-details', $business->slug), $business->name);
+        return view('business.setting.business_profile', compact('business', 'BusinessSticker'));
     }
 
     public function businessUpdate(Request $request, $id)
