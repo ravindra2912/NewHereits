@@ -192,8 +192,8 @@
               <label>QR code</label><br>
 
               <div class="text-center">
-                <img src="{{ $BusinessSticker }}" height="400" />
-                <a href="{{ $BusinessSticker }}" class="btn btn-sm btn-outline-primary" download>Download QR</a>
+                <img src="{{ $BusinessSticker }}" height="400" /></br>
+                <a href="{{ $BusinessSticker }}" class="btn btn-sm btn-outline-primary mt-3" download>Download QR</a>
               </div>
             </div>
             <div class="col-md-6 col-12">
