@@ -147,6 +147,7 @@ class CommonController extends Controller
                 if ($location) {
                     // Update the 'data' field
                     $location['data'] = $data;
+                    $location['expires_at'] = now()->addDays(7);
 
                     // Store the updated array back into the session
                     session()->put('hereitsLocation', $location);
@@ -154,7 +155,7 @@ class CommonController extends Controller
                     // If the session data doesn't exist, you can initialize it
                     session()->put('hereitsLocation', [
                         'data' => $data,
-                        'expires_at' => now()->addMinutes(10), // Set your desired expiration
+                        'expires_at' => now()->addDays(7), // Set your desired expiration
                     ]);
                 }
 

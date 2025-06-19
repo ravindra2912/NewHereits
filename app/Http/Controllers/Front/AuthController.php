@@ -226,6 +226,8 @@ class AuthController extends Controller
     {
         $data = session()->only(['hereitsLocation']);
 
+        User::where('id', Auth::user()->id)->update(['notification_token' => null]);
+
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -346,14 +348,26 @@ class AuthController extends Controller
     }
 
 
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        if (isset($request->notificationtoken) && !empty($request->notificationtoken)) {
+            session()->put('notificationtoken', [
+                'data' => $request->notificationtoken,
+                'expires_at' => now()->addMinutes(5), // Set your desired expiration
+            ]);
+        }
         return Socialite::driver('google')->redirect();
     }
 
     public function handleGoogleCallback()
     {
         try {
+            $notificationtoken = '';
+            $session = session('notificationtoken');
+            if ($session && isset($session['data']) != null) {
+                $notificationtoken = $session['data'];
+            }
+
             $googleUser = Socialite::driver('google')->stateless()->user();
             // Check if the user already exists
             $user = User::where('email', $googleUser->getEmail())->first();
@@ -368,8 +382,9 @@ class AuthController extends Controller
                 if ($user->role_id == 2 && $user->business_id == null) {
                     $business = Business::select('id')->where('owner_id', $user->id)->first();
                     $user->business_id = $business->id;
-                    $user->save();
                 }
+                $user->notification_token = $notificationtoken;
+                $user->save();
             } else {
                 $name = explode(' ', $googleUser->getName());
                 // Create a new user
@@ -397,12 +412,14 @@ class AuthController extends Controller
                 $user->last_name = isset($name[1]) != null ? $name[1] : $name[0];
                 $user->email = $googleUser->getEmail();
                 $user->google_key = $googleUser->getId();
+                $user->notification_token = $notificationtoken;
 
                 $user->password = Hash::make(Str::random(8)); // Generate a random 8-character password
                 $user->save();
             }
 
             // Log the user in
+            $user->load('getBusinessDetails:id, owner_id, name, business_image, subscription_expiry_date');
             Auth::login($user);
 
             return redirect()->intended('/');

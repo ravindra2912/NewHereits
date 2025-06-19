@@ -36,9 +36,20 @@ function loadOneSignalAndInit() {
 			}
 
 			const NotificationUserId = await OneSignal.User.PushSubscription.id;
-			$('#notification_token').val(NotificationUserId);
-			console.log("Push token:", NotificationUserId);
+			if (NotificationUserId != null) {
+				$('#notification_token').val(NotificationUserId);
+				console.log("Push token:", NotificationUserId);
+
+				// Get all elements with class "google-a"
+				const elements = document.querySelectorAll('.google-a');
+				elements.forEach(el => {
+					const currentHref = el.getAttribute('href');
+					const newHref = currentHref + '?notificationtoken=' + NotificationUserId; // Example modification
+					el.setAttribute('href', newHref);
+				});
+			}
 		});
+
 	};
 
 	script.onerror = function () {

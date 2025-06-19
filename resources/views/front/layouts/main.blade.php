@@ -334,8 +334,8 @@
 
 	<!-- Location Modal =========================== -->
 	<div id="location-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-lg h-75 modal-dialog-centered" role="document">
-			<div class="modal-content h-75 border-0">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+			<div class="modal-content border-0">
 				<div class="modal-body py-4 px-0">
 					<button type="button" class="close position-absolute location-close-btn d-none" style="right: 15px; top: 15px; z-index: 10;" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
@@ -463,7 +463,7 @@
 							</div>
 							<div class="d-flex  flex-column align-items-center mb-3">
 								<ul class="social-icons social-icons-colored social-icons-circle">
-									<li class="social-icons-google"><a href="{{ route('auth.google') }}" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
+									<li class="social-icons-google"><a href="{{ route('auth.google') }}" class="google-a" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
 								</ul>
 							</div>
 							<p class="text-2 text-center mb-0">New to Hereits? <a class="btn-link" href="" data-toggle="modal" data-target="#signup-modal" data-dismiss="modal">Sign Up</a></p>
@@ -527,7 +527,7 @@
 							</div>
 							<div class="d-flex  flex-column align-items-center mb-3">
 								<ul class="social-icons social-icons-colored social-icons-circle">
-									<li class="social-icons-google"><a href="{{ route('auth.google') }}" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
+									<li class="social-icons-google"><a href="{{ route('auth.google') }}" class="google-a" data-bs-toggle="tooltip" title="" data-bs-original-title="Log In with Google" aria-label="Log In with Google"><i class="fab fa-google"></i></a></li>
 								</ul>
 							</div>
 
