@@ -55,6 +55,20 @@ class Business extends Model
         return $this->hasOne(BusinessSetting::class, 'business_id', 'id');
     }
 
+    // ***************************
+    // for dashboard calculation start
+    // ***************************
+
+    public function bookings()
+    {
+        return $this->hasMany(AppointmentBooking::class, 'business_id', 'id');
+    }
+    
+    // ***************************
+    // for dashboard calculation end
+    // ***************************
+
+
     /**
      * Scope a query to only include businesses within a certain distance.
      *

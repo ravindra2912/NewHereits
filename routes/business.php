@@ -21,6 +21,7 @@ Route::name('business.')->group(function () {
     Route::middleware(['web', 'business'])->group(function () {
         Route::controller(DashboarController::class)->group(function () {
             Route::get('dashboard', 'index')->name('dashboard');
+            Route::post('dashboard-analytics', 'analytics')->name('dashboard.analytics');
         });
 
         Route::name('appointment.')->group(function () {
