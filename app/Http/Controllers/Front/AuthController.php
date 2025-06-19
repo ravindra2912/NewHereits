@@ -350,12 +350,15 @@ class AuthController extends Controller
 
     public function redirectToGoogle(Request $request)
     {
+        $token = '';
         if (isset($request->notificationtoken) && !empty($request->notificationtoken)) {
-            session()->put('notificationtoken', [
-                'data' => $request->notificationtoken,
-                'expires_at' => now()->addMinutes(5), // Set your desired expiration
-            ]);
+            $token = $request->notificationtoken;
         }
+        session()->put('googleAuth', [
+            'data' => $token,
+            'redirectUrl' => url()->previous(),
+            'expires_at' => now()->addMinutes(5), // Set your desired expiration
+        ]);
         return Socialite::driver('google')->redirect();
     }
 
@@ -363,9 +366,10 @@ class AuthController extends Controller
     {
         try {
             $notificationtoken = '';
-            $session = session('notificationtoken');
-            if ($session && isset($session['data']) != null) {
+            $session = session('googleAuth');
+            if ($session && (isset($session['data']) != null || $session['redirectUrl'] != null)) {
                 $notificationtoken = $session['data'];
+                $redirectUrl = $session['redirectUrl'];
             }
 
             $googleUser = Socialite::driver('google')->stateless()->user();
@@ -422,7 +426,12 @@ class AuthController extends Controller
             $user->load('getBusinessDetails:id, owner_id, name, business_image, subscription_expiry_date');
             Auth::login($user);
 
-            return redirect()->intended('/');
+            if(isset($redirectUrl) && !empty($redirectUrl)){
+                return redirect($redirectUrl);
+            }else{
+                return redirect()->intended('/');
+            }
+            
         } catch (\Exception $e) {
             dd($e->getMessage());
             // Handle exceptions
