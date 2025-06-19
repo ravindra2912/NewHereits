@@ -64,6 +64,11 @@ class Business extends Model
         return $this->hasMany(AppointmentBooking::class, 'business_id', 'id');
     }
     
+    public function professionals()
+    {
+        return $this->hasMany(Appointmenter::class, 'business_id', 'id');
+    }
+    
     // ***************************
     // for dashboard calculation end
     // ***************************

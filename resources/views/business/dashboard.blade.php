@@ -38,6 +38,28 @@
 
       <div class="col-md-3 col-sm-6 col-12">
         <div class="info-box">
+          <span class="info-box-icon bg-info"><i class="fas fa-user-tie"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Professionals</span>
+            <span class="info-box-number">{{ $businessDetails->allProfessionals }}</span>
+          </div>
+        </div>
+      </div>
+
+      @if ($businessSettings->is_appointment_with_department)
+      <div class="col-md-3 col-sm-6 col-12">
+        <div class="info-box">
+          <span class="info-box-icon bg-info"><i class="fas fa-project-diagram"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Departments</span>
+            <span class="info-box-number">{{ $businessDetails->allProfessionals }}</span>
+          </div>
+        </div>
+      </div>
+      @endif
+
+      <div class="col-md-3 col-sm-6 col-12">
+        <div class="info-box">
           <span class="info-box-icon bg-info"><i class="fas fa-clipboard-check"></i></span>
           <div class="info-box-content">
             <span class="info-box-text">Complited Appoinment</span>
@@ -57,7 +79,7 @@
       </div>
 
       <div class="col-12 mt-3">
-        <div class="card card-success">
+        <div class="card ">
           <div class="card-header">
             <h3 class="card-title">Appoinment</h3>
             <div class="card-tools">

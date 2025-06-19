@@ -52,20 +52,20 @@
         @if ($businessSettings->is_appointment_with_department)
         <li class="nav-item">
           <a href="{{ route('business.appointment.department.index') }}" class="nav-link {{ request()->routeIs('business.appointment.department*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <i class="nav-icon fas fa-project-diagram"></i>
             <p> Department </p>
           </a>
         </li>
         @endif
         <li class="nav-item">
           <a href="{{ route('business.appointment.appointmenter.index') }}" class="nav-link {{ request()->routeIs('business.appointment.appointmenter*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <i class="nav-icon fas fa-user-tie"></i>
             <p> Professionals </p>
           </a>
         </li>
         <li class="nav-item">
           <a href="{{ route('business.appointment.bookings.index') }}" class="nav-link {{ request()->routeIs('business.appointment.bookings*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <i class="nav-icon fas fa-clipboard"></i>
             <p> Appointments </p>
           </a>
         </li>
@@ -74,7 +74,7 @@
         <li class="nav-header">SITE SETTING</li>
         <li class="nav-item {{ request()->routeIs('business.setting*') ? 'menu-open' : '' }}">
           <a href="#" class="nav-link {{ request()->routeIs('business.setting*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <i class="nav-icon fas fa-cog"></i>
             <p>
               Setting
               <i class="right fas fa-angle-left"></i>
@@ -108,14 +108,14 @@
                 <p>System Setting</p>
               </a>
             </li>
-            
+
             <li class="nav-item">
               <a href="{{ route('business.setting.business.plan') }}" class="nav-link {{ request()->routeIs('business.setting.business.plan') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Plan</p>
               </a>
             </li>
-            
+
             <li class="nav-item">
               <a href="{{ route('business.setting.business.credit') }}" class="nav-link {{ request()->routeIs('business.setting.business.credit') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>

@@ -21,6 +21,7 @@ class DashboarController extends Controller
      */
     public function index(Request $request): View
     {
+        $businessSettings = getBusinessSettings();
         $businessDetails = Business::select('id', 'credit')
             ->withCount([
                 'bookings as complited_count' => function ($q) {
@@ -28,12 +29,13 @@ class DashboarController extends Controller
                 },
                 'bookings as all_count' => function ($q) {
                     $q->where('status', '!=', 'clipboard-check');
-                }
+                },
+                'professionals as allProfessionals'
 
             ])
-        ->find(Auth::user()->business_id);
+            ->find(Auth::user()->business_id);
         // dd($businessDetails->complited_count);
-        return view('business.dashboard', compact('businessDetails'));
+        return view('business.dashboard', compact('businessDetails', 'businessSettings'));
     }
 
     function monthlyBookings($date)
@@ -45,11 +47,11 @@ class DashboarController extends Controller
             ->withCount([
                 'bookings as complited_count' => function ($q) use ($startDate, $endDate) {
                     $q->where('status', 'completed')
-                    ->whereBetween('booking_date', [$startDate, $endDate]);
+                        ->whereBetween('booking_date', [$startDate, $endDate]);
                 },
                 'bookings as all_count' => function ($q) use ($startDate, $endDate) {
                     $q->where('status', '!=', 'clipboard-check')
-                    ->whereBetween('booking_date', [$startDate, $endDate]);
+                        ->whereBetween('booking_date', [$startDate, $endDate]);
                 }
 
             ])
