@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Appointmenter;
 use App\Models\BusinessSetting;
 use App\Models\CityArea;
 use Illuminate\Support\Facades\Redirect;
@@ -322,10 +323,18 @@ class AuthController extends Controller
 
                 updateBusinessSeo($insert->id);
 
+                // assign appoinment system to business
                 BusinessSetting::create([
                     'business_id'=>$insert->id,
                     'is_appointment_system'=>true,
                 ]);
+                
+                // add default expert for show booking
+                $expertInsert = new Appointmenter();
+                $expertInsert->business_id = $insert->id;
+                $expertInsert->appointmenter_name = $insert->name;
+                $expertInsert->slug  = generateUniqueSlug(Appointmenter::class, $insert->name);
+                $expertInsert->save();
 
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
