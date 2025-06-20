@@ -128,7 +128,7 @@ class CommonController extends Controller
                     }
                 } else if ($data['locationType'] == 'currentLocation') {
                     $data['fullAddress'] = getAddressOnLatLong($data['lat'], $data['long']);
-                }else if ($data['locationType'] == 'searchLocation') {
+                } else if ($data['locationType'] == 'searchLocation') {
                     $data['locationType'] = 'currentLocation';
                 }
 
@@ -143,20 +143,18 @@ class CommonController extends Controller
                 // Retrieve the existing session data
                 $location = session('hereitsLocation');
 
-                // Check if the session data exists
-                if ($location) {
-                    // Update the 'data' field
-                    $location['data'] = $data;
-                    $location['expires_at'] = now()->addDays(7);
+                $updatedData = [
+                    'data' => $data,
+                    'expires_at' => now()->addDays(7),
+                ];
 
-                    // Store the updated array back into the session
+                if ($location) {
+                    // Merge or update the session data
+                    $location = array_merge($location, $updatedData);
                     session()->put('hereitsLocation', $location);
                 } else {
-                    // If the session data doesn't exist, you can initialize it
-                    session()->put('hereitsLocation', [
-                        'data' => $data,
-                        'expires_at' => now()->addDays(7), // Set your desired expiration
-                    ]);
+                    // Initialize session with new data
+                    session()->put('hereitsLocation', $updatedData);
                 }
 
                 // $data = getUserLocationInfo();

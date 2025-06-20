@@ -283,7 +283,7 @@ class BusinessController extends Controller
     {
         $success = false;
         $message = 'Something Wrong!';
-        $redirect = Route('business.setting.systemsetting');
+        $redirect = '';
         $data = array();
 
         try {

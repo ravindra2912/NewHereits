@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\BusinessSetting;
 use App\Models\CityArea;
 use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
@@ -320,6 +321,11 @@ class AuthController extends Controller
                 $insert->save();
 
                 updateBusinessSeo($insert->id);
+
+                BusinessSetting::create([
+                    'business_id'=>$insert->id,
+                    'is_appointment_system'=>true,
+                ]);
 
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
