@@ -1,7 +1,7 @@
 @extends('front.layouts.main', ['seo' => [
 'title' => $business->name,' | Hereits',
-'description' => $business->name,
-'keywords' => $business->name ,
+'description' => $business->seo_description,
+'keywords' => $business->seo_keyword ,
 'image' => getImage($business->business_image) ,
 'city' => '',
 'state' => '',

@@ -1,4 +1,14 @@
-@extends('front.layouts.main')
+@extends('front.layouts.main', ['seo' => [
+'title' => 'Hereits',
+'description' => 'Hereits',
+'keywords' => 'Hereits' ,
+'image' => '' ,
+'city' => '',
+'state' => '',
+'position' => ''
+]
+])
+
 @section('content')
 @section('title', 'Home')
 
@@ -122,7 +132,7 @@
           <p class="text-3 text-white" style="line-height: 1.25;">Join our platform today and boost your business visibility. Reach more customers, increase your sales, and grow your brand with us. Simple, effective, and made for success! </p>
           <div class="text-md-left text-center">
             <button class="btn btn-outline-danger btn-sm list-business-btn"><a href="{{ route('register.business') }}" class="text-white">Register your business</a></button>
-            
+
           </div>
         </div>
         <div class="col-lg-5 col-md-5 col-sm-5 col-12 d-flex text-center justify-content-center align-items-center mb-md-0 mb-2">

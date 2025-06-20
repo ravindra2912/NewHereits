@@ -34,6 +34,11 @@ class Business extends Model
     {
         return $this->belongsTo(City::class, 'city_id', 'id')->select('id', 'name', 'state_id');
     }
+    
+    public function area()
+    {
+        return $this->belongsTo(CityArea::class, 'area_id', 'id')->select('id', 'area_name', 'city_id');
+    }
 
     public function reviews()
     {

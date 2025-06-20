@@ -43,12 +43,14 @@ Route::name('business.')->group(function () {
         Route::controller(SettingController::class)->group(function () {
             Route::get('setting/profile', 'profile')->name('setting.profile');
             Route::post('setting/profile/{id}', 'profileUpdate')->name('setting.profile.update');
+
             Route::get('setting/business/profile', 'businessProfile')->name('setting.business');
             Route::post('setting/business/profile/{id}', 'businessUpdate')->name('setting.business.update');
+            Route::post('setting/business/seo/{id}', 'seoUpdate')->name('setting.seo.update');
+
             Route::get('setting/business/timings', 'businessTiming')->name('setting.business.timing');
             Route::post('setting/business/timings/add', 'businessTimingStore')->name('setting.business.timing.add');
             Route::post('setting/business/timings/remove', 'businessTimingSestroy')->name('setting.business.timing.remove');
-            Route::get('setting/business/system-setting', 'systemSetting')->name('setting.systemsetting');
             Route::post('setting/business/system-setting', 'systemSettingUpdate')->name('setting.systemsetting.update');
             Route::get('switch-business/{id}', 'switchBusiness')->name('switchBusiness');
 

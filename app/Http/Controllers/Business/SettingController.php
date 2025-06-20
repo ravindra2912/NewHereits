@@ -107,9 +107,10 @@ class SettingController extends Controller
         // dd(Carbon::now()->addDay(6)->format('l'));
 
         $business = Business::with('businessCategory')->find(Auth::user()->business_id);
+        $setting = getBusinessSettings();
         // $businessCat = BusinessCategory::get();
         $BusinessSticker = businessSticker(route('business-details', $business->slug), $business->name);
-        return view('business.setting.business_profile', compact('business', 'BusinessSticker'));
+        return view('business.setting.business_profile', compact('business', 'BusinessSticker', 'setting'));
     }
 
     public function businessUpdate(Request $request, $id)
@@ -124,12 +125,13 @@ class SettingController extends Controller
                 'business_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'name' => 'required',
                 // 'business_category_id' => 'required',
-                'business_type' => 'required',
+                // 'business_type' => 'required',
                 'address' => 'required',
                 'contact' => 'required|numeric|unique:businesses,contact,' . $id,
                 'state_id' => 'required|exists:states,id',
                 'city_id' => 'required|exists:cities,id',
                 'area_id' => 'required|exists:city_areas,id',
+                'pincode' => 'required|numeric|digits:6',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -149,12 +151,12 @@ class SettingController extends Controller
 
                 $update->name = $request->name;
                 // $update->business_category_id = $request->business_category_id;
-                $update->business_type = $request->business_type;
                 $update->address = $request->address;
                 $update->contact = $request->contact;
                 $update->state_id = $request->state_id;
                 $update->city_id = $request->city_id;
                 $update->area_id = $request->area_id;
+                $update->pincode = $request->pincode;
                 $update->save();
 
                 // Remove old uploaded image if exist
@@ -170,6 +172,40 @@ class SettingController extends Controller
             if (isset($image_name) && !empty($image_name)) {
                 fileRemoveStorage($image_name);
             }
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function seoUpdate(Request $request, $id)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = '';
+        $data = array();
+
+        try {
+            $rules = [
+                'seo_description' => 'required|string|max:160',
+                'seo_keyword' => 'required|string|max:255',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else {
+
+                Business::where('id', $id)->update([
+                    'seo_description' => $request->seo_description,
+                    'seo_keyword' => $request->seo_keyword,
+                ]);
+
+                $success = true;
+                $message = 'SEO update successfully.';
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
@@ -259,12 +295,6 @@ class SettingController extends Controller
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
 
-    public function systemSetting(Request $request)
-    {
-        $setting = getBusinessSettings();
-        return view('business.setting.systemsetting', compact('setting'));
-    }
-
     public function systemSettingUpdate(Request $request)
     {
         $success = false;
@@ -320,9 +350,9 @@ class SettingController extends Controller
     {
         $info = SiteSetting::first('yearly_subscription_price');
         $history = Subscription::where('business_id', getBusinessId())
-        ->with(['transaction'])
-        ->orderBy('id', 'desc')
-        ->get();
+            ->with(['transaction'])
+            ->orderBy('id', 'desc')
+            ->get();
         return view('business.setting.businessPlan', compact('info', 'history'));
     }
 
@@ -386,11 +416,11 @@ class SettingController extends Controller
     public function businessCredit()
     {
         $business = Business::select('id', 'credit')
-        ->with([
-            'businessCredits' => function ($q) {
-                $q->with('transaction')->orderBy('id', 'desc');
-            }
-        ])->find(getBusinessId());
+            ->with([
+                'businessCredits' => function ($q) {
+                    $q->with('transaction')->orderBy('id', 'desc');
+                }
+            ])->find(getBusinessId());
 
         $price = 1.3;
         return view('business.setting.businessCredit', compact('business', 'price'));
@@ -408,7 +438,7 @@ class SettingController extends Controller
             $business = Business::select('id', 'credit')->find(getBusinessId());
             if (!$business) {
                 $message = 'Business not found.';
-            }else if($request->credit < 1){
+            } else if ($request->credit < 1) {
                 $message = 'Invalid credit amount.';
             } else {
                 $price = 1.3;

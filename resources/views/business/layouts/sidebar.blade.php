@@ -84,7 +84,7 @@
             <li class="nav-item">
               <a href="{{ route('business.setting.profile') }}" class="nav-link {{ request()->routeIs('business.setting.profile*') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Profile</p>
+                <p>Owner profile</p>
               </a>
             </li>
 
@@ -99,13 +99,6 @@
               <a href="{{ route('business.setting.business.timing') }}" class="nav-link {{ request()->routeIs('business.setting.business.timing') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Timing</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="{{ route('business.setting.systemsetting') }}" class="nav-link {{ request()->routeIs('business.setting.systemsetting') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
-                <p>System Setting</p>
               </a>
             </li>
 

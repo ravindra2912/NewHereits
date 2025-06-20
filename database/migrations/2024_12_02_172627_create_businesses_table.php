@@ -32,6 +32,8 @@ return new class extends Migration
             $table->date('subscription_expiry_date')->nullable();
             $table->unsignedBigInteger('credit')->default(0);
             $table->float('rating', 2, 1)->default(0);
+            $table->string('seo_description', 160)->nullable();
+            $table->string('seo_keyword', 255)->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

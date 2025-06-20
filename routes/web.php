@@ -4,6 +4,7 @@ use App\Models\Appointmenter;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Front\AuthController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\AccountController;
@@ -18,6 +19,8 @@ Route::get('test', function(){
 Route::get('test-map', function(){
     return view('testmap');
 });
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::controller(CommonController::class)->group(function () {
     Route::get('get-areas', 'getAreas')->name('getAreas');

@@ -89,12 +89,13 @@ class BusinessController extends Controller
 
     public function businessDetails(Request $request, $slug): View
     {
-        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id', 'rating', 'pincode', 'credit')
+        $business = Business::select('id', 'name', 'slug', 'business_image', 'address', 'contact', 'business_category_id', 'latitude', 'longitude', 'country_id', 'state_id', 'city_id', 'area_id', 'seo_description', 'seo_keyword', 'rating', 'pincode', 'credit')
             ->with([
                 'businessCategory',
                 'country',
                 'state',
                 'city',
+                'area',
                 'reviews' => function ($query) {
                     $query->where('review_type', 'business')
                         ->with([
