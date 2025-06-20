@@ -319,6 +319,8 @@ class AuthController extends Controller
 
                 $insert->save();
 
+                updateBusinessSeo($insert->id);
+
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
                 if ($user && ($user->role_id != 2 || $user->business_id == null)) {
@@ -346,6 +348,8 @@ class AuthController extends Controller
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
+
+    
 
 
     public function redirectToGoogle(Request $request)
@@ -426,12 +430,11 @@ class AuthController extends Controller
             $user->load('getBusinessDetails:id, owner_id, name, business_image, subscription_expiry_date');
             Auth::login($user);
 
-            if(isset($redirectUrl) && !empty($redirectUrl)){
+            if (isset($redirectUrl) && !empty($redirectUrl)) {
                 return redirect($redirectUrl);
-            }else{
+            } else {
                 return redirect()->intended('/');
             }
-            
         } catch (\Exception $e) {
             dd($e->getMessage());
             // Handle exceptions

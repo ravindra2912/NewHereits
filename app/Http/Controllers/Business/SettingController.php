@@ -5,26 +5,17 @@ namespace App\Http\Controllers\Business;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Business;
-use App\Models\LegalPage;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\BusinessCategory;
-use Yajra\DataTables\DataTables;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\BusinessCredit;
 use App\Models\BusinessSetting;
 use App\Models\BusinessTiming;
 use App\Models\SiteSetting;
 use App\Models\Subscription;
 use App\Models\Transactions;
-use Cart;
 use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
@@ -104,7 +95,7 @@ class SettingController extends Controller
 
     public function businessProfile(Request $request)
     {
-        // dd(Carbon::now()->addDay(6)->format('l'));
+        // updateBusinessSeo(Auth::user()->business_id);
 
         $business = Business::with('businessCategory')->find(Auth::user()->business_id);
         $setting = getBusinessSettings();

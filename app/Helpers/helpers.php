@@ -17,6 +17,7 @@ use App\Models\BusinessSetting;
 use App\Models\BusinessCategory;
 use chillerlan\QRCode\QROptions;
 use App\Models\AppointmentBooking;
+use App\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -278,6 +279,52 @@ function isExpertAvailable($appointmenter_id = null)
         }
     }
     return $res;
+}
+
+function updateBusinessSeo($bussinessId)
+{
+    $business = Business::select('id', 'name', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'area_id', 'pincode')
+        ->with([
+            'businessCategory',
+            'country',
+            'state',
+            'city',
+            'area',
+        ])
+        ->find($bussinessId);
+
+    $catname = '';
+    if (isset($business->businessCategory) && !empty($business->businessCategory->name)) {
+        $catname = $business->businessCategory->name;
+    }
+
+    $description = '';
+    $keyword = '';
+    if ($business) {
+        if (isset($business->city) && !empty($business->city->name)) {
+            $keyword .= $catname . ' in ' . $business->city->name . ', ';
+            $keyword .= 'Top ' . $catname . ' in ' . $business->city->name . ', ';
+            $keyword .= 'Best ' . $catname . ' in ' . $business->city->name . ', ';
+        }
+
+        if (isset($business->area) && !empty($business->area->area_name)) {
+            $keyword .= 'Best ' . $catname . ' near ' . $business->area->area_name . ', ';
+            $keyword .= $business->name . ' ' . $catname . ' ' . $business->area->area_name . ', ';
+            $keyword .= 'Top ' . $catname . ' in ' . $business->area->area_name . ', ';
+            $keyword .= 'nearby  ' . $catname . ' in ' . $business->area->area_name . ', ';
+
+            $description = "Explore trusted {$catname} services in {$business->area->area_name}";
+            $description .= !empty($business->city->name) ? " {$business->city->name}" : "";
+            $description .= ". ";
+        }
+
+        $description .= "{$business->name} offers professional and reliable {$catname} solutions near you.";
+    }
+
+    Business::where('id', $bussinessId)->update([
+        'seo_description' => $description,
+        'seo_keyword' => $keyword,
+    ]);
 }
 
 // =============== Business functions end ================
