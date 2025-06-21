@@ -7,6 +7,8 @@
                 <div>
                     @if($booking->status == 'pending')
                     <span class="badge badge-warning">Pending</span>
+                    @elseif($booking->status == 'confirmed')
+                    <span class="badge badge-info">Confirmed</span>
                     @elseif($booking->status == 'cancel')
                     <span class="badge badge-danger">Cancelled</span>
                     @elseif($booking->status == 'completed')

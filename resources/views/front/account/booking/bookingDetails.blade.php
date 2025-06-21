@@ -27,6 +27,8 @@
                         <div>
                             @if($booking->status == 'pending')
                             <span class="badge badge-warning">Pending</span>
+                            @elseif($booking->status == 'confirmed')
+                            <span class="badge badge-info">Confirmed</span>
                             @elseif($booking->status == 'cancel')
                             <span class="badge badge-danger">Cancelled</span>
                             @elseif($booking->status == 'completed')
@@ -59,12 +61,12 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        @if($booking->status == 'pending')
+                        @if($booking->status == 'pending' && $booking->status == 'confirmed')
                         <button class="btn btn-danger btn-sm mt-3" onclick="cancelBooking({{ $booking->id}})">Cancel booking</button>
                         @endif
                     </div>
 
-                    @if($booking->status == 'completed')
+                    @if($booking->status == 'completed') 
                     @if($booking->review_id == null)
                     <div class="col-12">
                         <h5 class="mb-3 mt-2">Write a review</h5>
