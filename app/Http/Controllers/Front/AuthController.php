@@ -403,7 +403,7 @@ class AuthController extends Controller
                     ]);
                 }
                 if ($user->role_id == 2 && $user->business_id == null) {
-                    $business = Business::select('id')->where('owner_id', $user->id)->first();
+                    $business = Business::select('id', 'owner_id')->where('owner_id', $user->id)->first();
                     $user->business_id = $business->id;
                 }
                 $user->notification_token = $notificationtoken;
