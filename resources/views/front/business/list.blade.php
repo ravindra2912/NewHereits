@@ -2,7 +2,6 @@
 @section('content')
 @section('title', 'Businesses')
 
-
 <section class="container mt-2 mb-5">
   <!-- fore filters -->
   <input type="hidden" id="category" value="{{ $catSlug }}" />
@@ -17,7 +16,7 @@
     <div class="col-lg-8 mt-1 mt-lg-0">
       <!-- Sort Filters
           ============================================= -->
-      <div class=" mb-2 pb-2">
+      <div id="filter" class=" mb-2 pb-2">
         <div class="row align-items-center">
           <div class="col-12 col-md-12">
             <div class="row no-gutters ml-auto">
@@ -36,6 +35,8 @@
 
       <div class="" id="business-data"></div>
 
+
+
       <div class="text-center h5 mt-4 d-none" id="data-loader">Loading ...</div>
 
       <div id="list-obj"></div>
@@ -44,6 +45,9 @@
     </div>
     <div class="col-lg-2 mt-2 mt-lg-2 col-0">
       <x-ad-banner />
+    </div>
+    <div id="comingsoon" class="col-12 mt-4 d-none">
+      <x-coming-soon-area />
     </div>
   </div>
 </section>
@@ -75,6 +79,7 @@
       },
       beforeSend: function() {
         $('#data-loader').removeClass('d-none');
+        $('#comingsoon').addClass('d-none');
         // document.getElementById("preloader").style.display = "block";
       },
       success: function(res) {
@@ -84,6 +89,12 @@
         if (res.counts < limit) {
           is_data = false;
         }
+
+        if (offset == 0 && res.counts == 0) {
+          $('#filter').addClass('d-none');
+          $('#comingsoon').removeClass('d-none');
+        }
+
         offset += limit;
         listAjax = '';
         $('#business-data').append(res.list);

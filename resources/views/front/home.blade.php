@@ -40,9 +40,9 @@
 
 
 @if ($businesses && count($businesses) <= 0)
-  <section class="section py-2 bg-white ">
-  <div class="container d-flex justify-content-center align-items-center" style="height: 300px;">
-    <h1 class=""> We are coming soon. </h1>
+  <section class="section py-5 bg-white ">
+  <div class="container py-5">
+    <x-coming-soon-area />
   </div>
   </section>
   @else

@@ -83,6 +83,18 @@ input[name="radius"]:checked+label {
 	}
 }
 
+/*-------------------------  comingsoon page----------------------------------------*/
+.comingsoon h1 {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    color: #6c63ff;
+  }
+
+  .comingsoon img {
+    height: 300px;
+    width: 100%;
+    object-fit: contain;
+  }
 /*-------------------------  appoinments page----------------------------------------*/
 
 .appoinmenter-img {
