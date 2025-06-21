@@ -61,7 +61,7 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        @if($booking->status == 'pending' && $booking->status == 'confirmed')
+                        @if($booking->status == 'pending' || $booking->status == 'confirmed')
                         <button class="btn btn-danger btn-sm mt-3" onclick="cancelBooking({{ $booking->id}})">Cancel booking</button>
                         @endif
                     </div>
