@@ -180,7 +180,7 @@
         success: function(result) {
           if (result.success) {
             toastr.success(result.message);
-            table.ajax.reload()
+            table.ajax.reload(null, false);
           } else {
             toastr.error(result.message);
           }

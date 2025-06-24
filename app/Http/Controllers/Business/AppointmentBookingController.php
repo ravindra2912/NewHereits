@@ -80,7 +80,7 @@ class AppointmentBookingController extends Controller
                 })
 
                 ->addColumn('status_info', function ($row) {
-                    $statusUi = '<p class="mb-1">status : ' . $row->status . '</p>';
+                    $statusUi = '<p class="mb-1">status : ' . ucwords(str_replace('_', ' ', $row->status)) . '</p>';
                     if ($row->status == 'pending') {
                         $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="confirmed" >Accept</button>';
                         $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
