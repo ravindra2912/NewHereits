@@ -173,7 +173,7 @@
 
   @if (isset($expert) && !empty($expert))
 
-  <div class="section pt-3 pb-0 mx-3 row">
+  <div class="section pt-3 pb-0 mt-3 row">
     <a href="{{ route('expert', $expert->slug) }}" title="{{ $expert->appointmenter_name }}" class="col-md-7 col-sm-7 col-12 p-md-2 p-0">
       <div class="bg-white shadow-md rounded p-3 mb-2 list-store">
         <div class="row">
