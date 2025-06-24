@@ -22,7 +22,7 @@ class DashboarController extends Controller
     public function index(Request $request): View
     {
         $businessSettings = getBusinessSettings();
-        $businessDetails = Business::select('id', 'credit')
+        $businessDetails = Business::select('id', 'credit', 'subscription_expiry_date')
             ->withCount([
                 'bookings as complited_count' => function ($q) {
                     $q->where('status', 'completed');

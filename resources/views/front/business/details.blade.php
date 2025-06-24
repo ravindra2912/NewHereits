@@ -125,9 +125,9 @@
 @endpush
 
 <section>
-  <div class="hero-wrap section pb-3" id="store_info">
-    <div class="hero-bg" style="background-image:url({{ asset('front/img/store-bg.webp') }});"></div>
-    <div class="hero-content">
+  <div class="hero-wrap section pb-0 pt-0" style="background: linear-gradient(to top, #000, #686869);" id="store_info">
+    <!-- <div class="hero-bg" style="background-image:url({{ asset('front/img/store-bg.webp') }});"></div> -->
+    <div class="hero-content py-3">
       <div class="container">
         <div class="row">
           <div class="col-lg-4 col-12 text-center align-self-center mt-md-0 mt-3">
@@ -179,7 +179,7 @@
         <div class="row">
           <div class="col-md-3 col-5 text-center">
 
-            <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" />
+            <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($expert->appointmenter_image, 'expert') }}" alt="{{ $expert->appointmenter_name }}" />
           </div>
           <div class="col-md-5 col-7 pl-3 pl-md-0 mt-3 mt-md-0">
             <div class="row no-gutters">
@@ -201,7 +201,7 @@
           </div>
           <div class="col-md-4 col-12 pl-3 pl-md-0 mt-md-3 mt-0 mt-md-0 d-flex flex-column justify-content-center">
             @if($expert->getLastBooking['status'] == 'close')
-            <p class="text-danger mb-0 text-center h5 pt-2">Available soon</p>
+            <p class="text-danger mb-0 text-center h5 pt-2">Close</p>
             @elseif($expert->getLastBooking['status'] == 'open')
             @if ($expert->getLastBooking['data'])
             <div class="my-2 mx-3 text-center align-self-center ">
@@ -210,7 +210,6 @@
                 <h3>{{ $expert->getLastBooking['data']->token_number }}</h3>
               </div>
             </div>
-
             @else
             <p class="text-success mb-0 text-center h5 pt-2">Available</p>
             @endif

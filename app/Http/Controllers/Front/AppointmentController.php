@@ -78,13 +78,13 @@ class AppointmentController extends Controller
 
     public function board(Request $request, $slug): View
     {
-        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
+        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'timing_per_appointment', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description')
             ->where('status', 'active')
             ->where('slug', $slug)
             ->first();
 
         if ($expert) {
-            $timing = isExpertAvailable($expert->id);
+            $timing = isExpertAvailable($expert->id, $expert->business_id);
             $appointmentFirst = null;
             if ($timing['data']) {
                 $appointmentFirst = $timing['data'];

@@ -99,7 +99,7 @@ class AppointmentBookingObserver
                                 ];
                             }
                             Mail::to($appointment_details->user->email)->send(new AppointmentComplitedMail($appointment_details));
-                        } else if ($changes['status'] == 'cancel') {
+                        } else if ($changes['status'] == 'cancel' || $changes['status'] == 'cancel_by_user') {
                             $notification = [
                                 'include_player_ids' => [$appointment_details->user->notification_token],
                                 'title' => 'Hello ' . $appointment_details->user->first_name,
@@ -135,7 +135,7 @@ class AppointmentBookingObserver
                             }
 
                             Mail::to($appointment_details->user->email)->send(new TokenComplitedMail($appointment_details));
-                        } else if ($changes['status'] == 'cancel') {
+                        } else if ($changes['status'] == 'cancel' || $changes['status'] == 'cancel_by_user') {
 
                             $notification = [
                                 'include_player_ids' => [$appointment_details->user->notification_token],

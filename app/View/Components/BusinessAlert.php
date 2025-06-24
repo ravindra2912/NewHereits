@@ -8,12 +8,14 @@ use Illuminate\View\Component;
 
 class BusinessAlert extends Component
 {
+    public $businessDetails;
+
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($businessDetails = array())
     {
-        //
+        $this->businessDetails = $businessDetails;
     }
 
     /**

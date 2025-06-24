@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Front;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Business;
+use App\Models\CityArea;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Appointmenter;
+use App\Models\BusinessTiming;
+use App\Models\BusinessSetting;
 use App\Mail\ResetPasswordEmail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -17,9 +21,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\Appointmenter;
-use App\Models\BusinessSetting;
-use App\Models\CityArea;
 use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Validator;
@@ -267,7 +268,6 @@ class AuthController extends Controller
                 'pincode' => 'required',
             ];
 
-
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) { // Validation fails
@@ -325,16 +325,41 @@ class AuthController extends Controller
 
                 // assign appoinment system to business
                 BusinessSetting::create([
-                    'business_id'=>$insert->id,
-                    'is_appointment_system'=>true,
+                    'business_id' => $insert->id,
+                    'is_appointment_system' => true,
                 ]);
-                
+
                 // add default expert for show booking
                 $expertInsert = new Appointmenter();
                 $expertInsert->business_id = $insert->id;
                 $expertInsert->appointmenter_name = $insert->name;
+                $expertInsert->number_of_bookings_per_day = 25;
+                $expertInsert->timing_per_appointment = 15;
+                $expertInsert->is_default = true;
                 $expertInsert->slug  = generateUniqueSlug(Appointmenter::class, $insert->name);
                 $expertInsert->save();
+
+                // add business and expert timing
+                $start = '08:00'; // 8 AM
+                $end = '20:00';   // 8 PM
+                foreach (config('const.week_day_name') as $day) {
+                    // Add for business
+                    $businessTime = new BusinessTiming();
+                    $businessTime->business_id = $insert->id;
+                    $businessTime->day = $day;
+                    $businessTime->start_time = $start;
+                    $businessTime->end_time = $end;
+                    $businessTime->save();
+
+                    // Add for expert
+                    $expertTime = new BusinessTiming();
+                    $expertTime->business_id = $insert->id;
+                    $expertTime->appointmenter_id = $expertInsert->id;
+                    $expertTime->day = $day;
+                    $expertTime->start_time = $start;
+                    $expertTime->end_time = $end;
+                    $expertTime->save();
+                }
 
                 //change user role to seller
                 $user = User::select('id', 'role_id', 'business_id')->find($insert->owner_id);
@@ -364,7 +389,7 @@ class AuthController extends Controller
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
 
-    
+
 
 
     public function redirectToGoogle(Request $request)
@@ -442,7 +467,7 @@ class AuthController extends Controller
             }
 
             // Log the user in
-            $user->load('getBusinessDetails:id, owner_id, name, business_image, subscription_expiry_date');
+            $user->load('getBusinessDetails:id,owner_id,name,business_image,subscription_expiry_date');
             Auth::login($user);
 
             if (isset($redirectUrl) && !empty($redirectUrl)) {

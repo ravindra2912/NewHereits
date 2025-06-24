@@ -91,7 +91,8 @@
                 <select class="form-control" name="timeslote" id="timeslote">
                   <option value="">Select Timing</option>
                   @foreach ($timeSlots as $time)
-                  <option value="{{ $time['time'] }}" {{ $appontment->bookdate == $time['time'] ? 'selected' : ' ' }} {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option>
+                  <option value="{{ $time['time'] }}" {{ $appontment->bookdate == $time['time'] ? 'selected' : ' ' }} >{{ $time['time'] }}</option>
+                  <!-- <option value="{{ $time['time'] }}" {{ $appontment->bookdate == $time['time'] ? 'selected' : ' ' }} {{ $time['is_booked']?'disabled':'' }}>{{ $time['time'] }}</option> -->
                   @endforeach
                 </select>
               </div>

@@ -104,33 +104,34 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Job title <span class="error">*</span></label>
-                    <input type="text" class="form-control" name="title" placeholder="Job title" />
-                  </div>
-                </div>
-                @if($businessSetting->is_appointment_book_with_time_slote)
-                <div class="col-md-6">
-                  <div class="form-group">
                     <label>Time per appointment <span class="error">*</span></label>
                     <input type="text" class="form-control" name="timing_per_appointment" placeholder="Time per appointment" />
                   </div>
                 </div>
-                @else
+
                 <div class="col-md-6">
                   <div class="form-group">
                     <label>Number of bookings per day <span class="error">*</span></label>
                     <input type="text" class="form-control" name="number_of_bookings_per_day" placeholder="Number of bookings per day" />
                   </div>
                 </div>
-                @endif
 
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label>Short description <span class="error">*</span></label>
-                    <input type="text" class="form-control" name="description" placeholder="Description" />
-                  </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Job title <span class="error">*</span></label>
+                  <input type="text" class="form-control" name="title" placeholder="Job title" />
                 </div>
               </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Short description <span class="error">*</span></label>
+                  <input type="text" class="form-control" name="description" placeholder="Description" />
+                </div>
+              </div>
+
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Status <span class="error">*</span></label>

@@ -48,7 +48,7 @@
            <i class="fas fa-heart"></i>
         </span> -->
         @endif
-        <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($appontmenter->appointmenter_image) }}" alt="{{ $appontmenter->appointmenter_name }}">
+        <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($appontmenter->appointmenter_image, 'expert') }}" alt="{{ $appontmenter->appointmenter_name }}">
       </div>
       <div class="col-md-5 col-7 pl-3 pl-md-0 mt-3 mt-md-0">
         <div class="row no-gutters">

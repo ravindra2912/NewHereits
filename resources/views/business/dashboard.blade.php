@@ -6,7 +6,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-12">
-        <x-business-alert />
+        <x-business-alert :businessDetails="$businessDetails" />
       </div>
       <div class="col-sm-6">
         <h1 class="m-0">Dashboard</h1>
@@ -26,7 +26,7 @@
 <section class="content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-3 col-sm-6 col-12">
+      <a href="{{ route('business.setting.business.credit') }}" class="col-md-3 col-sm-6 col-12 text-dark">
         <div class="info-box">
           <span class="info-box-icon bg-info"><i class="far fa-credit-card"></i></span>
           <div class="info-box-content">
@@ -34,9 +34,9 @@
             <span class="info-box-number">{{ $businessDetails->credit }}</span>
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="col-md-3 col-sm-6 col-12">
+      <a href="{{ route('business.appointment.appointmenter.index') }}" class="col-md-3 col-sm-6 col-12 text-dark">
         <div class="info-box">
           <span class="info-box-icon bg-info"><i class="fas fa-user-tie"></i></span>
           <div class="info-box-content">
@@ -44,10 +44,10 @@
             <span class="info-box-number">{{ $businessDetails->allProfessionals }}</span>
           </div>
         </div>
-      </div>
+      </a>
 
       @if ($businessSettings->is_appointment_with_department)
-      <div class="col-md-3 col-sm-6 col-12">
+      <a href="{{ route('business.appointment.department.index') }}" class="col-md-3 col-sm-6 col-12 text-dark">
         <div class="info-box">
           <span class="info-box-icon bg-info"><i class="fas fa-project-diagram"></i></span>
           <div class="info-box-content">
@@ -55,10 +55,10 @@
             <span class="info-box-number">{{ $businessDetails->allProfessionals }}</span>
           </div>
         </div>
-      </div>
+      </a>
       @endif
 
-      <div class="col-md-3 col-sm-6 col-12">
+      <a href="{{ route('business.appointment.bookings.index') }}" class="col-md-3 col-sm-6 col-12 text-dark">
         <div class="info-box">
           <span class="info-box-icon bg-info"><i class="fas fa-clipboard-check"></i></span>
           <div class="info-box-content">
@@ -66,9 +66,9 @@
             <span class="info-box-number">{{ $businessDetails->complited_count }}</span>
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="col-md-3 col-sm-6 col-12">
+      <a href="{{ route('business.appointment.bookings.index') }}" class="col-md-3 col-sm-6 col-12 text-dark">
         <div class="info-box">
           <span class="info-box-icon bg-info"><i class="fas fa-clipboard"></i></span>
           <div class="info-box-content">
@@ -76,7 +76,7 @@
             <span class="info-box-number">{{ $businessDetails->all_count }}</span>
           </div>
         </div>
-      </div>
+      </a>
 
       <div class="col-12 mt-3">
         <div class="card ">

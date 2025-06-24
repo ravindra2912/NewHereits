@@ -251,12 +251,13 @@
 					<a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="fas fa-home"></i><span> Home</span></a>
 					<!-- <a href="#" class=""><i class="fab fa-dropbox"></i><span> Products</span></a> -->
 					<a href="{{ route('business') }}" class="{{ request()->routeIs('business') ? 'active' : '' }}"><i class="fas fa-store-alt"></i><span> Stores</span></a>
-					<!-- <a href="#" class=">"><i class="fas fa-list-ul"></i><span> Services</span></a> -->
 
 					@if (Auth::check())
-					<a href="{{ route('account.index') }}" class=""><i class="far fa-user"></i><span> Account</span></a>
+					<a href="{{ route('account.booking') }}" class=">"><i class="fas fa-calendar-check"></i><span>Booking</span></a>
+					<a href="{{ route('account.index') }}" class=""><i class="fas fa-user"></i><span> Account</span></a>
 					@else
-					<a data-toggle="modal" data-target="#login-modal" href="#"><i class="far fa-user"></i><span> Account</span></a>
+					<a data-toggle="modal" data-target="#login-modal" href="#"><i class="fas fa-calendar-check"></i><span> Booking</span></a>
+					<a data-toggle="modal" data-target="#login-modal" href="#"><i class="fas fa-user"></i><span> Account</span></a>
 					@endif
 				</div>
 			</div>

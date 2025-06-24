@@ -29,10 +29,14 @@
                             <span class="badge badge-warning">Pending</span>
                             @elseif($booking->status == 'confirmed')
                             <span class="badge badge-info">Confirmed</span>
+                            @elseif($booking->status == 'in_progress')
+                            <span class="badge badge-primary">in_progress</span>
                             @elseif($booking->status == 'cancel')
                             <span class="badge badge-danger">Cancelled</span>
+                            @elseif($booking->status == 'cancel_by_user')
+                            <span class="badge badge-danger">Cancelled by user</span>
                             @elseif($booking->status == 'completed')
-                            <span class="badge badge-primary">Completed</span>
+                            <span class="badge badge-success">Completed</span>
                             @endif
                         </div>
                     </div>
@@ -66,7 +70,7 @@
                         @endif
                     </div>
 
-                    @if($booking->status == 'completed') 
+                    @if($booking->status == 'completed')
                     @if($booking->review_id == null)
                     <div class="col-12">
                         <h5 class="mb-3 mt-2">Write a review</h5>

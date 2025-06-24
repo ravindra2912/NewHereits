@@ -35,7 +35,9 @@
             <select class="form-control" name="timeslote" id="timeslote" required="">
               <option value="">Select Your Appointment Time</option>
               @foreach ($timeSlots as $time)
-              <option value="{{ $time['time'] }}" {{ $time['is_booked'] || $time['is_available'] == false ?'disabled':'' }}>{{ $time['time'] }}</option>
+              @if(!$time['is_booked'] && $time['is_available'] == true)
+              <option value="{{ $time['time'] }}">{{ $time['time'] }}</option>
+              @endif
               @endforeach
             </select>
           </div>
@@ -69,7 +71,7 @@
             </button>
             @endif
             @else
-            <button class="btn btn-secondary disabled btn-block" type="button" >
+            <button class="btn btn-secondary disabled btn-block" type="button">
               <span> Unable to book</span>
             </button>
             @endif
@@ -144,12 +146,13 @@
         beforeSend: function() {
           $('#timeslote').html('<option value="">Loading ...</option>');
         },
-        success: function(states) {
-          console.log(states);
+        success: function(res) {
+          console.log(res);
           $('#timeslote').html('<option value="">Select Timing</option>');
-          $.each(states, function(index, item) {
-            var disable = item.is_booked ? 'disabled' : '';
-            $('#timeslote').append('<option value="' + item.time + '" ' + disable + '>' + item.time + '</option>');
+          $.each(res, function(index, item) {
+            if (!item.is_booked && item.is_available == true) {
+              $('#timeslote').append('<option value="' + item.time + '" >' + item.time + '</option>');
+            }
           });
         },
         error: function(xhr, status, error) {

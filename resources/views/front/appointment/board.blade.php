@@ -62,15 +62,11 @@
       <p class="text-center">Open at :- {{ get_time($timing['data']->start_time) }}</p>
       @endif
 
-
-      @php
-      $time = 10;
-      @endphp
       @foreach ($appointmentList as $index => $list)
       <div class="row next-list">
         <div class="col-2 border-right text-center">{{ $list->token_number }}</div>
         <div class="col-7 border-right">{{ $list->user_name }}</div>
-        <div class="col-3">{{ $time*($index+1) }} Min</div>
+        <div class="col-3">{{ $expert->timing_per_appointment*($index+1) }} Min</div>
       </div>
       @endforeach
 

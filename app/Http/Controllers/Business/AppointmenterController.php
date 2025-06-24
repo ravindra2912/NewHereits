@@ -50,10 +50,8 @@ class AppointmenterController extends Controller
                     $url = "'" . $url . "'";
                     $html = ' <div class="text-center">
                     <a href="' . route('business.appointment.appointmenter.edit', $row->id) . '" class="btn btn-outline-primary btn-sm" title="edit"><i class="far fa-edit"></i></a>';
-                    if ($businessSetting->is_appointment_book_with_time_slote) {
-                        $html .= '<a href="' . route('business.appointment.appointmenter.timing', $row->id) . '" class="btn btn-outline-warning btn-sm" title="timing"><i class="far fa-clock"></i></a>';
-                    }
-                    $html .= '<!-- button onclick="destroy(' . $url . ', ' . $row->id . ')" class="btn btn-outline-danger btn-sm btn_delete-' . $row->id . '" title="Delete">
+                    $html .= '<a href="' . route('business.appointment.appointmenter.timing', $row->id) . '" class="btn btn-outline-warning btn-sm ml-1" title="timing"><i class="far fa-clock"></i></a>
+                    <!-- button onclick="destroy(' . $url . ', ' . $row->id . ')" class="btn btn-outline-danger btn-sm btn_delete-' . $row->id . '" title="Delete">
                         <i id="buttonText" class="far fa-trash-alt"></i>
                         <span id="loader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                     </button -->
@@ -96,8 +94,8 @@ class AppointmenterController extends Controller
                 'appointmenter_image' => 'required|mimes:jpg,jpeg,png,webp',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'appointmenter_name' => 'required',
-                'timing_per_appointment' => $businessSetting->is_appointment_book_with_time_slote ? 'required|numeric|gt:0' : 'nullable|numeric|gt:0',
-                'number_of_bookings_per_day' => !$businessSetting->is_appointment_book_with_time_slote ? 'required|numeric|gt:0' : 'nullable|numeric|gt:0',
+                'timing_per_appointment' => 'required|numeric|gt:0',
+                'number_of_bookings_per_day' => 'required|numeric|gt:0',
                 'title' => 'required',
                 'description' => 'required',
             ];
@@ -116,8 +114,8 @@ class AppointmenterController extends Controller
                 $insert->business_id  = Auth::user()->business_id;
                 $insert->department_id = $request->department_id;
                 $insert->appointmenter_name = $request->appointmenter_name;
-                $insert->timing_per_appointment = isset($request->timing_per_appointment) ? $request->timing_per_appointment : 0;
-                $insert->number_of_bookings_per_day = isset($request->number_of_bookings_per_day) ? $request->number_of_bookings_per_day : 0;
+                $insert->timing_per_appointment = $request->timing_per_appointment;
+                $insert->number_of_bookings_per_day = $request->number_of_bookings_per_day;
                 $insert->title = $request->title;
                 $insert->description = $request->description;
                 $insert->status = $request->status;
@@ -165,8 +163,8 @@ class AppointmenterController extends Controller
                 'appointmenter_image' => 'nullable|mimes:jpg,jpeg,png,webp|',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'appointmenter_name' => 'required',
-                'timing_per_appointment' => $businessSetting->is_appointment_book_with_time_slote ? 'required|numeric|gt:0' : 'nullable|numeric|gt:0',
-                'number_of_bookings_per_day' => !$businessSetting->is_appointment_book_with_time_slote ? 'required|numeric|gt:0' : 'nullable|numeric|gt:0',
+                'timing_per_appointment' => 'required|numeric|gt:0',
+                'number_of_bookings_per_day' => 'required|numeric|gt:0',
                 'title' => 'required',
                 'description' => 'required',
             ];
@@ -188,8 +186,8 @@ class AppointmenterController extends Controller
                 $update->business_id  = Auth::user()->business_id;
                 $update->department_id = $request->department_id;
                 $update->appointmenter_name = $request->appointmenter_name;
-                $update->timing_per_appointment = isset($request->timing_per_appointment) ? $request->timing_per_appointment : 0;
-                $update->number_of_bookings_per_day = isset($request->number_of_bookings_per_day) ? $request->number_of_bookings_per_day : 0;
+                $update->timing_per_appointment = $request->timing_per_appointment;
+                $update->number_of_bookings_per_day = $request->number_of_bookings_per_day;
                 $update->title = $request->title;
                 $update->description = $request->description;
                 $update->status = $request->status;

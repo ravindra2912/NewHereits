@@ -84,13 +84,16 @@ function fileUploadStorage($imageObject, $directory = "", $width = "", $hieght =
     return "";
 }
 
-function getImage($url = "")
+function getImage($url = "", $type = '')
 {
     $image = "storage/" . $url;
     if (!empty($url)) {
         if (file_exists(public_path($image))) {
             return asset("storage/" . $url);
         }
+    }
+    if ($type == 'expert') {
+        return asset('front/img/expert.webp');
     }
     return asset('admin/images/default.png');
 }
@@ -236,45 +239,52 @@ function isBusinessOpen($business_id = null)
     return false;
 }
 
-function isExpertAvailable($appointmenter_id = null)
+function isExpertAvailable($appointmenter_id = null, $business_id = null)
 {
     $res['status'] = 'close';
     $res['data'] = null;
+
     if ($appointmenter_id != null) {
-        $day = Carbon::now()->format('l');
-        $time = Carbon::now()->format('H:i:s');
-        $businessTiming = BusinessTiming::where('day', $day)
+        if ($business_id == null) {
+            $expertDetail = Appointmenter::select('id', 'business_id')->find($appointmenter_id);
+            $business_id = $expertDetail->business_id;
+        }
+        $businessSetting = getBusinessSettings($business_id);
+
+        $currentBooking = AppointmentBooking::select('id', 'token_number', 'user_id', 'appointmenter_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'status')
+            ->where('booking_date', Carbon::now()->format('Y-m-d'))
             ->where('appointmenter_id', $appointmenter_id)
-            ->where('start_time', '<=', $time)
-            ->where('end_time', '>=', $time)
-            ->first();
-        if ($businessTiming) {
-            $res['status'] = 'open';
-            $businessSetting = getBusinessSettings($businessTiming->business_id);
-
-
-            $data = AppointmentBooking::select('id', 'token_number', 'user_id', 'appointmenter_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'status')
-                ->where('booking_date', Carbon::now()->format('Y-m-d'))
-                ->where('appointmenter_id', $appointmenter_id)
-                ->where('status', 'confirmed');
-            if ($businessSetting->is_appointment_book_with_time_slote) {
-                $data = $data->orderBy('slot_start_time', 'asc');
-            } else {
-                $data = $data->orderBy('token_number', 'asc');
-            }
-            $data = $data->first();
-            if ($data) {
-                $res['data'] = $data;
-            }
+            ->where('status', 'in_progress');
+        if ($businessSetting->is_appointment_book_with_time_slote) {
+            $currentBooking = $currentBooking->orderBy('slot_start_time', 'asc');
         } else {
-            $businessTiming = BusinessTiming::select('id', 'start_time')
-                ->where('day', $day)
+            $currentBooking = $currentBooking->orderBy('token_number', 'asc');
+        }
+        $currentBooking = $currentBooking->first();
+
+        if ($currentBooking) {
+            $res['status'] = 'open';
+            $res['data'] = $currentBooking;
+        } else {
+            $day = Carbon::now()->format('l');
+            $time = Carbon::now()->format('H:i:s');
+            $businessTiming = BusinessTiming::where('day', $day)
                 ->where('appointmenter_id', $appointmenter_id)
-                ->where('start_time', '>=', $time)
+                ->where('start_time', '<=', $time)
+                ->where('end_time', '>=', $time)
                 ->first();
             if ($businessTiming) {
-                $res['status'] = 'break';
-                $res['data'] = $businessTiming;
+                $res['status'] = 'open';
+            } else {
+                $businessTiming = BusinessTiming::select('id', 'start_time')
+                    ->where('day', $day)
+                    ->where('appointmenter_id', $appointmenter_id)
+                    ->where('start_time', '>=', $time)
+                    ->first();
+                if ($businessTiming) {
+                    $res['status'] = 'break';
+                    $res['data'] = $businessTiming;
+                }
             }
         }
     }

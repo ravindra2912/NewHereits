@@ -17,6 +17,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\AppointmentBooking;
 use App\Models\ReviewAndRating;
 use Illuminate\Support\Facades\DB;
+
 class AccountController extends Controller
 {
     public function index(): View
@@ -184,36 +185,36 @@ class AccountController extends Controller
                 // $message = $validator->errors();
                 $message = $validator->errors()->first();
             } else {
-                
+
                 $booking = AppointmentBooking::select('id', 'business_id', 'appointmenter_id', 'booking_date', 'token_number', 'status')
                     ->where('user_id', Auth::user()->id)
                     ->where('id', $request->booking_id)
                     ->first();
-                if ($booking && $booking->status == 'pending') {
+                if ($booking && ($booking->status == 'pending' || $booking->status == 'confirmed')) {
 
                     // Get all booking with token number greater than current booking
-                    $getAllbooking = AppointmentBooking::select('id', 'token_number')
-                        ->where('appointmenter_id', $booking->appointmenter_id)
-                        ->where('booking_date', $booking->booking_date)
-                        ->where('status', 'pending')
-                        ->where('token_number', '>', $booking->token_number)
-                        ->where('business_id', $booking->business_id)
-                        ->orderBy('token_number', 'asc')
-                        ->get();
-                    if ($getAllbooking) {
-                        // Decrease token number of all booking
-                        foreach ($getAllbooking as $value) {
-                            $value->token_number = $value->token_number - 1;
-                            $value->save();
-                        }
-                    }
+                    // $getAllbooking = AppointmentBooking::select('id', 'token_number')
+                    //     ->where('appointmenter_id', $booking->appointmenter_id)
+                    //     ->where('booking_date', $booking->booking_date)
+                    //     ->where('status', 'pending')
+                    //     ->where('token_number', '>', $booking->token_number)
+                    //     ->where('business_id', $booking->business_id)
+                    //     ->orderBy('token_number', 'asc')
+                    //     ->get();
+                    // if ($getAllbooking) {
+                    //     // Decrease token number of all booking
+                    //     foreach ($getAllbooking as $value) {
+                    //         $value->token_number = $value->token_number - 1;
+                    //         $value->save();
+                    //     }
+                    // }
 
-                    $booking->status = 'cancel';
+                    $booking->status = 'cancel_by_user';
                     $booking->save();
                     $success = true;
                     $message = 'Booking Cancel successfully.';
                     DB::commit();
-                }else {
+                } else {
                     $message = 'Booking not found.';
                 }
             }

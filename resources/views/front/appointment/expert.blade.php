@@ -121,7 +121,7 @@
     <div class="container">
       <div class="inner row justify-content-center">
         <div class="col-12 col-lg-3 col-md-4 mb-md-0 mb-4 auth-img-wrap d-flex justify-content-center">
-          <img src="{{ getImage($expert->appointmenter_image) }}" alt="{{ $expert->appointmenter_name }}" title="{{ $expert->appointmenter_name }}" class="">
+          <img src="{{ getImage($expert->appointmenter_image, 'expert') }}" alt="{{ $expert->appointmenter_name }}" title="{{ $expert->appointmenter_name }}" class="">
         </div>
         <div class="col-12 col-lg-8 col-md-7 auth-content-wrap banner-info">
           <div class="title-sub mb-md-4 mb-3 row">

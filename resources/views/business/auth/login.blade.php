@@ -71,7 +71,9 @@
             <!-- /.col -->
           </div>
         </form>
-
+        <p class="mb-0">
+        <a href="{{ route('register.business') }}" class="text-center">Register a new Business</a>
+      </p>
 
 
       </div>
