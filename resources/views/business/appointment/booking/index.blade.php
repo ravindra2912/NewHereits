@@ -80,13 +80,11 @@
               <thead>
                 <tr>
                   <th>Token Number</th>
-                  <th>department</th>
+                  <!-- <th>department</th> -->
                   <th>Appontmenter</th>
-                  <th>User name</th>
-                  <th>User Contact</th>
+                  <th>User</th>
                   <th>Booking date</th>
                   <th>Start Time</th>
-                  <th>End Time</th>
                   <th>status</th>
                   <th>Action</th>
                 </tr>
@@ -132,35 +130,22 @@
           data: 'token_number',
           name: 'token_number'
         }, {
-          data: 'department',
-          name: 'department.department_name',
-          visible: $('#is_appointment_with_department').val() == 1 ? true : false
+          data: 'appointmenter_info',
+          name: 'appontmenter.appointmenter_name',
         }, {
-          data: 'appontmenter.appointmenter_name',
-          name: 'appontmenter.appointmenter_name'
-        }, {
-          data: 'user_name',
+          data: 'user_info',
           name: 'user_name'
-        },
-        {
-          data: 'user_contact',
-          name: 'user_contact'
         },
         {
           data: 'booking_date',
           name: 'booking_date'
         }, {
-          data: 'start_time',
+          data: 'time',
           name: 'slot_start_time',
           searchable: false,
           visible: $('#is_appointment_book_with_time_slote').val() == 1 ? true : false
         }, {
-          data: 'end_time',
-          name: 'slot_end_time',
-          searchable: false,
-          visible: $('#is_appointment_book_with_time_slote').val() == 1 ? true : false
-        },{
-          data: 'status',
+          data: 'status_info',
           name: 'status'
         },
         {
@@ -175,7 +160,44 @@
     $('#filterdate, #department_id, #appointmenter_id, #status').on('change', function() {
       table.ajax.reload()
     })
+
+    $(document).on('click', '.ststus_chenge_btn', function() {
+      var id = $(this).data('id');
+      var status = $(this).data('status');
+
+      $.ajax({
+        url: "{{ route('business.appointment.bookings.change.status') }}",
+        type: "POST",
+        data: {
+          'appointment_id': id,
+          'status': status,
+        },
+        dataType: "json",
+        headers: {
+          'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        },
+        beforeSend: function() {},
+        success: function(result) {
+          if (result.success) {
+            toastr.success(result.message);
+            table.ajax.reload()
+          } else {
+            toastr.error(result.message);
+          }
+        },
+        error: function(e) {
+          toastr.error('Somthing Wrong');
+          console.log(e);
+        }
+      });
+
+    });
+
   });
+
+
+
+
 
   // get appoinmenters on deparment id
   $('#department_id').on('change', function(event) {

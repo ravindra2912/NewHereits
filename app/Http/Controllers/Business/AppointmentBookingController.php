@@ -59,15 +59,48 @@ class AppointmentBookingController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('department', function ($row) {
-                    return isset($row->department) ? $row->department->department_name : '';
+                ->addColumn('appointmenter_info', function ($row) {
+                    $expinfo = $row->appontmenter->appointmenter_name;
+                    if (isset($row->department) && !empty($row->department->department_name)) {
+                        $expinfo .= " (" . $row->department->department_name . ")";
+                    }
+                    return $expinfo;
                 })
-                ->addColumn('start_time', function ($row) {
-                    return !empty($row->slot_start_time) ? Carbon::parse($row->slot_start_time)->format('H:i a') : '';
+                ->addColumn('user_info', function ($row) {
+                    $expinfo = $row->user_name;
+                    if (!empty($row->user_contact)) {
+                        $expinfo .= "</br>" . $row->user_contact;
+                    }
+                    return $expinfo;
                 })
-                ->addColumn('end_time', function ($row) {
-                    return !empty($row->slot_end_time) ? Carbon::parse($row->slot_end_time)->format('H:i a') : '';
+                ->addColumn('time', function ($row) {
+                    $time = !empty($row->slot_start_time) ? Carbon::parse($row->slot_start_time)->format('h:i a') : '';
+                    $time .= !empty($row->slot_end_time) ? ' To ' . Carbon::parse($row->slot_end_time)->format('h:i a') : '';
+                    return $time;
                 })
+
+                ->addColumn('status_info', function ($row) {
+                    $statusUi = '<p class="mb-1">status : ' . $row->status . '</p>';
+                    if ($row->status == 'pending') {
+                        $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="confirmed" >Accept</button>';
+                        $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
+                    } else if ($row->status == 'confirmed') {
+                        $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="in_progress" >In progress</button>';
+                        $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
+                    } else if ($row->status == 'in_progress') {
+                        $statusUi .= '<button class="ststus_chenge_btn btn btn-success btn-sm" data-id="' . $row->id . '" data-status="completed">Completed</button>';
+                        $statusUi .= '<button class="ststus_chenge_btn btn btn-info btn-sm ml-1" data-id="' . $row->id . '" data-status="completeAndNext">Complete & Next</button>';
+                    } else if ($row->status == 'cancel') {
+                        $statusUi = '<span class="badge bg-danger">Cancel</span>';
+                    } else if ($row->status == 'cancel_by_user') {
+                        $statusUi = '<span class="badge bg-danger">Cancel by user</span>';
+                    } else if ($row->status == 'completed') {
+                        $statusUi = '<span class="badge bg-success">Completed</span>';
+                    }
+
+                    return $statusUi;
+                })
+
                 ->addColumn('action', function ($row) {
                     $url = route('business.appointment.bookings.destroy', $row->id);
                     $url = "'" . $url . "'";
@@ -79,7 +112,7 @@ class AppointmentBookingController extends Controller
                     </button -->
                     </div>';
                 })
-                ->rawColumns(['action', 'img', 'start_time', 'end_time'])
+                ->rawColumns(['action', 'img', 'time', 'appointmenter_info', 'user_info', 'status_info'])
                 ->make(true);
         }
 
@@ -256,6 +289,60 @@ class AppointmentBookingController extends Controller
 
                 $success = true;
                 $message = 'Appoinment Update successfully.';
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = '';
+        $data = array();
+
+        try {
+            $rules = [
+                'appointment_id' => 'required',
+                'status' => 'required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                $message = $validator->errors();
+                // $message = $validator->errors()->first();
+            } else {
+
+                $appointment = AppointmentBooking::select('id', 'business_id', 'appointmenter_id', 'status')->where('business_id', getBusinessId())->find($request->appointment_id);
+                if ($appointment) {
+                    $appointment->status = $request->status == 'completeAndNext' ? 'completed' : $request->status;
+                    $appointment->save();
+
+                    if ($request->status == 'completeAndNext') {
+                        $businessSetting = getBusinessSettings();
+                        $nextBooking = AppointmentBooking::select('id', 'status')
+                            ->where('booking_date', Carbon::now()->format('Y-m-d'))
+                            ->where('appointmenter_id', $appointment->appointmenter_id)
+                            ->where('status', 'confirmed');
+                        if ($businessSetting->is_appointment_book_with_time_slote) {
+                            $nextBooking = $nextBooking->orderBy('slot_start_time', 'asc');
+                        } else {
+                            $nextBooking = $nextBooking->orderBy('token_number', 'asc');
+                        }
+                        $nextBooking = $nextBooking->first();
+                        if ($nextBooking) {
+                            $nextBooking->status = 'in_progress';
+                            $nextBooking->save();
+                        }
+                    }
+                    $success = true;
+                    $message = 'Appoinment Update successfully.';
+                } else {
+                    $message = 'Appoinment not found!';
+                }
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();

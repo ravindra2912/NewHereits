@@ -83,7 +83,7 @@
         $timing = isExpertAvailable($appontmenter->id);
         @endphp
         @if($timing['status'] == 'close')
-        <p class="text-danger mb-0 text-center h5 pt-2">Available soon</p>
+        <p class="text-danger mb-0 text-center h5 pt-2">Close</p>
         @elseif($timing['status'] == 'open')
         @if ($timing['data'])
         <div class="my-2 mx-3 text-center align-self-center ">
