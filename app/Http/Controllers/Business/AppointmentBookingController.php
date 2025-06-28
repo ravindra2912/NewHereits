@@ -323,7 +323,7 @@ class AppointmentBookingController extends Controller
 
                     if ($request->status == 'completeAndNext') {
                         $businessSetting = getBusinessSettings();
-                        $nextBooking = AppointmentBooking::select('id', 'status')
+                        $nextBooking = AppointmentBooking::query()
                             ->where('booking_date', Carbon::now()->format('Y-m-d'))
                             ->where('appointmenter_id', $appointment->appointmenter_id)
                             ->where('status', 'confirmed');

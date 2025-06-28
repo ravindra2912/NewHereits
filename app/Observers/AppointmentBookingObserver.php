@@ -58,7 +58,7 @@ class AppointmentBookingObserver
         $notification = '';
 
         //send mail
-        if ($insert->user_id != null && $insert->wasChanged('status')) {
+        if ($insert->wasChanged('status')) {
             $changes = $appointmentBooking->getChanges();
             if (in_array($changes['status'], ['confirmed', 'completed', 'cancel'])) {
                 $appointment_details = AppointmentBooking::query()
@@ -70,7 +70,7 @@ class AppointmentBookingObserver
                     ])
                     ->find($insert->id);
 
-                if ($appointment_details) {
+                if ($appointment_details && $appointment_details->user_id != null) {
                     $businessSetting = getBusinessSettings($appointment_details->business_id);
 
                     if ($businessSetting->is_appointment_book_with_time_slote) {
@@ -152,7 +152,6 @@ class AppointmentBookingObserver
                 }
             }
         }
-
         if (!empty($notification)) {
             PuhsNotificationToUser::dispatch($notification);
         }
