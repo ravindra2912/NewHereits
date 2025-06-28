@@ -2543,7 +2543,7 @@ body {
 .search-input-line .form-control {
   background-color: transparent;
   border: none;
-  border-bottom: 2px solid rgba(250, 250, 250, 0.5);
+  border-bottom: 2px solid rgb(194 192 192 / 50%);
   border-radius: 0px;
   padding-left: 0px !important;
   color: #ccc;

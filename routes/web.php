@@ -25,6 +25,9 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::controller(CommonController::class)->group(function () {
     Route::get('get-areas', 'getAreas')->name('getAreas');
     Route::get('get-location-info', 'getLocationInfo')->name('getLocationInfo');
+
+
+    Route::get('search', 'getSearch')->name('search');
 });
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');

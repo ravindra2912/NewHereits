@@ -51,3 +51,34 @@ $("#forgotForm").on('submit', (function (e) {
 		}
 	});
 }));
+
+// for common search
+let searchRequest = null;
+
+function search(search) {
+	// Abort previous request if still pending
+	if (searchRequest !== null) {
+		searchRequest.abort();
+	}
+
+	// Store the new request
+	searchRequest = $.ajax({
+		url: route('search'),
+		method: "get",
+		data: {
+			search: search
+		},
+		beforeSend: function () {
+			$('#search-result').html("<li><label class='w-100 ' tabindex='2'> <p class='location-name border-bottom-0 text-center'>Searching ...</p></label></li>");
+		},
+		success: function (res) {
+			$('#search-result').html(res.data);
+		},
+		error: function (e) {
+			if (e.statusText !== 'abort') { // Ignore abort errors
+				alert('Something went wrong');
+				console.log(e);
+			}
+		}
+	});
+}

@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Validator;
-
-use App\Http\Controllers\Controller;
 use App\Models\City;
+use App\Models\Business;
 use App\Models\CityArea;
 use App\Models\LegalPage;
+use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Appointmenter;
 
 class CommonController extends Controller
 {
@@ -82,6 +85,55 @@ class CommonController extends Controller
                 $success = true;
                 $message = 'success';
             }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function getSearch(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = '';
+        $data = array();
+
+        try {
+            $search = $request->search;
+
+            $businesses = Business::select('id', 'name', 'slug', DB::raw("'Business' as type"))
+                ->where('name', 'like', "%{$search}%")
+                ->where('status', 'active')
+                ->union(
+                    Appointmenter::select('id', 'appointmenter_name as name', 'slug', DB::raw("'Expert' as type"))
+                        ->where('appointmenter_name', 'like', "%{$search}%")
+                        ->where('status', 'active')
+                )
+                ->limit(10)
+                ->get();
+
+
+            $html = '';
+            if ($businesses && count($businesses) > 0) {
+                foreach ($businesses as $val) {
+                    if ($val->type == 'Business') {
+                        $html .= '<li><span><a class="text-dark" href="' . route('business-details', $val->slug) . '"> <i class="fas fa-building  pr-2"></i>' . $val->name . '</a></span><span style="float: right; margin-top: -20px;">' . $val->type . '</span></li>';
+                    } else {
+                        $html .= '<li><span><a class="text-dark" href="' . route('expert', $val->slug) . '"> <i class="fas fa-user-tie  pr-2"></i>' . $val->name . '</a></span><span style="float: right; margin-top: -20px;">' . $val->type . '</span></li>';
+                    }
+                }
+            } else {
+                $html .= "  <li>
+                                    <label class='w-100 ' tabindex='2'>
+                                        <p class='location-name border-bottom-0 text-center'>No results found</p>
+                                    </label>
+                                </li>";
+            }
+
+            $data = $html;
+            $success = true;
+            $message = 'success';
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }

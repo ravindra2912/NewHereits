@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers\Front;
 
+use Cart;
 use Carbon\Carbon;
 use App\Models\Business;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\Appointmenter;
-use App\Models\ReviewAndRating;
 
+use App\Models\BusinessTiming;
+use App\Models\ReviewAndRating;
 use App\Models\BusinessCategory;
 use App\Models\AppointmentBooking;
 use Illuminate\Support\Facades\DB;
+use App\Mail\TokenConfirmationMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\AppointmentDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use App\Mail\AppointmentConfirmationMail;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Mail\AppointmentConfirmationMail;
-use App\Mail\TokenConfirmationMail;
-use Cart;
-use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -138,6 +139,28 @@ class AppointmentController extends Controller
             } else if (Auth::check() == false) {
                 $message = 'pease login form book your appointment';
             } else {
+
+                // check business timing 
+                if (!$businessSetting->is_appointment_book_with_time_slote && Carbon::parse($request->booking_date)->isToday()) {
+                    $day = Carbon::now()->format('l');
+                    $now = Carbon::now();
+                    $timings = BusinessTiming::select('id', 'start_time', 'end_time')
+                        ->where('day', $day)
+                        ->where('appointmenter_id', $request->expert_id)
+                        ->where('business_id', $request->business_id)
+                        ->orderBy('start_time', 'asc')
+                        ->get();
+
+                    $startTiming = $timings->first(); // ⬅️ First slot (earliest start_time)
+                    $endTiming = $timings->last();
+
+                    if (!$now->between(Carbon::createFromFormat('H:i:s', $startTiming->start_time), Carbon::createFromFormat('H:i:s', $endTiming->end_time))) {
+                        $message = 'Today appointment is closed, please try next date.';
+                        goto LAST;
+                    }
+                }
+
+                // check maximum booking
                 if (!$businessSetting->is_appointment_book_with_time_slote) {
                     $appointmenter = Appointmenter::select('id', 'number_of_bookings_per_day')->where('id', $request->expert_id)->first();
                     if ($appointmenter) {
@@ -193,6 +216,7 @@ class AppointmentController extends Controller
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }
+        LAST:
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
     }
 }

@@ -8,18 +8,9 @@ use App\Models\Favorite;
 use App\Models\LegalPage;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-
-use App\Mail\UserWelcomeMail;
-use App\Models\BusinessCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
-use App\Jobs\PuhsNotificationToAllUser;
-use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\ProfileUpdateRequest;
 
 class HomeController extends Controller
 {
@@ -38,6 +29,10 @@ class HomeController extends Controller
         // ];
 
         // PuhsNotificationToAllUser::dispatch($data);
+
+
+        // $user = User::find(9);
+        // Mail::to($user->email)->send(new UserWelcomeMail($user));
 
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
@@ -59,7 +54,6 @@ class HomeController extends Controller
         }
         $businesses = $businesses->where('status', 'active')->limit(8)->get();
         $businessCategory = getBusinessCategory();
-        // $businessCategory = BusinessCategory::select('id', 'name', 'image', 'slug')->where('status', 'active')->limit(8)->get();
 
         if (Auth::check() && Auth::user()->role_id != 1) {
             $fevoriteBusinesses = Favorite::select('id', 'business_id')
@@ -79,7 +73,6 @@ class HomeController extends Controller
 
     public function faq(Request $request): View
     {
-        // Cache::forget('Faq'); // Clear Cache
         $faqs = Cache::rememberForever('Faq', function () { // 1440/60 = 1 day
             return Faq::select('id', 'question', 'answer', 'type')->get()->groupBy('type');
         });
