@@ -118,9 +118,9 @@ class CommonController extends Controller
             if ($businesses && count($businesses) > 0) {
                 foreach ($businesses as $val) {
                     if ($val->type == 'Business') {
-                        $html .= '<li><span><a class="text-dark" href="' . route('business-details', $val->slug) . '"> <i class="fas fa-building  pr-2"></i>' . $val->name . '</a></span><span style="float: right; margin-top: -20px;">' . $val->type . '</span></li>';
+                        $html .= '<li><span><a class="text-dark" href="' . route('business-details', $val->slug) . '"> <i class="fas fa-building  pr-2"></i>' . $val->name . '</a></span><span style="float: right;">' . $val->type . '</span></li>';
                     } else {
-                        $html .= '<li><span><a class="text-dark" href="' . route('expert', $val->slug) . '"> <i class="fas fa-user-tie  pr-2"></i>' . $val->name . '</a></span><span style="float: right; margin-top: -20px;">' . $val->type . '</span></li>';
+                        $html .= '<li><span><a class="text-dark" href="' . route('expert', $val->slug) . '"> <i class="fas fa-user-tie  pr-2"></i>' . $val->name . '</a></span><span style="float: right;">' . $val->type . '</span></li>';
                     }
                 }
             } else {

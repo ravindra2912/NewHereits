@@ -130,7 +130,7 @@
 
 						<!-- Collapse Button
 		  =============================== -->
-						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-nav"> <span></span> <span></span> <span></span> </button>
+						<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-nav"> <span></span> <span></span> <span></span> </button> -->
 
 
 						<nav class="login-signup navbar navbar-expand ml-sm-2 pl-sm-2"> <!-- separator -->
@@ -141,28 +141,8 @@
 									</a>
 
 									<a class="pr-0 mr-0" href="#" id="search-btn" title="Search" data-toggle="modal" data-target="#Search-modal">
-										<span class="text-5 ml-sm-2"><i class="fas fa-search"></i></span>
+										<span class="text-5 ml-sm-2 mobile-hide"><i class="fas fa-search"></i></span>
 									</a>
-
-									<!-- Search Modal =========================== -->
-									<div id="Search-modal" class="modal fade" role="dialog">
-										<div class="modal-dialog modal-dialog-centered" role="document">
-											<div class="modal-content border-0">
-												<div class="modal-header" style="padding-bottom: unset;border: none;">
-													<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
-												</div>
-												<div class="modal-body py-4 px-0">
-													<div class="row">
-														<div class="col-11 col-md-10 mx-auto search-input-line">
-															<input type="text" class="form-control" data-bv-field="number" onkeyup="search(this.value)" id="search_input" required="" placeholder="Search">
-															<ul class="p-0" id="search-result" style="height: 400px;"></ul>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!-- Search Modal End -->
 
 									<?php
 									$pcout = 0;
@@ -223,6 +203,7 @@
 				<div class="mobile-icon-section pt-1 px-4">
 					<a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="fas fa-home"></i><span> Home</span></a>
 					<a href="{{ route('business') }}" class="{{ request()->routeIs('business') ? 'active' : '' }}"><i class="fas fa-store-alt"></i><span> Stores</span></a>
+					<a href="#" data-toggle="modal" data-target="#Search-modal"><i class="fas fa-search"></i><span>Search</span></a>
 
 					@if (Auth::check())
 					<a href="{{ route('account.booking') }}" class="{{ request()->routeIs('account.booking') ? 'active' : '' }}"><i class="fas fa-calendar-check"></i><span>Booking</span></a>
@@ -543,6 +524,25 @@
 	</div>
 	<!-- Forgot Password Modal End -->
 
+	<!-- Search Modal =========================== -->
+	<div id="Search-modal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content border-0">
+				<div class="modal-header" style="padding-bottom: unset;border: none;">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+				</div>
+				<div class="modal-body py-4 px-0">
+					<div class="row">
+						<div class="col-11 col-md-10 mx-auto search-input-line">
+							<input type="text" class="form-control" autocomplete="off" spellcheck="false" data-bv-field="number" onkeyup="search(this.value)" id="search_input" required="" placeholder="Search">
+							<ul class="p-0" id="search-result" style="height: 400px;"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Search Modal End -->
 
 
 	<!-- Script -->
