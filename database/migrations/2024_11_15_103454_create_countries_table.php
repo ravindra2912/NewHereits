@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('sortname', 4);
             $table->string('name', 150);
             $table->integer('phonecode');
+            $table->enum('status', ['active','in-active'])->default('in-active');
             $table->timestamps();
             $table->softDeletes();
         });

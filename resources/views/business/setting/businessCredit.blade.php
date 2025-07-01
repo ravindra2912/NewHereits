@@ -437,10 +437,10 @@
         <!-- /.card-header -->
         <div class="card-body">
           <div class="pricingTable row">
-            <div class="col-12 mb-4">
+            <div class="col-12 mb-12">
               Available credit: <span class="text-success">{{ $business->credit }}</span>
             </div>
-            <form action="{{ route('business.setting.business.credit.buy')}}" data-action="call" class="formaction col-md-6">
+            <form action="{{ route('business.setting.business.credit.buy')}}" data-action="redirect" data-tost="false" class="formaction col-md-6">
               @csrf
               <ul class="pricingTable-firstTable ">
                 <li class="pricingTable-firstTable_table">
@@ -449,7 +449,7 @@
                   </h1>
                   <p class="pricingTable-firstTable_table__pricing">
                     <input type="number" name="credit" class="form-control" min="1" placeholder="Enter Your credit" />
-                    <label class="h5 mb-3 calculation"> 0 * 1.3 Rs</label></br><span>Rs.</span><span class="total">0</span><span></span>
+                    <label class="h5 mb-3 calculation"> 0 * {{ $price }} Rs</label></br><span>Rs.</span><span class="total">0</span><span></span>
                   </p>
                   <ul class="pricingTable-firstTable_table__options">
                     <li>Get booking</li>
@@ -459,19 +459,21 @@
                 </li>
               </ul>
             </form>
-            <div class="col-md-6">
+            <div class="col-md-12">
               <h4>History</h4>
               <hr>
               <table class="table table-bordered table-striped">
                 <tr>
                   <th>Price</th>
                   <th>Credits</th>
+                  <th>Status</th>
                   <th>Date</th>
                 </tr>
                 @foreach ($business->businessCredits as $data)
                 <tr>
                   <td>Rs. {{ $data->transaction->amount }}</td>
                   <td>{{ $data->credit }}</td>
+                  <td>{{ ucfirst( str_replace('_', ' ', $data->status)) }}</td>
                   <td>{{ get_date($data->created_at) }}</td>
                 </tr>
                 @endforeach

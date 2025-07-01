@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 50);
             $table->unsignedBigInteger('country_id');
+            $table->enum('status', ['active','in-active'])->default('in-active');
             $table->timestamps();
             $table->softDeletes();
 

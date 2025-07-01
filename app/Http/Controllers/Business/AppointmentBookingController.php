@@ -174,7 +174,7 @@ class AppointmentBookingController extends Controller
             $businessSetting = getBusinessSettings();
             $rules = [
                 'user_name' => 'required',
-                'user_contact' => 'required|numeric',
+                'user_contact' => 'required|numeric|digits_between:10,15',
                 'booking_date' => 'required|date',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
@@ -260,7 +260,7 @@ class AppointmentBookingController extends Controller
             $businessSetting = getBusinessSettings();
             $rules = [
                 'user_name' => 'required',
-                'user_contact' => 'required|numeric',
+                'user_contact' => 'required|numeric|digits_between:10,15',
                 'booking_date' => 'required|date',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
                 'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',

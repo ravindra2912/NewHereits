@@ -8,6 +8,7 @@ use App\Http\Controllers\Business\DashboarController;
 use App\Http\Controllers\Business\AppointmenterController;
 use App\Http\Controllers\Business\AppointmentBookingController;
 use App\Http\Controllers\Business\AppointmentDepartmentController;
+use App\Http\Controllers\Business\PaymentController;
 
 Route::name('business.')->group(function () {
     Route::middleware('web', 'guest')->group(function () {
@@ -63,6 +64,11 @@ Route::name('business.')->group(function () {
             Route::post('setting/business/credit/buy', 'businessCreditBuy')->name('setting.business.credit.buy');
         });
 
+        Route::controller(PaymentController::class)->group(function () {
+            Route::get('payment/{type}/{id}', 'Payment')->name('Payment');
+            Route::post('payment/responce', 'paymentResponce')->name('payment.responce');
+        });
+        
         Route::controller(AuthController::class)->group(function () {
             Route::get('logout', 'destroy')->name('logout');
         });

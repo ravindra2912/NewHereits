@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Redirect;
@@ -377,6 +378,9 @@ class AuthController extends Controller
 
                 $success = true;
                 $message = 'Business register successfully.';
+
+                Cache::forget('getAvailableCities'); //this function in helpers.php file getAvailableCities()
+
                 DB::commit();
             }
         } catch (\Exception $e) {

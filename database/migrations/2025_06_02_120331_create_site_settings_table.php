@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('site_settings', function (Blueprint $table) {
             $table->id();
             $table->double('yearly_subscription_price', 10, 2)->default(0);
+            $table->double('per_credit_price', 10, 2)->default(0);
             $table->timestamps();
         });
     }

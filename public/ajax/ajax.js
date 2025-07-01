@@ -6,6 +6,22 @@ $(function () {
 
 		var form = this;
 
+		// check form validation start
+		const requiredInputs = form.querySelectorAll('.required');
+		var requiredInputsArray = {};
+		requiredInputs.forEach(input => {
+			if (!input.value.trim()) {
+				let label = input.name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+				requiredInputsArray[input.name] = ['The ' + label + ' field is required.'];
+			}
+		});
+
+		if (Object.keys(requiredInputsArray).length > 0) {
+			obj_handler(requiredInputsArray, form);
+			return; // stop form submit or ajax
+		}
+		// check form validation End
+
 		if ($(form).data('scroll') == false) {
 			scrollIntoView = false;
 		}
@@ -21,14 +37,14 @@ $(function () {
 			processData: false,
 			beforeSend: function () {
 				remove_error();
-				$('.btn_action #buttonText').addClass('d-none');
-				$('.btn_action #loader').removeClass('d-none');
-				$('.btn_action').prop('disabled', true);
+				$(form).find('.btn_action #buttonText').addClass('d-none');
+				$(form).find('.btn_action #loader').removeClass('d-none');
+				$(form).find('.btn_action').prop('disabled', true);
 			},
 			success: function (result) {
-				$('.btn_action #buttonText').removeClass('d-none');
-				$('.btn_action #loader').addClass('d-none');
-				$('.btn_action').prop('disabled', false);
+				$(form).find('.btn_action #buttonText').removeClass('d-none');
+				$(form).find('.btn_action #loader').addClass('d-none');
+				$(form).find('.btn_action').prop('disabled', false);
 				remove_error();
 				if (result.success) {
 					if ($(form).data('tost') == null || $(form).data('tost') == true) {
@@ -75,111 +91,94 @@ $(function () {
 					}, 3000);
 				} else {
 					toastr.error('Something Wrong');
-					$('.btn_action #buttonText').removeClass('d-none');
-					$('.btn_action #loader').addClass('d-none');
-					$('.btn_action').prop('disabled', false);
+					$(form).find('.btn_action #buttonText').removeClass('d-none');
+					$(form).find('.btn_action #loader').addClass('d-none');
+					$(form).find('.btn_action').prop('disabled', false);
 				}
 			}
 		});
 	}));
 
 	function error_handler(error, form) {
-		//console.log(typeof error);
-		if (typeof error == 'string') {
+		if (typeof error === 'string') {
 			toastr.error(error);
-			//console.log('string');
-		} else if (typeof error == 'object') {
+		} else if (typeof error === 'object' && error !== null) {
 			obj_handler(error, form);
 		} else {
-			toastr.error('Something Wrong');
+			console.error('Unknown error type:', error);
+			toastr.error('Something went wrong. Please try again.');
 		}
 	}
 
 	function obj_handler(obj, form) {
-		const Values = Object.values(obj);
-		var result = Object.keys(obj).map((key, index) => {
+		const values = Object.values(obj);
+		const keys = Object.keys(obj);
 
-			//for multy data on same name like 'name="benifits[benifit1]"' start
-			var check_dot = key.includes('.') ? "true" : "false";
-			if (check_dot == 'true') {
-				const myArray = key.split(".");
-				key = myArray[0] + '[' + myArray[1] + ']';
+		keys.forEach((key, index) => {
+			// Handle dot notation (e.g., "benefits.benefit1")
+			if (key.includes('.')) {
+				const parts = key.split('.');
+				key = `${parts[0]}[${parts[1]}]`;
 			}
-			//end
-			// if (key == 'sports') {
-			// 	var element = $('select[name="' + key + '[]"]');
-			// 	// var element = document.getElementsByName(key);
-			// 	// var element = document.getElementsByName(key+'[]');
-			// 	console.log(element[0].tagName);
-			// 	console.log(element[0].nextElementSibling.tagName == 'SPAN');
-			// 	console.log(key);
-			// }
-			// console.log(key);
 
-			if (form.id != '') {
-				if ($("#" + form.id + ' select[name="' + key + '[]"]')[0] != undefined) {
-					var element = $("#" + form.id + ' select[name="' + key + '[]"]')[0]
-					if (element.nextElementSibling.tagName == 'SPAN') {
-						$(element.nextElementSibling).addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					} else {
-						$("#" + form.id + ' select[name="' + key + '[]"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					}
+			const formSelector = form.id ? `#${form.id} ` : '';
+			const errorMessage = values[index][0];
 
-				} else {
-					$("#" + form.id + ' input[name="' + key + '"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					$("#" + form.id + ' select[name="' + key + '"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					$("#" + form.id + ' select[name="' + key + '[]"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					$("#" + form.id + ' textarea[name="' + key + '"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-				}
-			} else {
-				if ($('select[name="' + key + '[]"]')[0] != undefined) {
-					var element = $('select[name="' + key + '[]"]')[0]
-					if (element.nextElementSibling.tagName == 'SPAN') {
-						$(element.nextElementSibling).addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					} else {
-						$('select[name="' + key + '[]"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					}
+			const fieldSelectors = [
+				`input[name="${key}"]`,
+				`select[name="${key}"]`,
+				`select[name="${key}[]"]`,
+				`textarea[name="${key}"]`
+			];
 
-				} else {
-					$('input[name="' + key + '"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					$('select[name="' + key + '"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					$('select[name="' + key + '[]"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
-					$('textarea[name="' + key + '"]').addClass("is-invalid").after('<div class="text-danger errors" id="error-' + key + '">' + Values[index][0] + '</div>');
+			let field = null;
+			for (let selector of fieldSelectors) {
+				const el = document.querySelector(formSelector + selector);
+				if (el) {
+					field = el;
+					break;
 				}
 			}
 
-			if (index == 0) {
+			if (field) {
+				const $field = $(field);
+				$field.addClass('is-invalid');
+
+				// Remove any existing error message
+				$field.siblings(`#error-${key}`).remove();
+
+				// Add new error message
+				$field.after(`<div class="text-danger errors" id="error-${key}">${errorMessage}</div>`);
+			}
+
+			// Scroll and focus on first error
+			if (index === 0) {
 				if (scrollIntoView) {
-					form.scrollIntoView({
-						behavior: 'smooth'
-					});
+					form.scrollIntoView({ behavior: 'smooth' });
 				}
-
-
-				document.getElementsByName(key)[0].focus();
+				field?.focus();
 			}
-
 		});
 	}
 
 	function remove_error() {
-		$(".form-control").removeClass("is-invalid");
-		$(".errors").remove();
+		// Remove all validation styling from inputs
+		$(".form-control, .form-select, textarea").removeClass("is-invalid");
 
+		// Remove error messages next to the inputs
+		$(".errors").remove();
 	}
 
-	// onchnage remove error
-	$(".formaction input, .formaction select, .formaction textarea").on('change keyup', (function (e) {
+	// onchange remove error
+	$(".formaction input, .formaction select, .formaction textarea").on('change keyup', function () {
 		$(this).removeClass("is-invalid");
-		if (this.closest('.form-group') != null) {
-			var ele = this.closest('.form-group').children;
-			for (var i = 0; i <= ele.length - 1; i++) {
-				if (ele[i] != undefined && ele[i].classList.contains('errors')) {
-					ele[i].remove();
-				}
-			}
-		}
-	}));
+
+		// Remove any `.errors` element next to the field
+		$(this).siblings(".errors").remove();
+
+		// Optionally, remove from parent `.form-group` if needed
+		$(this).closest('.form-group').find('.errors').remove();
+	});
 
 	/*$(document).ajaxError(function(e) {
 	 var e = eval("(" + e.responseText + ")");

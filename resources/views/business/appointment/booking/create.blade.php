@@ -45,7 +45,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Booking Date <span class="error">*</span></label>
-                <input type="date" class="form-control" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="booking_date" id="booking_date" placeholder="Date" />
+                <input type="date" class="form-control required" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="booking_date" id="booking_date" placeholder="Date" />
               </div>
             </div>
 
@@ -53,7 +53,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Department <span class="error">*</span></label>
-                  <select class="form-control" name="department_id" id="department_id">
+                  <select class="form-control required" name="department_id" id="department_id">
                     <option value="">Select Department</option>
                     @foreach ( $departments as $department)
                     <option value="{{ $department->id }}">{{ $department->department_name }}</option>
@@ -66,7 +66,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Appointmenter <span class="error">*</span></label>
-                <select class="form-control" name="appointmenter_id" id="appointmenter_id">
+                <select class="form-control required" name="appointmenter_id" id="appointmenter_id">
                   <option value="">Select Appointmenter</option>
                   @foreach ( $appontmenters as $appontmenter)
                   <option value="{{ $appontmenter->id }}">{{ $appontmenter->appointmenter_name }}</option>
@@ -79,7 +79,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Timing <span class="error">*</span></label>
-                <select class="form-control" name="timeslote" id="timeslote">
+                <select class="form-control required" name="timeslote" id="timeslote">
                   <option value="">Select Timing</option>
                 </select>
               </div>
@@ -89,14 +89,14 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>User name <span class="error">*</span></label>
-                <input type="text" class="form-control" name="user_name" placeholder="User name" />
+                <input type="text" class="form-control required" name="user_name" placeholder="User name" />
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="form-group">
                 <label>User Contact <span class="error">*</span></label>
-                <input type="text" class="form-control" name="user_contact" placeholder="User Contact" />
+                <input type="text" class="form-control required" name="user_contact" placeholder="User Contact" />
               </div>
             </div>
 

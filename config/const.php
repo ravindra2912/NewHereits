@@ -40,4 +40,8 @@ return [
 
     "faq_type" => ['General', 'Business', 'Appointment', 'Services', 'Product'],
 
+
+    "transactions_status" => ['pending', 'completed', 'failed', 'refunded'],
+    "subscriptions_status" => ['pending_for_payment', 'payment_success', 'payment_failed', 'refunded'],
+
 ];

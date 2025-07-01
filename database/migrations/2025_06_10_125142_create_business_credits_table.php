@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('business_id')->index();
             $table->unsignedBigInteger('transation_id')->index();
             $table->bigInteger('credit')->default(0);
+            $table->enum('status', ['pending_for_payment', 'payment_success', 'payment_failed', 'refunded'])->default('pending_for_payment');
             $table->timestamps();
             $table->softDeletes();
 

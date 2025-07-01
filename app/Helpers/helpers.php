@@ -724,7 +724,16 @@ function sendNotification($user_id, $title, $body, $permission, $type, array $ex
 
 function getAvailableCities()
 {
-    return City::select('id', 'name')->get();
+    return Cache::rememberForever('getAvailableCities', function () {
+        return City::select('cities.id', 'cities.name')
+            ->join('businesses', 'businesses.city_id', '=', 'cities.id', 'right')
+            ->groupBy('businesses.city_id')
+            ->get();
+    });
+
+    //fore clear cashe
+    // Cache::forget('getAvailableCities'); 
+
 }
 
 // ==============================================

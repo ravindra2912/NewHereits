@@ -376,9 +376,9 @@ class SettingController extends Controller
                 $info = SiteSetting::first('yearly_subscription_price');
                 $insert = new Transactions();
                 $insert->amount = $info->yearly_subscription_price;
-                $insert->payment_type = 'cash';
+                $insert->payment_type = 'online';
                 $insert->transaction_date = Carbon::now();
-                $insert->status = 'completed';
+                $insert->status = 'pending';
                 $insert->save();
 
                 $binsert = new Subscription();
@@ -386,12 +386,13 @@ class SettingController extends Controller
                 $binsert->transation_id = $insert->id;
                 $binsert->start_date =  $startData;
                 $binsert->end_date = $endData;
+                $binsert->status = 'pending_for_payment';
                 $binsert->save();
 
 
-                $business->subscription_expiry_date = $binsert->end_date;
-                $business->save();
-
+                // $business->subscription_expiry_date = $binsert->end_date;
+                // $business->save();
+                $redirect = route('business.Payment', ['type' => 'subscription', 'id' => $binsert->id]);
                 $success = true;
                 $message = 'Play purchase successfully.';
                 DB::commit();
@@ -412,8 +413,9 @@ class SettingController extends Controller
                     $q->with('transaction')->orderBy('id', 'desc');
                 }
             ])->find(getBusinessId());
-
-        $price = 1.3;
+            
+        $info = SiteSetting::first('per_credit_price');
+        $price = $info->per_credit_price ?? 1;
         return view('business.setting.businessCredit', compact('business', 'price'));
     }
 
@@ -432,26 +434,28 @@ class SettingController extends Controller
             } else if ($request->credit < 1) {
                 $message = 'Invalid credit amount.';
             } else {
-                $price = 1.3;
-
+                $info = SiteSetting::first('per_credit_price');
+                $price = $info->per_credit_price ?? 1;
 
                 $insert = new Transactions();
                 $insert->amount = $price * $request->credit;
                 $insert->payment_type = 'cash';
                 $insert->transaction_date = Carbon::now();
-                $insert->status = 'completed';
+                $insert->status = 'pending';
                 $insert->save();
 
                 $binsert = new BusinessCredit();
                 $binsert->business_id = getBusinessId();
                 $binsert->transation_id = $insert->id;
                 $binsert->credit =  $request->credit;
+                $binsert->status = 'pending_for_payment';
                 $binsert->save();
 
 
-                $business->credit = $business->credit + $request->credit;
-                $business->save();
+                // $business->credit = $business->credit + $request->credit;
+                // $business->save();
 
+                $redirect = route('business.Payment', ['type' => 'credit', 'id' => $binsert->id]);
                 $success = true;
                 $message = 'Credit purchase successfully.';
                 DB::commit();

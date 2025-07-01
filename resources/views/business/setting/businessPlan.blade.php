@@ -437,7 +437,7 @@
         <div class="card-body">
           <div class="pricingTable row">
 
-            <ul class="pricingTable-firstTable col-md-6">
+            <ul class="pricingTable-firstTable col-md-12">
               <li class="pricingTable-firstTable_table">
                 <h1 class="pricingTable-firstTable_table__header">Yearly plan</h1>
                 <p class="pricingTable-firstTable_table__pricing"><span>Rs.</span><span>{{ $info->yearly_subscription_price }}</span><span>Year</span></p>
@@ -447,16 +447,16 @@
                   <li>Approve Reviews</li>
                 </ul>
                 @if(round(Carbon\Carbon::now()->diffInDays(Carbon\Carbon::parse(Auth::user()->getBusinessDetails->subscription_expiry_date))) <= 7)
-                  <form action="{{ route('business.setting.business.plan.buy')}}" data-action="call" class="formaction">
+                <form action="{{ route('business.setting.business.plan.buy')}}" data-action="redirect" data-tost="false" class="formaction">
                   @csrf
                   <button type="submit" class="pricingTable-firstTable_table__getstart btn-block">Get Started Now</button>
-                  </form>
-                  @else
-                  <button type="button" class="pricingTable-firstTable_table__getstart btn-block">Activated</button>
-                  @endif
+                </form>
+                @else
+                <button type="button" class="pricingTable-firstTable_table__getstart btn-block">Activated</button>
+                @endif
               </li>
             </ul>
-            <div class="col-md-6">
+            <div class="col-md-12">
               <h4>History</h4>
               <hr>
               <table class="table table-bordered table-striped">
@@ -465,6 +465,7 @@
                   <th>Price</th>
                   <th>Start Date</th>
                   <th>End Date</th>
+                  <th>Status</th>
                 </tr>
                 @foreach ($history as $data)
                 <tr>
@@ -472,6 +473,7 @@
                   <td>{{ $data->transaction->amount }}</td>
                   <td>{{ get_date($data->start_date) }}</td>
                   <td>{{ get_date($data->end_date) }}</td>
+                  <td>{{ ucfirst( str_replace('_', ' ', $data->status)) }}</td>
                 </tr>
                 @endforeach
               </table>
@@ -490,6 +492,11 @@
     alert('a');
   }
 </script>
+
+<script src="{{ asset('rezorpay/jquery.min.js') }}"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script src="{{ asset('rezorpay/rezorpay.js') }}"></script>
 
 @endpush
 @endsection

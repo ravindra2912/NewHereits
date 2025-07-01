@@ -9,6 +9,10 @@ class Subscription extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'status',
+    ];
+
     public function transaction()
     {
         return $this->hasOne(Transactions::class, 'id', 'transation_id');

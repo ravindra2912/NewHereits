@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('transation_id')->index();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
+            $table->enum('status', ['pending_for_payment', 'payment_success', 'payment_failed', 'refunded'])->default('pending_for_payment');
             $table->timestamps();
             $table->softDeletes();
 
