@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->decimal('latitude',10, 7)->nullable();
             $table->decimal('longitude',10, 7)->nullable();
-            $table->unsignedBigInteger('country_id')->default(101)->nullable();
+            $table->unsignedBigInteger('country_id')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
             $table->integer('pincode')->nullable();
