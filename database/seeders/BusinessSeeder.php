@@ -35,13 +35,6 @@ class BusinessSeeder extends Seeder
             ]);
         }
 
-        Country::create([
-            'id' => 101,
-            'sortname' => 'IN',
-            'name' => 'india',
-            'phonecode' => '91',
-        ]);
-
         Business::create([
             'owner_id' => 2,
             'name' => $role,
