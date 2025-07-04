@@ -727,6 +727,7 @@ function getAvailableCities()
     return Cache::rememberForever('getAvailableCities', function () {
         return City::select('cities.id', 'cities.name')
             ->join('businesses', 'businesses.city_id', '=', 'cities.id', 'right')
+            ->where('businesses.status', '=', 'active')
             ->groupBy('businesses.city_id')
             ->get();
     });
