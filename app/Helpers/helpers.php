@@ -420,7 +420,7 @@ function getAppoinmenterTiming($id, $date, $appoinment_id = null, $getBusinessId
     foreach ($appontmenterTiming as $timing) {
         $startTime = Carbon::parse($timing->start_time)->format('H:i');
         $endTime = Carbon::parse($timing->end_time)->format('H:i');
-        $times = generateTimeSlots($startTime, $endTime, $date, $interval, $bookedArray);
+        $times = generateTimeSlots($startTime, $endTime, $date, (int)$interval, $bookedArray);
         $slots = array_merge($slots, $times,);
     }
     return $slots;

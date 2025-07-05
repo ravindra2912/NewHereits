@@ -15,10 +15,10 @@ class SiteSettingSeeder extends Seeder
     public function run(): void
     {
 
-        // SiteSetting::create([
-        //     'yearly_subscription_price' => 199,
-        //     'per_credit_price' => 1.3,
-        // ]);
+        SiteSetting::create([
+            'yearly_subscription_price' => 199,
+            'per_credit_price' => 1.3,
+        ]);
 
         $countries = database_path('sql/countries.sql');
         if (!File::exists($countries)) {
