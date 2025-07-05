@@ -124,7 +124,7 @@ class AppointmentController extends Controller
             $businessSetting = getBusinessSettings($request->business_id);
             $rules = [
                 'user_name' => $request->appointment_for == 'other' ? 'required' : 'nullable',
-                'user_contact' => ($request->appointment_for == 'other' ? 'required' : 'nullable') . '|numeric',
+                'user_contact' => ($request->appointment_for == 'other' ? 'required' : 'nullable') . '|numeric|digits_between:10,12',
                 'booking_date' => 'required|date',
                 'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
                 'expert_id' => 'required',

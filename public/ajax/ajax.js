@@ -7,10 +7,14 @@ $(function () {
 		var form = this;
 
 		// check form validation start
-		const requiredInputs = form.querySelectorAll('.required');
-		var requiredInputsArray = {};
+		const requiredInputs = form.querySelectorAll('input.required, select.required, textarea.required');
+		let requiredInputsArray = {};
+
 		requiredInputs.forEach(input => {
-			if (!input.value.trim()) {
+			// Check if the element is visible on screen
+			const isVisible = !!(input.offsetParent !== null || input.getClientRects().length);
+
+			if (isVisible && !input.value.trim()) {
 				let label = input.name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 				requiredInputsArray[input.name] = ['The ' + label + ' field is required.'];
 			}

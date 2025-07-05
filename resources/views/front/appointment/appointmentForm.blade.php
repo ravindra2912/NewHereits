@@ -13,7 +13,7 @@
           <input type="hidden" value="{{ $expert->businessSetting['is_appointment_book_with_time_slote'] }}" id="with-timing">
 
           <div class="col-12 mb-3">
-            <label for="booking_date" class="form-label required">Appointment For </label></br>
+            <label for="booking_date" class="form-label">Appointment For </label></br>
             <div class="form-check form-check-inline">
               <input id="Self" value="self" name="appointment_for" class="form-check-input" checked="" type="radio">
               <label class="form-check-label" for="Self">Self</label>
@@ -25,14 +25,14 @@
           </div>
 
           <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="booking_date" class="form-label required">Appointment date</label>
-            <input type="date" name="booking_date" class="form-control" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
+            <label for="booking_date" class="form-label ">Appointment date</label>
+            <input type="date" name="booking_date" class="form-control required" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
           </div>
 
           @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
           <div class="col-md-6 col-sm-6 col-12 mb-3">
-            <label for="operator" class="form-label required">Appointment Time</label>
-            <select class="form-control" name="timeslote" id="timeslote" required="">
+            <label for="operator" class="form-label ">Appointment Time</label>
+            <select class="form-control required" name="timeslote" id="timeslote" required="">
               <option value="">Select Your Appointment Time</option>
               @foreach ($timeSlots as $time)
               @if(!$time['is_booked'] && $time['is_available'] == true)
@@ -44,13 +44,13 @@
           @endif
 
           <div class="col-md-6 col-sm-6 col-12 mb-3 appointment-for-other d-none">
-            <label for="user_name" class="form-label required">Name</label>
-            <input class="form-control" name="user_name" id="user_name" placeholder="Enter Your Name" type="text">
+            <label for="user_name" class="form-label ">Name</label>
+            <input class="form-control required" name="user_name" id="user_name" placeholder="Enter Your Name" type="text">
           </div>
 
           <div class="col-md-6 col-sm-6 col-12 mb-3 appointment-for-other d-none">
-            <label for="user_contact" class="form-label required">Mobile Number</label>
-            <input type="text" name="user_contact" class="form-control" id="user_contact" placeholder="Enter Mobile Number">
+            <label for="user_contact" class="form-label ">Mobile Number</label>
+            <input type="text" name="user_contact" class="form-control required" id="user_contact" placeholder="Enter Mobile Number">
           </div>
 
           <div class="col-12 mb-3">

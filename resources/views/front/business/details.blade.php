@@ -170,9 +170,8 @@
     </div>
   </div>
 
-
   @if (isset($expert) && !empty($expert))
-
+  @if ($business->business_category_id != 1)
   <div class="section pt-3 pb-0 mx-3 row">
     <a href="{{ route('expert', $expert->slug) }}" title="{{ $expert->appointmenter_name }}" class="col-md-7 col-sm-7 col-12 p-md-2 pb-md-0 p-0">
       <div class="bg-white shadow-md rounded p-3 list-store">
@@ -228,6 +227,8 @@
       </div>
     </a>
   </div>
+  @endif
+
 
   @include('front.appointment.appointmentForm')
   @elseif(isset($setting->is_appointment_system) && $setting->is_appointment_system && $appontmentersHtml != null)
@@ -236,7 +237,7 @@
     <div class="row">
       <div class="col-lg-2 mt-2 mt-lg-2 col-0">
         <x-ad-banner />
-        
+
       </div>
       <div class="col-lg-8 mt-1 mt-lg-0">
         @if ($setting->is_appointment_with_department)
