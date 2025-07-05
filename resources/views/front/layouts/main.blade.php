@@ -56,7 +56,7 @@
 	<meta itemprop="description" content="">
 	@endif
 
-	@routes
+	<!-- @routes -->
 	@vite('resources/js/app.js')
 
 
