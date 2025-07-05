@@ -164,7 +164,7 @@ class BusinessController extends Controller
             if (count($appontmenters) == 1) {
                 $expert = $appontmenters[0];
                 $expert->getLastBooking = isExpertAvailable($expert->id);
-                $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
+                $timeSlots = $setting->is_appointment_book_with_time_slote ? getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id) : [];
             } else {
                 $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();
             }
