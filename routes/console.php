@@ -11,4 +11,4 @@ Artisan::command('inspire', function () {
 
 Log::info("Run schedule at" . date('y-m-d-h-i-s'));
 
-Schedule::command('queue:work --stop-when-empty')->everyMinute();
+Schedule::command('queue:work --stop-when-empty')->everySecond();
