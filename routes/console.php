@@ -9,11 +9,11 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Log::info("Run schedule at" . date('y-m-d-h-i-s'));
+Log::info("Run schedule at " . date('y-m-d-h-i-s'));
 
 Schedule::call(function () {
     Log::info('This job runs every minute or more'); 
-})->everySecond()->onFailure(function () {
+})->onFailure(function () {
     Log::error('This job failed to run at ' . now());
 });
 
