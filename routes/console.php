@@ -17,6 +17,7 @@ Schedule::call(function () {
     Log::error('This job failed to run at ' . now());
 });
 
+Schedule::command('app:appoinment-auto-cancel')->everySecond();
 Schedule::command('app:appoinment-auto-cancel')->dailyAt('00:01');
 Schedule::command('queue:work --stop-when-empty')->everySecond();
 
