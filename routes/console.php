@@ -15,4 +15,4 @@ Schedule::command('queue:work --stop-when-empty')->everySecond();
 
 Schedule::call(function () {
     Log::info('This job runs every minute or more');
-})->everyMinute();
+});
