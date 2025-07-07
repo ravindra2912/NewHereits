@@ -13,7 +13,11 @@ Log::info("Run schedule at" . date('y-m-d-h-i-s'));
 
 Schedule::call(function () {
     Log::info('This job runs every minute or more'); 
-});
+})->everySecond()->onFailure(function () {
+    Log::error('This job failed to run at ' . now());
+})->onSuccess(function () {
+    Log::info('This job ran successfully at ' . now());
+})->withoutOverlapping()->runInBackground();
 
 Schedule::command('queue:work --stop-when-empty')->everySecond();
 
