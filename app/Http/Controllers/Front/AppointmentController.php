@@ -211,7 +211,7 @@ class AppointmentController extends Controller
                 $message = 'Appointment Book Successfully.';
             }
         } catch (\Exception $e) {
-            dd($e);
+            // dd($e);
             $message = $e->getMessage();
         }
         LAST:

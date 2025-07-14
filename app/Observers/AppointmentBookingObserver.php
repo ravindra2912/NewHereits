@@ -31,10 +31,8 @@ class AppointmentBookingObserver
             ])
             ->find($appointmentBooking->id);
 
-            dd($appointment_details->appointmenter);
-
         if ($appointment_details && $appointment_details->user_id != null) {
-            if ($appointment_details->appointmenter->is_appointment_book_with_time_slot) {
+            if ($appointment_details->appontmenter->is_appointment_book_with_time_slot) {
                 if ($appointment_details->status == 'pending') {
                 } else if ($appointment_details->status == 'confirmed') {
                     Mail::to($appointment_details->user->email)->send(new AppointmentConfirmationMail($appointment_details));
