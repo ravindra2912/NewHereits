@@ -120,7 +120,6 @@ class AppointmentController extends Controller
 
         try {
             $appointmenter = Appointmenter::select('id', 'number_of_bookings_per_day', 'is_appointment_book_with_time_slot', 'is_need_booking_confirmation')->where('id', $request->expert_id)->first();
-            // dd($appointmenter->is_appointment_book_with_time_slot == true);
             $rules = [
                 'user_name' => $request->appointment_for == 'other' ? 'required' : 'nullable',
                 'user_contact' => ($request->appointment_for == 'other' ? 'required' : 'nullable') . '|numeric|digits_between:10,12',

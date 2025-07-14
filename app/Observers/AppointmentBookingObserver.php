@@ -31,6 +31,8 @@ class AppointmentBookingObserver
             ])
             ->find($appointmentBooking->id);
 
+            dd($appointment_details->appontmenter);
+
         if ($appointment_details && $appointment_details->user_id != null) {
             if ($appointment_details->appointmenter->is_appointment_book_with_time_slot) {
                 if ($appointment_details->status == 'pending') {
