@@ -250,7 +250,7 @@ function isExpertAvailable($appointmenter_id = null, $business_id = null)
             ->where('booking_date', Carbon::now()->format('Y-m-d'))
             ->where('appointmenter_id', $appointmenter_id)
             ->where('status', 'in_progress');
-        if ($currentBooking->appontmenter->is_appointment_book_with_time_slot) {
+        if (isset($currentBooking->appontmenter) && $currentBooking->appontmenter->is_appointment_book_with_time_slot) {
             $currentBooking = $currentBooking->orderBy('slot_start_time', 'asc');
         } else {
             $currentBooking = $currentBooking->orderBy('token_number', 'asc');
