@@ -24,7 +24,9 @@ return new class extends Migration
             $table->string('slug', 50)->unique();
             $table->boolean('is_default')->default(false);
             $table->float('rating', 2, 1)->default(0);
-            $table->enum('status', ['active','in-active'])->default('active');
+            $table->boolean('is_appointment_book_with_time_slot')->default(false)->comment('TRUE = book appointment with time slot, FALSE = using queue system');
+            $table->boolean('is_need_booking_confirmation')->default(false)->comment('TRUE = need to confirm booking from business, FALSE = all booking are confirmed');
+            $table->enum('status', ['active', 'in-active'])->default('active');
             $table->timestamps();
             $table->softDeletes();
 

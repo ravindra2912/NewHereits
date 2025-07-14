@@ -138,7 +138,7 @@ class AppointmentBookingController extends Controller
         if ($businessSetting->is_appointment_with_department) {
             $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', getBusinessId())->get();
         } else {
-            $appontmenters = Appointmenter::select('id', 'appointmenter_name')->where('business_id', getBusinessId())->get();
+            $appontmenters = Appointmenter::select('id', 'appointmenter_name', 'is_appointment_book_with_time_slot')->where('business_id', getBusinessId())->get();
         }
 
         return view('business.appointment.booking.create', compact('departments', 'appontmenters', 'businessSetting'));
@@ -172,12 +172,13 @@ class AppointmentBookingController extends Controller
 
         try {
             $businessSetting = getBusinessSettings();
+            $appointmenter = Appointmenter::select('id', 'is_appointment_book_with_time_slot')->where('id', $request->appointmenter_id)->first();
             $rules = [
                 'user_name' => 'required',
                 'user_contact' => 'required|numeric|digits_between:10,15',
                 'booking_date' => 'required|date',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
-                'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
+                'timeslote' => $appointmenter->is_appointment_book_with_time_slot ? 'required' : 'nullable',
                 'appointmenter_id' => 'required',
             ];
 
@@ -203,7 +204,7 @@ class AppointmentBookingController extends Controller
                 $insert->user_contact = $request->user_contact;
                 $insert->booking_date = $request->booking_date;
 
-                if ($businessSetting->is_appointment_book_with_time_slote) {
+                if ($appointmenter->is_appointment_book_with_time_slot) {
                     $timeslote = explode(' - ', $request->timeslote);
                     $insert->slot_start_time = Carbon::parse($request->booking_date . ' ' . $timeslote[0]);
                     $insert->slot_end_time = Carbon::parse($request->booking_date . ' ' . $timeslote[1]);
@@ -233,19 +234,18 @@ class AppointmentBookingController extends Controller
         $appontment = AppointmentBooking::find($id);
         $appontment->bookdate = Carbon::parse($appontment->slot_start_time)->format('h:i a') . ' - ' . Carbon::parse($appontment->slot_end_time)->format('h:i a');
         $businessSetting = getBusinessSettings();
-        $appontmenters = Appointmenter::select('id', 'appointmenter_name')->where('business_id', getBusinessId());
+        $appontmenters = Appointmenter::select('id', 'appointmenter_name', 'is_appointment_book_with_time_slot')->where('business_id', getBusinessId());
         $departments = array();
-        $timeSlots = array();
         if ($businessSetting->is_appointment_with_department) {
             $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', getBusinessId())->get();
             $appontmenters = $appontmenters->where('department_id', $appontment->department_id);
         }
-
-        if ($businessSetting->is_appointment_book_with_time_slote) {
-            $timeSlots = getAppoinmenterTiming($appontment->appointmenter_id, $appontment->booking_date, $id);
-        }
-
         $appontmenters = $appontmenters->get();
+
+        $timeSlots = array();
+        $timeSlots = getAppoinmenterTiming($appontment->appointmenter_id, $appontment->booking_date, $id);
+
+
         return view('business.appointment.booking.edit', compact('departments', 'appontmenters', 'businessSetting', 'appontment', 'timeSlots'));
     }
 
@@ -258,12 +258,13 @@ class AppointmentBookingController extends Controller
 
         try {
             $businessSetting = getBusinessSettings();
+            $appointmenter = Appointmenter::select('id', 'is_appointment_book_with_time_slot')->where('id', $request->appointmenter_id)->first();
             $rules = [
                 'user_name' => 'required',
                 'user_contact' => 'required|numeric|digits_between:10,15',
                 'booking_date' => 'required|date',
                 'department_id' => $businessSetting->is_appointment_with_department ? 'required' : 'nullable',
-                'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
+                'timeslote' => $appointmenter->is_appointment_book_with_time_slot ? 'required' : 'nullable',
                 'appointmenter_id' => 'required',
             ];
 
@@ -280,7 +281,7 @@ class AppointmentBookingController extends Controller
                 $insert->user_contact = $request->user_contact;
                 $insert->booking_date = $request->booking_date;
                 $insert->status = $request->status;
-                if ($businessSetting->is_appointment_book_with_time_slote) {
+                if ($appointmenter->is_appointment_book_with_time_slot) {
                     $timeslote = explode(' - ', $request->timeslote);
                     $insert->slot_start_time = Carbon::parse($request->booking_date . ' ' . $timeslote[0]);
                     $insert->slot_end_time = Carbon::parse($request->booking_date . ' ' . $timeslote[1]);
@@ -322,12 +323,12 @@ class AppointmentBookingController extends Controller
                     $appointment->save();
 
                     if ($request->status == 'completeAndNext') {
-                        $businessSetting = getBusinessSettings();
+                        $appointmenter = Appointmenter::select('id', 'is_appointment_book_with_time_slot')->where('id', $appointment->appointmenter_id)->first();
                         $nextBooking = AppointmentBooking::query()
                             ->where('booking_date', Carbon::now()->format('Y-m-d'))
                             ->where('appointmenter_id', $appointment->appointmenter_id)
                             ->where('status', 'confirmed');
-                        if ($businessSetting->is_appointment_book_with_time_slote) {
+                        if ($appointmenter->is_appointment_book_with_time_slot) {
                             $nextBooking = $nextBooking->orderBy('slot_start_time', 'asc');
                         } else {
                             $nextBooking = $nextBooking->orderBy('token_number', 'asc');

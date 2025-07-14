@@ -45,7 +45,7 @@ class AppointmenterController extends Controller
                 ->addColumn('department', function ($row) {
                     return isset($row->department) ? $row->department->department_name : '';
                 })
-                ->addColumn('action', function ($row) use ($businessSetting) {
+                ->addColumn('action', function ($row) {
                     $url = route('business.appointment.appointmenter.destroy', $row->id);
                     $url = "'" . $url . "'";
                     $html = ' <div class="text-center">
@@ -118,6 +118,8 @@ class AppointmenterController extends Controller
                 $insert->number_of_bookings_per_day = $request->number_of_bookings_per_day;
                 $insert->title = $request->title;
                 $insert->description = $request->description;
+                $insert->is_appointment_book_with_time_slot = $request->is_appointment_book_with_time_slot;
+                $insert->is_need_booking_confirmation = $request->is_need_booking_confirmation;
                 $insert->status = $request->status;
                 $insert->slug = generateUniqueSlug(Appointmenter::class, $request->appointmenter_name);
                 $insert->save();
@@ -190,6 +192,8 @@ class AppointmenterController extends Controller
                 $update->number_of_bookings_per_day = $request->number_of_bookings_per_day;
                 $update->title = $request->title;
                 $update->description = $request->description;
+                $update->is_appointment_book_with_time_slot = $request->is_appointment_book_with_time_slot;
+                $update->is_need_booking_confirmation = $request->is_need_booking_confirmation;
                 $update->status = $request->status;
                 $update->save();
 

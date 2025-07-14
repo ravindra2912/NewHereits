@@ -29,6 +29,8 @@ Route::name('admin.')->group(function () {
         });
     });
 
+    
+
     Route::middleware(['web', 'admin'])->group(function () {
         Route::controller(DashboarController::class)->group(function () {
             Route::get('dashboard', 'index')->name('dashboard');
@@ -37,7 +39,14 @@ Route::name('admin.')->group(function () {
 
         Route::resource('user', UsersController::class);
         Route::resource('faq', FaqController::class);
+
         Route::resource('business', BusinessController::class);
+        Route::controller(BusinessController::class)->group(function () {
+            Route::get('business/pending/list', 'pendingBusinesses')->name('business.pendings');
+            Route::post('business/change/status', 'changeBusinessStatus')->name('business.change.status');
+        });
+
+
         Route::resource('businesscategory', BusinessCategoryController::class);
         Route::controller(BusinessController::class)->group(function () {
             Route::post('business/setting/{id}', 'systemSettingUpdate')->name('business.systemsetting.update');

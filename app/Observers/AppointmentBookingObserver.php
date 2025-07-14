@@ -25,15 +25,14 @@ class AppointmentBookingObserver
         $appointment_details = AppointmentBooking::query()
             ->select('id', 'token_number', 'business_id', 'appointmenter_id', 'user_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'note', 'status')
             ->with([
-                'appontmenter:id,appointmenter_name,slug',
+                'appontmenter:id,appointmenter_name,slug,is_appointment_book_with_time_slot',
                 'business:id,name,slug,address',
                 'user:id,first_name,email'
             ])
             ->find($appointmentBooking->id);
 
         if ($appointment_details && $appointment_details->user_id != null) {
-            $businessSetting = getBusinessSettings($appointment_details->business_id);
-            if ($businessSetting->is_appointment_book_with_time_slote) {
+            if ($appointment_details->appointmenter->is_appointment_book_with_time_slot) {
                 if ($appointment_details->status == 'pending') {
                 } else if ($appointment_details->status == 'confirmed') {
                     Mail::to($appointment_details->user->email)->send(new AppointmentConfirmationMail($appointment_details));
@@ -64,16 +63,14 @@ class AppointmentBookingObserver
                 $appointment_details = AppointmentBooking::query()
                     ->select('id', 'token_number', 'business_id', 'appointmenter_id', 'user_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'note', 'status')
                     ->with([
-                        'appontmenter:id,appointmenter_name,slug',
+                        'appontmenter:id,appointmenter_name,slug,is_appointment_book_with_time_slot',
                         'business:id,name,slug,address',
                         'user:id,first_name,email,notification_token'
                     ])
-                    ->find($insert->id);
+                    ->find($insert->id); 
 
                 if ($appointment_details && $appointment_details->user_id != null) {
-                    $businessSetting = getBusinessSettings($appointment_details->business_id);
-
-                    if ($businessSetting->is_appointment_book_with_time_slote) {
+                    if ($appointment_details->appontmenter->is_appointment_book_with_time_slot) {
                         if ($changes['status'] == 'confirmed') {
                             Mail::to($appointment_details->user->email)->send(new AppointmentConfirmationMail($appointment_details));
 

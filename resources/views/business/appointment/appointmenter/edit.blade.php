@@ -117,6 +117,26 @@
                   </div>
                 </div>
 
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Is appointment book with time slot <span class="error">*</span></label>
+                    <select class="form-control" name="is_appointment_book_with_time_slot">
+                      <option value="0" {{ $appointmenter->is_appointment_book_with_time_slot == 0?'selected':'' }}>No</option>
+                      <option value="1" {{ $appointmenter->is_appointment_book_with_time_slot == 1?'selected':'' }}>yes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Is need booking confirmation <span class="error">*</span></label>
+                    <select class="form-control" name="is_need_booking_confirmation">
+                      <option value="0" {{ $appointmenter->is_need_booking_confirmation == 0?'selected':'' }}>No</option>
+                      <option value="1" {{ $appointmenter->is_need_booking_confirmation == 1?'selected':'' }}>Yes</option>
+                    </select>
+                  </div>
+                </div>
+
 
 
               </div>

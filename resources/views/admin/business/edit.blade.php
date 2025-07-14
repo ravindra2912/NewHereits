@@ -324,19 +324,7 @@
               </div>
             </div>
 
-            <div class="col-md-2 col-4 text-center">
-              <div class="form-group">
-                <label>Appointment book with Time Slote</label><br>
-                <input type="checkbox" name="is_appointment_book_with_time_slote" {{ $setting->is_appointment_book_with_time_slote ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
-              </div>
-            </div>
-
-            <div class="col-md-2 col-4 text-center"> 
-              <div class="form-group">
-                <label>Appointment booking confirmetion</label><br>
-                <input type="checkbox" name="is_need_booking_confirmetion" {{ $setting->is_need_booking_confirmetion ? 'checked':''}} data-bootstrap-switch data-off-color="danger" data-on-color="success">
-              </div>
-            </div>
+            
             
             <div class="col-sm-12 text-right">
               <button class="btn btn-danger" type="button" onclick="history.back()">Back</button>

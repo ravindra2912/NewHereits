@@ -18,90 +18,109 @@
             <p> Dashboard </p>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a href="{{ route('admin.user.index') }}" class="nav-link {{ request()->routeIs('admin.user*') ? 'active' : '' }}">
             <i class="nav-icon fas fa-user"></i>
             <p> Users </p>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a href="{{ route('admin.businesscategory.index') }}" class="nav-link {{ request()->routeIs('admin.businesscategory.*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-user"></i>
+            <i class="nav-icon fas fa-stream"></i>
             <p> Businesses Category </p>
           </a>
         </li>
-        
-        <li class="nav-item">
-          <a href="{{ route('admin.business.index') }}" class="nav-link {{ request()->routeIs('admin.business.*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-user"></i>
-            <p> Businesses </p>
+
+        <li class="nav-item {{ request()->routeIs('admin.business.*') ? 'menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->routeIs('admin.business.*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-building"></i>
+            <p>
+              Businesses
+              <i class="right fas fa-angle-left"></i>
+            </p>
           </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{ route('admin.business.index') }}" class="nav-link {{ request()->routeIs('admin.business.index*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>All</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{{ route('admin.business.pendings') }}" class="nav-link {{ request()->routeIs('admin.business.pendings*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Pending</p>
+              </a>
+            </li>
+
+          </ul>
         </li>
 
-        
-        
+
+
         <li class="nav-item">
           <a href="{{ route('admin.lagel-pages') }}" class="nav-link {{ request()->routeIs('admin.lagel-pages*') ? 'active' : '' }}">
             <i class="nav-icon fas fa-file-contract"></i>
             <p> Lagel Pages </p>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a href="{{ route('admin.faq.index') }}" class="nav-link {{ request()->routeIs('admin.faq*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-file-contract"></i>
+            <i class="nav-icon fas fa-question"></i>
             <p> FAQ </p>
           </a>
         </li>
 
         <li class="nav-item {{ request()->routeIs('admin.setting*') ? 'menu-open' : '' }}">
-            <a href="#" class="nav-link {{ request()->routeIs('admin.setting*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Setting
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{ route('admin.setting.profile') }}" class="nav-link {{ request()->routeIs('admin.setting.profile*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Profile</p>
-                </a>
-              </li>
-              
-            </ul>
-          </li>
-          
-          <li class="nav-item {{ request()->routeIs('admin.locations*') ? 'menu-open' : '' }}">
-            <a href="#" class="nav-link {{ request()->routeIs('admin.locations*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Location Master
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{ route('admin.locations.areas') }}" class="nav-link {{ request()->routeIs('admin.locations*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Areas</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-        
+          <a href="#" class="nav-link {{ request()->routeIs('admin.setting*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-cog"></i>
+            <p>
+              Setting
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{ route('admin.setting.profile') }}" class="nav-link {{ request()->routeIs('admin.setting.profile*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Profile</p>
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+        <li class="nav-item {{ request()->routeIs('admin.locations*') ? 'menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->routeIs('admin.locations*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-map-marked-alt"></i>
+            <p>
+              Location Master
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{ route('admin.locations.areas') }}" class="nav-link {{ request()->routeIs('admin.locations*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Areas</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
         <li class="nav-item">
-          <a href="{{ route('admin.logout') }}"  class="nav-link">
+          <a href="{{ route('admin.logout') }}" class="nav-link">
             <i class="nav-icon fas fa-power-off"></i>
             <p> Logout </p>
           </a>
         </li>
-       
 
-        
+
+
         <!-- <li class="nav-item menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>

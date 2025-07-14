@@ -32,7 +32,7 @@ class BusinessController extends Controller
         if ($request->ajax()) {
 
             $data = Business::with(['owner', 'businessCategory'])
-                ->select('id', 'owner_id', 'business_category_id', 'name', 'business_image', 'address', 'contact');
+                ->select('id', 'owner_id', 'business_category_id', 'name', 'business_image', 'address', 'contact', 'status');
 
             return Datatables::of($data)
                 ->addIndexColumn()
@@ -305,12 +305,79 @@ class BusinessController extends Controller
                 }
                 $update->is_appointment_system = isset($request->is_appointment_system) && $request->is_appointment_system == 'on' ? 1 : 0;
                 $update->is_appointment_with_department = isset($request->is_appointment_with_department) && $request->is_appointment_with_department == 'on' ? 1 : 0;
-                $update->is_appointment_book_with_time_slote = isset($request->is_appointment_book_with_time_slote) && $request->is_appointment_book_with_time_slote == 'on' ? 1 : 0;
-                $update->is_need_booking_confirmetion = isset($request->is_need_booking_confirmetion) && $request->is_need_booking_confirmetion == 'on' ? 1 : 0;
                 $update->save();
 
                 $success = true;
                 $message = 'Setting update successfully.';
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+        return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function pendingBusinesses(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $data = Business::with(['owner', 'businessCategory'])
+                ->select('id', 'owner_id', 'business_category_id', 'name', 'business_image', 'address', 'contact', 'status')
+                ->where('status', 'pending');
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('owner', function ($row) {
+                    return isset($row->owner) && !empty($row->owner->first_name) ? $row->owner->first_name : '';
+                })
+                ->addColumn('category', function ($row) {
+                    return isset($row->businessCategory) && !empty($row->businessCategory->name) ? $row->businessCategory->name : '';
+                    return $row->businessCategory->name;
+                })
+                ->addColumn('img', function ($row) {
+
+                    return '<div class="text-center"><img src="' . getImage($row->business_image) . '" class="table_img" /></div>';
+                })
+                ->addColumn('action', function ($row) {
+                    $url = route('admin.business.destroy', $row->id);
+                    return ' <div class="text-center">
+                    <button onclick="changeStatus(' . $row->id . ')" class="btn btn-success btn-sm btn_action-' . $row->id . '" title="Delete">
+                        <p id="buttonText" class="m-0">Approve</p>
+                        <span id="loader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                    </div>';
+                })
+                ->rawColumns(['action', 'owner', 'img'])
+                ->make(true);
+        }
+        return view('admin.business.pendingList');
+    }
+
+    public function changeBusinessStatus(Request $request)
+    {
+        $success = false;
+        $message = 'Something Wrong!';
+        $redirect = Route('admin.business.index');
+        $data = array();
+
+        try {
+            $rules = [
+                'business_id' => 'required|numeric|exists:businesses,id',
+                'status' => 'required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) { // Validation fails
+                // $message = $validator->errors();
+                $message = $validator->errors()->first();
+            } else {
+
+                $update = Business::find($request->business_id);
+                $update->status = $request->status;
+                $update->save();
+
+                $success = true;
+                $message = 'Business update successfully.';
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();

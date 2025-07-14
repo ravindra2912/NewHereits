@@ -1,6 +1,6 @@
 @extends('admin.layouts.main')
 @section('content')
-@section('title', 'Business')
+@section('title', 'Pending Business')
 
 @push('style')
 <link rel="stylesheet" type="text/css" href="{{ asset('admin/dist/css/jquery.dataTables.css') }}" />
@@ -12,12 +12,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Business list</h1>
+        <h1 class="m-0">Pending business list</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-          <li class="breadcrumb-item active">Business list</li>
+          <li class="breadcrumb-item active">Pending business list</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
@@ -33,10 +33,8 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Business list</h3>
-            <div class="float-right">
-              <a href="{{ route('admin.business.create') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add</a>
-            </div>
+            <h3 class="card-title">Pending business list</h3>
+            
           </div>
           <!-- /.card-header -->
           <div class="card-body table-responsive">
@@ -77,11 +75,12 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script type="text/javascript">
+  var table = '';
   $(function() {
-    var table = $('#data-table').DataTable({
+    table = $('#data-table').DataTable({
       processing: true,
       serverSide: true,
-      ajax: "{{ route('admin.business.index') }}",
+      ajax: "{{ route('admin.business.pendings') }}",
       columns: [{
           data: 'img',
           name: 'img',
@@ -122,37 +121,38 @@
 
 
   // delete user
-  function destroy(url, id) {
+  function changeStatus(id) {
     Swal.fire({
         title: 'Are you sure?',
         icon: 'error',
-        html: "You want to delete this user?",
+        html: "You want to change the status of this business?",
         allowOutsideClick: false,
         showCancelButton: true,
-        confirmButtonText: 'Delete',
+        confirmButtonText: 'Change',
         cancelButtonText: 'Cancel',
       })
       .then((result) => {
         if (result.isConfirmed) {
           $.ajax({
-            url: url,
+            url: "{{ route('admin.business.change.status') }}",
             type: "POST",
             data: {
-              '_method': 'DELETE'
+              'business_id': id,
+              'status': 'active'
             },
             dataType: "json",
             headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
             },
             beforeSend: function() {
-              $('.btn_delete-'+id+' #buttonText').addClass('d-none');
-              $('.btn_delete-'+id+' #loader').removeClass('d-none');
-              $('.btn_delete-'+id).prop('disabled', true);
+              $('.btn_action-'+id+' #buttonText').addClass('d-none');
+              $('.btn_action-'+id+' #loader').removeClass('d-none');
+              $('.btn_action-'+id).prop('disabled', true);
             },
             success: function(result) {
               if (result.success) {
                 toastr.success(result.message);
-                location.reload()
+                table.ajax.reload(null, false);
               } else {
                 toastr.error(result.message);
               }

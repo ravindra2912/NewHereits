@@ -49,7 +49,6 @@
           <div class="card-body table-responsive">
             <div class="row filter mb-3">
               <input type="hidden" value="{{ $businessSetting->is_appointment_with_department }}" id="is_appointment_with_department">
-              <input type="hidden" value="{{ $businessSetting->is_appointment_book_with_time_slote }}" id="is_appointment_book_with_time_slote">
 
               <input type="date" class="form-control" id="filterdate" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
               @if ($businessSetting->is_appointment_with_department)
@@ -143,7 +142,6 @@
           data: 'time',
           name: 'slot_start_time',
           searchable: false,
-          visible: $('#is_appointment_book_with_time_slote').val() == 1 ? true : false
         }, {
           data: 'status_info',
           name: 'status'

@@ -10,7 +10,7 @@
           <input type="hidden" name="expert_id" id="expert_id" value="{{ $expert->id }}">
           <input type="hidden" name="business_id" id="business_id" value="{{ $expert->business_id }}">
           <input type="hidden" name="department_id" value="{{ $expert->department_id }}">
-          <input type="hidden" value="{{ $expert->businessSetting['is_appointment_book_with_time_slote'] }}" id="with-timing">
+          <input type="hidden" value="{{ $expert->is_appointment_book_with_time_slot }}" id="with-timing">
 
           <div class="col-12 mb-3">
             <label for="booking_date" class="form-label">Appointment For </label></br>
@@ -29,7 +29,7 @@
             <input type="date" name="booking_date" class="form-control required" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" id="booking_date" required="" placeholder="Appointment date">
           </div>
 
-          @if ($expert->businessSetting['is_appointment_book_with_time_slote'])
+          @if ($expert->is_appointment_book_with_time_slot)
           <div class="col-md-6 col-sm-6 col-12 mb-3">
             <label for="operator" class="form-label ">Appointment Time</label>
             <select class="form-control required" name="timeslote" id="timeslote" required="">

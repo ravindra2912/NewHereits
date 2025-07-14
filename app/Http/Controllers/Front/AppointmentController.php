@@ -29,7 +29,7 @@ class AppointmentController extends Controller
 {
     public function index(Request $request, $slug): View
     {
-        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description', 'rating')
+        $expert = Appointmenter::select('id', 'department_id', 'business_id', 'appointmenter_image', 'appointmenter_name', 'slug', 'title', 'description', 'rating', 'is_appointment_book_with_time_slot')
             ->with([
                 'business' => function ($q) {
                     return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image', 'credit');
@@ -42,8 +42,7 @@ class AppointmentController extends Controller
                             }
                         ])
                         ->limit(6);
-                },
-                'businessSetting'
+                }
             ])
             ->where('status', 'active')
             ->where('slug', $slug)
@@ -65,7 +64,6 @@ class AppointmentController extends Controller
                 ->where('review_type', 'professional')
                 ->first();
 
-            $expert->businessSetting = $expert->businessSetting->getBusinessSettingObject();
             $timeSlots = getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id);
 
             $expert->timing = isExpertAvailable($expert->id);
@@ -121,12 +119,12 @@ class AppointmentController extends Controller
         $data = array();
 
         try {
-            $businessSetting = getBusinessSettings($request->business_id);
+            $appointmenter = Appointmenter::select('id', 'number_of_bookings_per_day', 'is_appointment_book_with_time_slot', 'is_need_booking_confirmation')->where('id', $request->expert_id)->first();
             $rules = [
                 'user_name' => $request->appointment_for == 'other' ? 'required' : 'nullable',
                 'user_contact' => ($request->appointment_for == 'other' ? 'required' : 'nullable') . '|numeric|digits_between:10,12',
                 'booking_date' => 'required|date',
-                'timeslote' => $businessSetting->is_appointment_book_with_time_slote ? 'required' : 'nullable',
+                'timeslote' => $appointmenter->is_appointment_book_with_time_slot ? 'required' : 'nullable',
                 'expert_id' => 'required',
                 'note' => 'nullable|string|max:250',
             ];
@@ -141,7 +139,7 @@ class AppointmentController extends Controller
             } else {
 
                 // check business timing 
-                if (!$businessSetting->is_appointment_book_with_time_slote && Carbon::parse($request->booking_date)->isToday()) {
+                if (!$appointmenter->is_appointment_book_with_time_slot && Carbon::parse($request->booking_date)->isToday()) {
                     $day = Carbon::now()->format('l');
                     $now = Carbon::now();
                     $timings = BusinessTiming::select('id', 'start_time', 'end_time')
@@ -161,8 +159,7 @@ class AppointmentController extends Controller
                 }
 
                 // check maximum booking
-                if (!$businessSetting->is_appointment_book_with_time_slote) {
-                    $appointmenter = Appointmenter::select('id', 'number_of_bookings_per_day')->where('id', $request->expert_id)->first();
+                if (!$appointmenter->is_appointment_book_with_time_slot) {
                     if ($appointmenter) {
                         $getAllbooking = AppointmentBooking::select('id', 'token_number')
                             ->where('appointmenter_id', $request->expert_id)
@@ -202,12 +199,12 @@ class AppointmentController extends Controller
                 $insert->booking_date = $request->booking_date;
                 $insert->note = $request->note;
 
-                if ($businessSetting->is_appointment_book_with_time_slote) {
+                if ($appointmenter->is_appointment_book_with_time_slot) {
                     $timeslote = explode(' - ', $request->timeslote);
                     $insert->slot_start_time = Carbon::parse($request->booking_date . ' ' . $timeslote[0]);
                     $insert->slot_end_time = Carbon::parse($request->booking_date . ' ' . $timeslote[1]);
                 }
-                $insert->status =  $businessSetting->is_need_booking_confirmetion ? 'pending' : 'confirmed';
+                $insert->status =  $appointmenter->is_need_booking_confirmation ? 'pending' : 'confirmed';
                 $insert->save();
 
                 $success = true;

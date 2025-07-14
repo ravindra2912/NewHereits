@@ -210,9 +210,7 @@ function getBusinessSettings($business_id = null)
     } else {
         $data = [
             'is_appointment_system' => false,
-            'is_appointment_book_with_time_slote' => false,
             'is_appointment_with_department' => false,
-            'is_need_booking_confirmetion' => false,
         ];
     }
     return (object)$data;
@@ -245,17 +243,14 @@ function isExpertAvailable($appointmenter_id = null, $business_id = null)
     $res['data'] = null;
 
     if ($appointmenter_id != null) {
-        if ($business_id == null) {
-            $expertDetail = Appointmenter::select('id', 'business_id')->find($appointmenter_id);
-            $business_id = $expertDetail->business_id;
-        }
-        $businessSetting = getBusinessSettings($business_id);
-
         $currentBooking = AppointmentBooking::select('id', 'token_number', 'user_id', 'appointmenter_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'status')
+            ->with(['appontmenter' => function ($q) {
+                return $q->select('id', 'is_appointment_book_with_time_slot');
+            }])
             ->where('booking_date', Carbon::now()->format('Y-m-d'))
             ->where('appointmenter_id', $appointmenter_id)
             ->where('status', 'in_progress');
-        if ($businessSetting->is_appointment_book_with_time_slote) {
+        if ($currentBooking->appontmenter->is_appointment_book_with_time_slot) {
             $currentBooking = $currentBooking->orderBy('slot_start_time', 'asc');
         } else {
             $currentBooking = $currentBooking->orderBy('token_number', 'asc');

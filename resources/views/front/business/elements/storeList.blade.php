@@ -50,11 +50,9 @@
         </div>
 
         <!-- for appointmnet button -->
-        @if (isset($res->businessSetting) && !empty($res->businessSetting) && $res->businessSetting->is_appointment_system == 1)
         <div class="text-right col-12">
-          <button class="btn btn-outline-danger btn-sm mt-2 mt-md-0" style="display: inline-block;" onclick="window.location.href='{{ route('business-details', $res->slug) }}'">{{ $res->businessSetting->is_appointment_book_with_time_slote == 1 ? 'Book appointment':'Get token' }}</button>
+          <button class="btn btn-outline-danger btn-sm mt-2 mt-md-0" style="display: inline-block;" onclick="window.location.href='{{ route('business-details', $res->slug) }}'">Book appointment</button>
         </div>
-        @endif
 
 
 

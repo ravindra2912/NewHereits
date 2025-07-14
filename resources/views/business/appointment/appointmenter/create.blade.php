@@ -115,6 +115,26 @@
                     <input type="text" class="form-control" name="number_of_bookings_per_day" placeholder="Number of bookings per day" />
                   </div>
                 </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Is appointment book with time slot <span class="error">*</span></label>
+                    <select class="form-control" name="is_appointment_book_with_time_slot">
+                      <option value="0">No</option>
+                      <option value="1">Yes</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Is need booking confirmation <span class="error">*</span></label>
+                    <select class="form-control" name="is_need_booking_confirmation">
+                      <option value="0">No</option>
+                      <option value="1">Yes</option>
+                    </select>
+                  </div>
+                </div>
 
               </div>
 

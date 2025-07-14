@@ -38,7 +38,6 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-          <input type="hidden" value="{{ $businessSetting->is_appointment_book_with_time_slote }}" id="with-timing" >
           <form action="{{ route('business.appointment.bookings.store') }}" data-action="redirect" class="row formaction">
             @csrf
             <input type="hidden" name="_method" value="POST">
@@ -50,33 +49,32 @@
             </div>
 
             @if ($businessSetting->is_appointment_with_department)
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Department <span class="error">*</span></label>
-                  <select class="form-control required" name="department_id" id="department_id">
-                    <option value="">Select Department</option>
-                    @foreach ( $departments as $department)
-                    <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                    @endforeach
-                  </select>
-                </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Department <span class="error">*</span></label>
+                <select class="form-control required" name="department_id" id="department_id">
+                  <option value="">Select Department</option>
+                  @foreach ( $departments as $department)
+                  <option value="{{ $department->id }}">{{ $department->department_name }}</option>
+                  @endforeach
+                </select>
               </div>
+            </div>
             @endif
-            
+
             <div class="col-md-6">
               <div class="form-group">
                 <label>Appointmenter <span class="error">*</span></label>
                 <select class="form-control required" name="appointmenter_id" id="appointmenter_id">
                   <option value="">Select Appointmenter</option>
                   @foreach ( $appontmenters as $appontmenter)
-                  <option value="{{ $appontmenter->id }}">{{ $appontmenter->appointmenter_name }}</option>
+                  <option value="{{ $appontmenter->id }}" data-withtime="{{ $appontmenter->is_appointment_book_with_time_slot }}">{{ $appontmenter->appointmenter_name }}</option>
                   @endforeach
                 </select>
               </div>
             </div>
-            
-            @if ($businessSetting->is_appointment_book_with_time_slote)
-            <div class="col-md-6">
+
+            <div class="col-md-6 " id="time-slot-container">
               <div class="form-group">
                 <label>Timing <span class="error">*</span></label>
                 <select class="form-control required" name="timeslote" id="timeslote">
@@ -84,7 +82,6 @@
                 </select>
               </div>
             </div>
-            @endif
 
             <div class="col-md-6">
               <div class="form-group">
@@ -120,7 +117,6 @@
 @push('js')
 
 <script>
-
   // get appoinmenters on deparment id
   $('#department_id').on('change', function(event) {
     $.ajax({
@@ -140,7 +136,7 @@
       success: function(states) {
         $('#appointmenter_id').html('<option value="">Select Appointmenter</option>');
         $.each(states, function(index, item) {
-          $('#appointmenter_id').append('<option value="' + item.id + '">' + item.appointmenter_name + '</option>');
+          $('#appointmenter_id').append('<option value="' + item.id + '" data-withtime="'+ item.is_appointment_book_with_time_slot+'">' + item.appointmenter_name + '</option>');
         });
       },
       error: function(xhr, status, error) {
@@ -150,11 +146,18 @@
       }
     });
   });
-  
+
   // get appoinmenters time slote
   $('#appointmenter_id, #booking_date').on('change', function(event) {
     $('#timeslote').html('<option value="">Select Timing</option>');
-    if($('#booking_date').val() == '' || $('#appointmenter_id').val() == '' || $('#with-timing').val() != 1){
+
+    let withTime = $('#appointmenter_id option:selected').data('withtime');
+    if (withTime == 0) {
+      $('#time-slot-container').addClass('d-none');
+    } else {
+      $('#time-slot-container').removeClass('d-none');
+    }
+    if ($('#booking_date').val() == '' || $('#appointmenter_id').val() == '' || withTime == 0) {
       return
     }
     $.ajax({
@@ -174,8 +177,8 @@
       success: function(states) {
         $('#timeslote').html('<option value="">Select Timing</option>');
         $.each(states, function(index, item) {
-          var disable = item.is_booked?'disabled':'';
-          $('#timeslote').append('<option value="' + item.time + '" '+disable+'>' + item.time + '</option>');
+          var disable = item.is_booked ? 'disabled' : '';
+          $('#timeslote').append('<option value="' + item.time + '" ' + disable + '>' + item.time + '</option>');
         });
       },
       error: function(xhr, status, error) {

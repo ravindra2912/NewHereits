@@ -146,13 +146,12 @@ class BusinessController extends Controller
             if ($setting->is_appointment_with_department) {
                 $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', $business->id)->get();
             }
-            $appontmenters = Appointmenter::select('id', 'business_id', 'title', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug', 'rating')
+            $appontmenters = Appointmenter::select('id', 'business_id', 'title', 'appointmenter_name', 'appointmenter_image', 'department_id', 'slug', 'rating', 'is_appointment_book_with_time_slot')
                 ->with([
                     'department',
                     'business' => function ($q) {
                         return $q->select('id', 'name', 'slug', 'address', 'latitude', 'longitude', 'business_image', 'credit');
-                    },
-                    'businessSetting'
+                    }
                 ])
                 ->where('business_id', $business->id)
                 ->where('status', 'active')
@@ -164,7 +163,7 @@ class BusinessController extends Controller
             if (count($appontmenters) == 1) {
                 $expert = $appontmenters[0];
                 $expert->getLastBooking = isExpertAvailable($expert->id);
-                $timeSlots = $setting->is_appointment_book_with_time_slote ? getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id) : [];
+                $timeSlots = $expert->is_appointment_book_with_time_slot ? getAppoinmenterTiming($expert->id, Carbon::now(), null, $expert->business_id) : [];
             } else {
                 $appontmentersHtml = view('front.business.elements.appontmenterList', compact('appontmenters'))->render();
             }
