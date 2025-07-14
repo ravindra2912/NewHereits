@@ -47,7 +47,7 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body table-responsive">
-          
+          <input type="hidden" id="is_appointment_with_department" value="{{ $businessSetting->is_appointment_with_department }}" />
             <table class="table table-hover text-nowrap" id="data-table">
               <thead>
                 <tr>
@@ -93,7 +93,8 @@
           searchable: false
         },{
           data: 'department',
-          name: 'department.department_name'
+          name: 'department.department_name',
+          visible: $('#is_appointment_with_department').val() == 1 ? true : false,
         },
         {
           data: 'appointmenter_name',
