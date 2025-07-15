@@ -26,7 +26,7 @@ class BusinessSeeder extends Seeder
     public function run(): void
     {
 
-        $roles = ['hotel', 'salon', 'clinic'];
+        $roles = ['restaurant', 'salon', 'clinic'];
 
         foreach ($roles as $role) {
             BusinessCategory::create([
