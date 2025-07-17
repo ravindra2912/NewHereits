@@ -19,32 +19,46 @@ class HomeController extends Controller
      */
     public function index(Request $request): View
     {
-        retry:
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
-        $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude')
-            ->where('subscription_expiry_date', '>=', now());
-        if ($userLocationInfo) {
-            if ($userLocationInfo['locationType'] == 'manual') {
-                if ($userLocationInfo['area'] != '') {
-                    $businesses = $businesses->where('area_id', $userLocationInfo['area']);
-                }
-                if ($userLocationInfo['city'] != '') {
-                    $businesses = $businesses->where('city_id', $userLocationInfo['city']);
-                }
-            } else if ($userLocationInfo['locationType'] == 'currentLocation') {
-                if ($userLocationInfo['lat'] != '' && $userLocationInfo['long'] != '') {
-                    $businesses = $businesses->withinDistance($userLocationInfo['lat'], $userLocationInfo['long'], $userLocationInfo['radius']); // 5 KM radius
+        $maxAttempts = 2;
+        $attempt = 0;
+
+        do {
+            $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude')
+                ->where('subscription_expiry_date', '>=', now());
+
+            if ($userLocationInfo) {
+                if ($userLocationInfo['locationType'] == 'manual') {
+                    if (!empty($userLocationInfo['area'])) {
+                        $businesses = $businesses->where('area_id', $userLocationInfo['area']);
+                    }
+                    if (!empty($userLocationInfo['city'])) {
+                        $businesses = $businesses->where('city_id', $userLocationInfo['city']);
+                    }
+                } elseif ($userLocationInfo['locationType'] == 'currentLocation') {
+                    if (!empty($userLocationInfo['lat']) && !empty($userLocationInfo['long'])) {
+                        $businesses = $businesses->withinDistance(
+                            $userLocationInfo['lat'],
+                            $userLocationInfo['long'],
+                            $userLocationInfo['radius']
+                        );
+                    }
                 }
             }
-        }
-        $businesses = $businesses->where('status', 'active')->limit(8)->get();
 
-        if (!$businesses && $userLocationInfo['radius'] == 5) {
-            $userLocationInfo['radius'] = 15;
-            session()->put('hereitsLocation', $userLocationInfo);
-            goto retry;
-        }
+            $businesses = $businesses->where('status', 'active')->limit(8)->get();
+
+            if ($businesses->isEmpty() && $userLocationInfo['radius'] == 5 && $attempt == 0) {
+                // Expand radius and retry
+                $userLocationInfo['radius'] = 15;
+                session()->put('hereitsLocation', $userLocationInfo);
+                $attempt++;
+                dd($userLocationInfo['radius']);
+            } else {
+                break;
+            }
+        } while ($attempt < $maxAttempts);
 
         $businessCategory = getBusinessCategory();
 
