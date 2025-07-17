@@ -22,7 +22,7 @@
             </div>
             <div class="col-sm-2 col-12 text-sm-right  booking-border">
                 {{ get_date($booking->booking_date, 'd M') }}<br>
-                10:00 AM
+                @if($booking->slot_start_time) get_time($booking->slot_start_time) @endif
             </div>
             <div class="col-sm-10 col-12 row ml-0">
                 <div class="col-sm-6 col-12">
