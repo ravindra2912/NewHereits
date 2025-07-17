@@ -459,7 +459,7 @@ input[name="radius"]:checked+label {
 
 .store-img {
 	height: 150px;
-	object-fit: cover;
+	object-fit: contain;
 	width: 100%;
 }
 
@@ -484,6 +484,16 @@ input[name="radius"]:checked+label {
 	.list-store .store-name {
 		-webkit-line-clamp: 2;
 		font-size: 16px !important;
+	}
+
+	.store-status{
+		position: absolute;
+		right: 0;
+		top: 4px;
+		p{
+			position: absolute;
+			right: 10px;
+		}
 	}
 }
 

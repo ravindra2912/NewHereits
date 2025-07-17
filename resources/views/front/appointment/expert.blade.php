@@ -182,7 +182,7 @@
   @include('front.appointment.appointmentForm')
 
   <!-- review and rating  -->
-  <div class="section mx-5 py-2">
+  <div class="section mx-md-4 mx-3 py-2">
     <div class="resp-tabs-container bg-white shadow-md rounded p-3">
       <h2 id="reviews" class="text-6 mb-3 mt-2">Reviews</h2>
       <div class="row">

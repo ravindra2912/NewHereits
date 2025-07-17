@@ -1,7 +1,7 @@
 @foreach ($businesses as $res)
 <div class=" bg-white shadow-md rounded p-3 mb-2 list-store">
   <div class="row">
-    <div class="col-md-4 col-4" style="align-self: center;">
+    <div class="col-md-4 col-12" style="align-self: center;">
       @if (Auth::check())
       <span class="cf store-fav border rounded-pill text-nowrap" id="store-fav-{{ $res->id }}" onclick="favorite({{ $res->id }})">
         @if (isset($res->is_favorite) && $res->is_favorite)
@@ -17,7 +17,7 @@
       @endif
       <a href="{{ route('business-details', $res->slug) }}"><img class="img-fluid rounded align-top store-img" src="{{ getImage($res->business_image) }}" alt="{{ $res->name }}"></a>
     </div>
-    <div class="col-md-8 col-8 pl-3 pl-md-0 mt-3 mt-md-0">
+    <div class="col-md-8 col-12 pl-3 pl-md-0 mt-3 mt-md-0">
       <div class="row no-gutters">
         <div class="col-sm-9">
           <h4><a href="{{ route('business-details', $res->slug) }}" title="{{ $res->name }}" class="text-dark text-5 store-name">{{ $res->name }}</a></h4>
@@ -41,7 +41,7 @@
 
 
         </div>
-        <div class="col-sm-3 text-right d-flex d-sm-block align-items-center">
+        <div class="col-sm-3 text-right d-flex d-sm-block align-items-center store-status">
           @if (isBusinessOpen($res->id))
           <p class="text-success mb-0">Open</p>
           @else
@@ -51,7 +51,7 @@
 
         <!-- for appointmnet button -->
         <div class="text-right col-12">
-          <button class="btn btn-outline-danger btn-sm mt-2 mt-md-0" style="display: inline-block;" onclick="window.location.href='{{ route('business-details', $res->slug) }}'">Book appointment</button>
+          <button class="btn btn-outline-danger btn-sm mt-2 mt-md-0 w-100" style="display: inline-block;" onclick="window.location.href='{{ route('business-details', $res->slug) }}'">Book appointment</button>
         </div>
 
 

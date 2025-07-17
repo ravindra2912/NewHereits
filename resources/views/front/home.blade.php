@@ -98,7 +98,7 @@
   @endif
 
 
-  @if ($fevoriteBusinesses)
+  @if ($fevoriteBusinesses && !$fevoriteBusinesses->isEmpty())
   <section class="section  py-2 bg-white">
     <div class="container ">
       <div class="d-flex justify-content-between align-items-center">
