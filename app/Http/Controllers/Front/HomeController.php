@@ -54,7 +54,6 @@ class HomeController extends Controller
                 $userLocationInfo['radius'] = 15;
                 session()->put('hereitsLocation', $userLocationInfo);
                 $attempt++;
-                dd($userLocationInfo['radius']);
             } else {
                 break;
             }
