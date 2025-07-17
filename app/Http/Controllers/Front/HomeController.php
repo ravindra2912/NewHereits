@@ -40,8 +40,7 @@ class HomeController extends Controller
         }
         $businesses = $businesses->where('status', 'active')->limit(8)->get();
 
-        dd($userLocationInfo['radius'], $businesses, $businesses->isEmpty(), $userLocationInfo['radius'] == 5);
-        if (!$businesses && $userLocationInfo['radius'] == 5) { 
+        if ($businesses->isEmpty() && $userLocationInfo['radius'] == 5) { 
             $userLocationInfo['radius'] = 15;
             $updatedData = [
                 'data' => $userLocationInfo,
