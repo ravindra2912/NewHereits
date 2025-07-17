@@ -124,7 +124,7 @@
   function responce(res) {
     $('#thank-you-modal').modal('show');
     $('.status-checker').attr('href', res.data.status_url);
-    console.log(res);
+    console.log(res.data.status_url);
   }
   $(document).ready(function() {
     // get appoinmenters time slote

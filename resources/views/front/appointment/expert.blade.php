@@ -244,77 +244,10 @@
     </div>
   </div>
 
-
-  <!-- thank you Modal Start-->
-  <div id="thank-you-modal" class="modal fade" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content border-0">
-        <div class="modal-body py-4 px-0">
-          <button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-          <div class="row">
-            <div class="col-11 col-md-10 mx-auto">
-
-              <div class="text-center">
-                <i class="fas fa-check-circle text-success mb-3"></i>
-                <h2 class="text-success">Appointment Book Successfully</h2>
-                <p>Thank you for booking your appointment, <!-- strong id="userName">John Doe</strong -->.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- thank you Modal End -->
-
 </section>
 
 
 @push('js')
-<script>
-  function responce(res) {
-    $('#thank-you-modal').modal('show');
-    console.log(res);
-  }
-  $(document).ready(function() {
-    // get appoinmenters time slote
-    $('#booking_date').on('change', function(event) {
-      // $('#timeslote').html('<option value="">Select Timing</option>');
-      if ($('#booking_date').val() == '' || $('#with-timing').val() != 1) {
-        return
-      }
-      $.ajax({
-        type: "POST",
-        url: "{{ route('get.appoinmenter.timing') }}",
-        data: {
-          appointmenter_id: $('#expert_id').val(),
-          business_id: $('#business_id').val(),
-          date: $('#booking_date').val()
-        },
-        dataType: "json",
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        beforeSend: function() {
-          $('#timeslote').html('<option value="">Loading ...</option>');
-        },
-        success: function(states) {
-          console.log(states);
-          $('#timeslote').html('<option value="">Select Timing</option>');
-          $.each(states, function(index, item) {
-            var disable = item.is_booked || item.is_available == false ? 'disabled' : '';
-            $('#timeslote').append('<option value="' + item.time + '" ' + disable + '>' + item.time + '</option>');
-          });
-        },
-        error: function(xhr, status, error) {
-          console.error("Error: " + error);
-          $('#timeslote').html('<option value="">Select Timing</option>');
-          alert("There was an error on appointmenter change.");
-        }
-      });
-    });
-  });
-</script>
 @endpush
 
 @endsection
