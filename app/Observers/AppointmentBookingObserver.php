@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use Carbon\Carbon;
 use App\Models\Business;
+use App\Models\Appointmenter;
 use App\Mail\TokenCancelledMail;
 use App\Mail\TokenComplitedMail;
 use App\Models\AppointmentBooking;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\AppointmentCancelledMail;
 use App\Mail\AppointmentComplitedMail;
 use App\Mail\AppointmentConfirmationMail;
+use PHPUnit\Framework\TestStatus\Notice;
 
 class AppointmentBookingObserver
 {
@@ -59,7 +62,7 @@ class AppointmentBookingObserver
         //send mail
         if ($insert->wasChanged('status')) {
             $changes = $appointmentBooking->getChanges();
-            if (in_array($changes['status'], ['confirmed', 'completed', 'cancel'])) {
+            if (in_array($changes['status'], ['confirmed', 'in_progress', 'completed', 'cancel'])) {
                 $appointment_details = AppointmentBooking::query()
                     ->select('id', 'token_number', 'business_id', 'appointmenter_id', 'user_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'note', 'status')
                     ->with([
@@ -67,7 +70,7 @@ class AppointmentBookingObserver
                         'business:id,name,slug,address',
                         'user:id,first_name,email,notification_token'
                     ])
-                    ->find($insert->id); 
+                    ->find($insert->id);
 
                 if ($appointment_details && $appointment_details->user_id != null) {
                     if ($appointment_details->appontmenter->is_appointment_book_with_time_slot) {
@@ -79,6 +82,17 @@ class AppointmentBookingObserver
                                     'include_player_ids' => [$appointment_details->user->notification_token],
                                     'title' => 'Hello ' . $appointment_details->user->first_name,
                                     'message' => 'Your appointment with ' . $appointment_details->appontmenter->appointmenter_name . ' has been confirmed.',
+                                    // 'data' => [],
+                                    'url' =>  route('account.booking.details',  $appointment_details->id),
+                                    // 'schedule' => now()->addMinutes(1)
+                                ];
+                            }
+                        } else if ($changes['status'] == 'in_progress') {
+                            if ($appointment_details->user->notification_token) {
+                                $notification = [
+                                    'include_player_ids' => [$appointment_details->user->notification_token],
+                                    'title' => 'Hello ' . $appointment_details->user->first_name,
+                                    'message' => 'Your turn is now! Please proceed to meet ' . $appointment_details->appontmenter->appointmenter_name . ' immediately.',
                                     // 'data' => [],
                                     'url' =>  route('account.booking.details',  $appointment_details->id),
                                     // 'schedule' => now()->addMinutes(1)
@@ -118,6 +132,17 @@ class AppointmentBookingObserver
                                 // 'schedule' => now()->addMinutes(1)
                             ];
                             Mail::to($appointment_details->user->email)->send(new TokenConfirmationMail($appointment_details));
+                        } else if ($changes['status'] == 'in_progress') {
+                            if ($appointment_details->user->notification_token) {
+                                $notification = [
+                                    'include_player_ids' => [$appointment_details->user->notification_token],
+                                    'title' => 'Hello ' . $appointment_details->user->first_name,
+                                    'message' => 'Your turn is now! Please proceed to meet ' . $appointment_details->appontmenter->appointmenter_name . ' immediately.',
+                                    // 'data' => [],
+                                    'url' =>  route('account.booking.details',  $appointment_details->id),
+                                    // 'schedule' => now()->addMinutes(1)
+                                ];
+                            }
                         } else if ($changes['status'] == 'completed') {
 
                             if ($appointment_details->user->notification_token) {
@@ -144,6 +169,55 @@ class AppointmentBookingObserver
                             ];
 
                             Mail::to($appointment_details->user->email)->send(new TokenCancelledMail($appointment_details));
+                        }
+                    }
+
+                    // notify to next turn
+                    if ($changes['status'] == 'in_progress') {
+                        $appointmenter = Appointmenter::select('id', 'is_appointment_book_with_time_slot')
+                            ->find($appointment_details->appontmenter->id);
+
+                        // Prepare base query for next booking
+                        $nextBookingQuery = AppointmentBooking::select(
+                            'id',
+                            'token_number',
+                            'business_id',
+                            'appointmenter_id',
+                            'user_id',
+                            'user_name',
+                            'user_contact',
+                            'slot_start_time',
+                            'slot_end_time',
+                            'booking_date',
+                            'note',
+                            'status'
+                        )
+                            ->with([
+                                'appontmenter:id,appointmenter_name,slug,is_appointment_book_with_time_slot',
+                                'business:id,name,slug,address',
+                                'user:id,first_name,email,notification_token',
+                            ])
+                            ->whereDate('booking_date', Carbon::today())
+                            ->where('appointmenter_id', $appointmenter->id)
+                            ->where('status', 'confirmed')
+                            ->where('id', '!=', $insert->id);
+
+                        // Order by appropriate field based on appointmenter settings
+                        $orderByField = $appointmenter->is_appointment_book_with_time_slot ? 'slot_start_time' : 'token_number';
+
+                        // Get the next booking
+                        $nextBooking = $nextBookingQuery->orderBy($orderByField)->first();
+
+                        if ($nextBooking && $nextBooking->user->notification_token) {
+                            $notification2 = [
+                                'include_player_ids' => [$nextBooking->user->notification_token],
+                                'title' => 'Hello ' . $nextBooking->user->first_name,
+                                'message' => 'Just a heads-up! You’re next for your appointment with  ' . $nextBooking->appontmenter->appointmenter_name,
+                                // 'data' => [],
+                                'url' =>  route('account.booking.details',  $nextBooking->id),
+                                // 'schedule' => now()->addMinutes(1)
+                            ];
+                            PuhsNotificationToUser::dispatch($notification2);
                         }
                     }
                 }

@@ -119,6 +119,12 @@
     height: 300px;
     border-radius: 8px;
   }
+
+  @media (min-width: 768px) {
+    .w-md-auto {
+      width: auto !important;
+    }
+  }
 </style>
 
 

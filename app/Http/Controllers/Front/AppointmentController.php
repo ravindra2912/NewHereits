@@ -151,8 +151,9 @@ class AppointmentController extends Controller
 
                     $startTiming = $timings->first(); // ⬅️ First slot (earliest start_time)
                     $endTiming = $timings->last();
+                    
 
-                    if (!$now->between(Carbon::createFromFormat('H:i:s', $startTiming->start_time), Carbon::createFromFormat('H:i:s', $endTiming->end_time))) {
+                    if ($startTiming == null || $endTiming == null || !$now->between(Carbon::createFromFormat('H:i:s', $startTiming->start_time), Carbon::createFromFormat('H:i:s', $endTiming->end_time))) {
                         $message = 'Today appointment is closed, please try next date.';
                         goto LAST;
                     }
@@ -206,6 +207,8 @@ class AppointmentController extends Controller
                 }
                 $insert->status =  $appointmenter->is_need_booking_confirmation ? 'pending' : 'confirmed';
                 $insert->save();
+
+                $data['status_url'] = route('account.booking.details', $insert->id);
 
                 $success = true;
                 $message = 'Appointment Book Successfully.';

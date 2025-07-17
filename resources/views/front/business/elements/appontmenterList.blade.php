@@ -50,7 +50,7 @@
         @endif
         <img class="img-fluid align-top appoinmenter-img" src="{{ getImage($appontmenter->appointmenter_image, 'expert') }}" alt="{{ $appontmenter->appointmenter_name }}">
       </div>
-      <div class="col-md-5 col-7 pl-3 pl-md-0 mt-3 mt-md-0">
+      <div class="col-md-3 col-7 pl-3 pl-md-0 mt-3 mt-md-0">
         <div class="row no-gutters">
           <div class="col-sm-9">
             <h4 title="{{ $appontmenter->appointmenter_name }}" class="text-dark text-5 store-name">{{ $appontmenter->appointmenter_name }}</h4>
@@ -105,6 +105,9 @@
           </div>
         </div>
         @endif
+      </div>
+      <div class="col-12 text-right">
+        <button class="btn btn-outline-danger btn-sm mt-md-0 mt-3 w-100 w-md-auto" >Book now</button>
       </div>
     </div>
   </div>

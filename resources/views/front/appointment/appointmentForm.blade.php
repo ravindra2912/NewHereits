@@ -101,7 +101,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content border-0">
       <div class="modal-body py-4 px-0">
-        <button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+        <button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span class="h1" aria-hidden="true">&times;</span> </button>
         <div class="row">
           <div class="col-11 col-md-10 mx-auto">
 
@@ -109,6 +109,7 @@
               <i class="fas fa-check-circle text-success mb-3"></i>
               <h2 class="text-success">Appointment Book Successfully</h2>
               <p>Thank you for booking your appointment, <!-- strong id="userName">John Doe</strong -->.</p>
+              <a href="" class="btn btn-outline-danger status-checker" >Check Booking status</a>
             </div>
           </div>
         </div>
@@ -122,6 +123,7 @@
 <script>
   function responce(res) {
     $('#thank-you-modal').modal('show');
+    $('.status-checker').attr('href', res.data.status_url);
     console.log(res);
   }
   $(document).ready(function() {
