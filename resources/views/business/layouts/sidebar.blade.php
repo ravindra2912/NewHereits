@@ -63,12 +63,33 @@
             <p> Professionals </p>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="{{ route('business.appointment.bookings.index') }}" class="nav-link {{ request()->routeIs('business.appointment.bookings*') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-clipboard"></i>
-            <p> Appointments </p>
+        
+
+        <li class="nav-item {{ request()->routeIs('business.appointment.bookings*') ? 'menu-open' : '' }}">
+          <a href="#" class="nav-link {{ request()->routeIs('business.appointment.bookings*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-clipboard-list"></i>
+            <p>
+              Appointments
+              <i class="right fas fa-angle-left"></i>
+            </p>
           </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{ route('business.appointment.bookings.index') }}" class="nav-link {{ request()->routeIs('business.appointment.bookings.index') || request()->routeIs('business.appointment.bookings.edit') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>All</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{{ route('business.appointment.bookings.pending') }}" class="nav-link {{ request()->routeIs('business.appointment.bookings.pending') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Pending</p>
+              </a>
+            </li>
+          </ul>
         </li>
+
         @endif
 
         <li class="nav-header">SITE SETTING</li>

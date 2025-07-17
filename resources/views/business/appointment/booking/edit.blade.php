@@ -113,11 +113,15 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Status <span class="error">*</span></label>
-                <select class="form-control" name="status">
-                  @foreach ( config('const.appointment_status') as $status )
-                  <option value="{{ $status }}" {{ $appontment->status == $status ? 'selected':'' }}>{{ ucfirst($status) }}</option>
-                  @endforeach
-                </select>
+                @if(carbon\Carbon::parse($appontment->booking_date)->toDateString() >= now()->toDateString())
+                  <select class="form-control" name="status">
+                    @foreach ( config('const.appointment_status') as $status )
+                    <option value="{{ $status }}" {{ $appontment->status == $status ? 'selected':'' }}>{{ ucfirst($status) }}</option>
+                    @endforeach
+                  </select>
+                  @else
+                  <input type="text" class="form-control" value="{{ $appontment->status }}" name="status" placeholder="Status" readonly />
+                  @endif
               </div>
             </div>
 
@@ -160,7 +164,7 @@
       success: function(states) {
         $('#appointmenter_id').html('<option value="">Select Appointmenter</option>');
         $.each(states, function(index, item) {
-          $('#appointmenter_id').append('<option value="' + item.id + '" data-withtime="'+ item.is_appointment_book_with_time_slot+'">' + item.appointmenter_name + '</option>');
+          $('#appointmenter_id').append('<option value="' + item.id + '" data-withtime="' + item.is_appointment_book_with_time_slot + '">' + item.appointmenter_name + '</option>');
         });
       },
       error: function(xhr, status, error) {

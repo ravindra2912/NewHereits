@@ -28,6 +28,8 @@ Route::name('business.')->group(function () {
         Route::name('appointment.')->group(function () {
             Route::resource('bookings', AppointmentBookingController::class);
             Route::controller(AppointmentBookingController::class)->group(function () {
+                Route::get('bookings/pending/list', 'gatPendingBookings')->name('bookings.pending');
+
                 Route::post('bookings/change-status', 'changeStatus')->name('bookings.change.status');
                 
                 Route::post('bookings/get-appoinmenter', 'getAppoinmenterByDepartment')->name('bookings.get.appointmrnter');

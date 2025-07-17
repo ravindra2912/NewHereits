@@ -78,24 +78,31 @@ class AppointmentBookingController extends Controller
                     $time .= !empty($row->slot_end_time) ? ' To ' . Carbon::parse($row->slot_end_time)->format('h:i a') : '';
                     return $time;
                 })
+                ->addColumn('booking_date', function ($row) {
+                    return get_date($row->booking_date);
+                })
 
                 ->addColumn('status_info', function ($row) {
-                    $statusUi = '<p class="mb-1">status : ' . ucwords(str_replace('_', ' ', $row->status)) . '</p>';
-                    if ($row->status == 'pending') {
-                        $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="confirmed" >Accept</button>';
-                        $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
-                    } else if ($row->status == 'confirmed') {
-                        $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="in_progress" >In progress</button>';
-                        $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
-                    } else if ($row->status == 'in_progress') {
-                        $statusUi .= '<button class="ststus_chenge_btn btn btn-success btn-sm" data-id="' . $row->id . '" data-status="completed">Completed</button>';
-                        $statusUi .= '<button class="ststus_chenge_btn btn btn-info btn-sm ml-1" data-id="' . $row->id . '" data-status="completeAndNext">Complete & Next</button>';
-                    } else if ($row->status == 'cancel') {
-                        $statusUi = '<span class="badge bg-danger">Cancel</span>';
-                    } else if ($row->status == 'cancel_by_user') {
-                        $statusUi = '<span class="badge bg-danger">Cancel by user</span>';
-                    } else if ($row->status == 'completed') {
-                        $statusUi = '<span class="badge bg-success">Completed</span>';
+                    if (Carbon::parse($row->booking_date)->toDateString() == now()->toDateString()) {
+                        $statusUi = '<p class="mb-1">status : ' . ucwords(str_replace('_', ' ', $row->status)) . '</p>';
+                        if ($row->status == 'pending') {
+                            $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="confirmed" >Accept</button>';
+                            $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
+                        } else if ($row->status == 'confirmed') {
+                            $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="in_progress" >In progress</button>';
+                            $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
+                        } else if ($row->status == 'in_progress') {
+                            $statusUi .= '<button class="ststus_chenge_btn btn btn-success btn-sm" data-id="' . $row->id . '" data-status="completed">Completed</button>';
+                            $statusUi .= '<button class="ststus_chenge_btn btn btn-info btn-sm ml-1" data-id="' . $row->id . '" data-status="completeAndNext">Complete & Next</button>';
+                        } else if ($row->status == 'cancel') {
+                            $statusUi = '<span class="badge bg-danger">Cancel</span>';
+                        } else if ($row->status == 'cancel_by_user') {
+                            $statusUi = '<span class="badge bg-danger">Cancel by user</span>';
+                        } else if ($row->status == 'completed') {
+                            $statusUi = '<span class="badge bg-success">Completed</span>';
+                        }
+                    } else {
+                        $statusUi = ucwords(str_replace('_', ' ', $row->status));
                     }
 
                     return $statusUi;
@@ -374,5 +381,83 @@ class AppointmentBookingController extends Controller
             $message = $e->getMessage();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
+    }
+
+    public function gatPendingBookings(Request $request)
+    {
+        $businessSetting = getBusinessSettings();
+        if ($request->ajax()) {
+            $data = AppointmentBooking::with(['department' => function ($q) {
+                $q->select('id', 'department_name');
+            }, 'appontmenter' => function ($q) {
+                $q->select('id', 'appointmenter_name');
+            }])
+                ->where('appointment_bookings.business_id', getBusinessId())
+                ->whereDate('booking_date', now()->toDateString())
+                ->where('status', 'pending')
+                ->select('appointment_bookings.id', 'appointment_bookings.business_id', 'appointment_bookings.department_id', 'token_number', 'appointmenter_id', 'user_name', 'user_contact', 'booking_date', 'slot_start_time', 'slot_end_time', 'appointment_bookings.status');
+            if (isset($request->department_id) && !empty($request->department_id)) {
+                $data = $data->where('department_id', $request->department_id);
+            }
+            if (isset($request->appointmenter_id) && !empty($request->appointmenter_id)) {
+                $data = $data->where('appointmenter_id', $request->appointmenter_id);
+            }
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('appointmenter_info', function ($row) {
+                    $expinfo = $row->appontmenter->appointmenter_name;
+                    if (isset($row->department) && !empty($row->department->department_name)) {
+                        $expinfo .= " (" . $row->department->department_name . ")";
+                    }
+                    return $expinfo;
+                })
+                ->addColumn('user_info', function ($row) {
+                    $expinfo = $row->user_name;
+                    if (!empty($row->user_contact)) {
+                        $expinfo .= "</br>" . $row->user_contact;
+                    }
+                    return $expinfo;
+                })
+                ->addColumn('booking_date', function ($row) {
+                    return get_date($row->booking_date);
+                })
+                ->addColumn('time', function ($row) {
+                    $time = !empty($row->slot_start_time) ? Carbon::parse($row->slot_start_time)->format('h:i a') : '';
+                    $time .= !empty($row->slot_end_time) ? ' To ' . Carbon::parse($row->slot_end_time)->format('h:i a') : '';
+                    return $time;
+                })
+
+                ->addColumn('status_info', function ($row) {
+                    $statusUi = '<p class="mb-1">status : ' . ucwords(str_replace('_', ' ', $row->status)) . '</p>';
+                    $statusUi .= '<button class="ststus_chenge_btn btn btn-primary btn-sm" data-id="' . $row->id . '" data-status="confirmed" >Accept</button>';
+                    $statusUi .= '<button class="ststus_chenge_btn btn btn-danger btn-sm ml-1" data-id="' . $row->id . '" data-status="cancel" >Cancel</button>';
+                    return $statusUi;
+                })
+
+                ->addColumn('action', function ($row) {
+                    $url = route('business.appointment.bookings.destroy', $row->id);
+                    $url = "'" . $url . "'";
+                    return ' <div class="text-center">
+                    <a href="' . route('business.appointment.bookings.edit', $row->id) . '" class="btn btn-outline-primary btn-sm" title="edit"><i class="far fa-edit"></i></a>
+                    <!-- button onclick="destroy(' . $url . ', ' . $row->id . ')" class="btn btn-outline-danger btn-sm btn_delete-' . $row->id . '" title="Delete">
+                        <i id="buttonText" class="far fa-trash-alt"></i>
+                        <span id="loader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button -->
+                    </div>';
+                })
+                ->rawColumns(['action', 'img', 'time', 'appointmenter_info', 'user_info', 'status_info'])
+                ->make(true);
+        }
+
+        $departments = array();
+        $appontmenters = array();
+        if ($businessSetting->is_appointment_with_department) {
+            $departments = AppointmentDepartment::select('id', 'department_name')->where('business_id', getBusinessId())->get();
+        } else {
+            $appontmenters = Appointmenter::select('id', 'appointmenter_name')->where('business_id', getBusinessId())->get();
+        }
+
+        return view('business.appointment.booking.pendig', compact('businessSetting', 'departments', 'appontmenters'));
     }
 }
