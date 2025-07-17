@@ -47,7 +47,6 @@ class HomeController extends Controller
                 'expires_at' => now()->addDays(7),
             ];
             session()->put('hereitsLocation', $updatedData);
-            dd(session('hereitsLocation'));
             goto retry;
         }
 
