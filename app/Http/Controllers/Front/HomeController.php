@@ -42,7 +42,11 @@ class HomeController extends Controller
 
         if (!$businesses && $userLocationInfo['radius'] == 5) {
             $userLocationInfo['radius'] = 15;
-            session()->put('hereitsLocation', $userLocationInfo);
+            $updatedData = [
+                'data' => $userLocationInfo,
+                'expires_at' => now()->addDays(7),
+            ];
+            session()->put('hereitsLocation', $updatedData);
             goto retry;
         }
 
