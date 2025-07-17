@@ -19,21 +19,7 @@ class HomeController extends Controller
      */
     public function index(Request $request): View
     {
-        // $data = [
-        //     'include_player_ids' => ['c1cb0123-6427-49f7-98af-8bce3aa4e8eb'],
-        //     'title' => 'Hello all users',
-        //     'message' => 'New offer for you',
-        //     // 'data' => [],
-        //     'url' => 'business/clinic',
-        //     // 'schedule' => now()->addMinutes(1)
-        // ];
-
-        // PuhsNotificationToAllUser::dispatch($data);
-
-
-        // $user = User::find(9);
-        // Mail::to($user->email)->send(new UserWelcomeMail($user));
-
+        retry:
         $fevoriteBusinesses = array();
         $userLocationInfo = getUserLocationInfo();
         $businesses = Business::select('id', 'name', 'slug', 'business_image', 'area_id', 'city_id', 'latitude', 'longitude')
@@ -53,6 +39,13 @@ class HomeController extends Controller
             }
         }
         $businesses = $businesses->where('status', 'active')->limit(8)->get();
+
+        if (!$businesses && $userLocationInfo['radius'] == 5) {
+            $userLocationInfo['radius'] = 15;
+            session()->put('hereitsLocation', $userLocationInfo);
+            goto retry;
+        }
+
         $businessCategory = getBusinessCategory();
 
         if (Auth::check() && Auth::user()->role_id != 1) {
