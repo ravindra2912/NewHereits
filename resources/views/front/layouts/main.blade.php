@@ -733,7 +733,6 @@
 				}
 				if (locationData.locationType == 'currentLocation') {
 					$('.location-close-btn').removeClass('d-none');
-					console.log(locationData['radius']);
 					if (locationData['radius'] == '' || locationData['radius'] == null) {
 						locationData['radius'] = 5;
 					}

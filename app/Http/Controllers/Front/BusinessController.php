@@ -29,6 +29,7 @@ class BusinessController extends Controller
 
     public function getBusiness(Request $request)
     {
+        retry:
         $userLocationInfo = getUserLocationInfo();
         $businesses = Business::query()
             ->select('id', 'name', 'slug', 'business_image', 'address', 'business_category_id', 'country_id', 'state_id', 'city_id', 'rating', 'pincode', 'latitude', 'longitude')
@@ -66,6 +67,17 @@ class BusinessController extends Controller
         $businesses =  $businesses->limit($request->limit)
             ->skip($request->offset)
             ->get();
+
+        // if data get empty then re try for 15 km redius
+        if ($businesses->isEmpty() && $userLocationInfo['radius'] == 5) {
+            $userLocationInfo['radius'] = 15;
+            $updatedData = [
+                'data' => $userLocationInfo,
+                'expires_at' => now()->addDays(7),
+            ];
+            session()->put('hereitsLocation', $updatedData);
+            goto retry;
+        }
 
         foreach ($businesses as $key => $business) {
             $businesses[$key]->address = $this->getBusinessAddress($business);

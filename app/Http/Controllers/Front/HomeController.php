@@ -40,6 +40,7 @@ class HomeController extends Controller
         }
         $businesses = $businesses->where('status', 'active')->limit(8)->get();
 
+        // if data get empty then re try for 15 km redius
         if ($businesses->isEmpty() && $userLocationInfo['radius'] == 5) { 
             $userLocationInfo['radius'] = 15;
             $updatedData = [
