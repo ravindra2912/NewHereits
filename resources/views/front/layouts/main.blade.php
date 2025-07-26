@@ -39,7 +39,7 @@
 	<meta property="og:type" content="website">
 	<meta property="og:site_name" content="Hereits - Local Business">
 	<meta property="og:locale" content="en_GB">
-	<meta property="og:image" content="<?= $seo['image'] ?>">
+	<meta property="og:image" content="{{ isset($seo['image']) && $seo['image'] != '' ? $seo['image'] : asset('front/img/logo.png') }}">
 	<meta property="og:image:width" content="550" />
 	<meta property="og:image:height" content="413" />
 
@@ -47,7 +47,7 @@
 	<meta property="twitter:site" content="hereitsdotcom">
 	<meta property="twitter:title" content="<?= $seo['title'] ?>">
 	<meta property="twitter:description" content="<?= $seo['description'] ?>">
-	<meta property="twitter:image" content="<?= $seo['image'] ?>">
+	<meta property="twitter:image" content="{{ isset($seo['image']) && $seo['image'] != '' ? $seo['image'] : asset('front/img/logo.png') }}">
 	<meta property="twitter:url" content="{{ url()->current() }}">
 	<meta name="twitter:domain" content="Hereits">
 
