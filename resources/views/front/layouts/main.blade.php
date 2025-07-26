@@ -237,6 +237,7 @@
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('termAndCondition') }}" title="Hereits Terms &amp; Conditions">Terms Of Use</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('privacyPolicy') }}" title="Hereits PRIVACY POLICY">Privacy</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('CopyRight') }}" title="Hereits Copy Rights">Copyright</a></li>
+							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('CancellationAndRefundPolicy') }}" title="Hereits Cancellation & Refund Policy">Cancellation & Refund Policy</a></li>
 							<li class="nav-item"> <a target="_blank" class="nav-link" href="{{ route('faq') }}" title="Faqs">FAQ</a></li>
 						</ul>
 					</div>

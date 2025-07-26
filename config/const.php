@@ -13,7 +13,7 @@ return [
 
     "common_status" => ["active", "in-active"],
 
-    "legal_page_type" => ["PrivacyPolicy", "TermsAndCondition", "CopyRight"],
+    "legal_page_type" => ["PrivacyPolicy", "TermsAndCondition", "CopyRight", "CopyRight", "CancellationAndRefundPolicy"],
 
     "gender" => ["Male", "Female"],
 

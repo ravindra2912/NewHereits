@@ -110,4 +110,12 @@ class HomeController extends Controller
         });
         return view('front.copy-right', compact('CopyRight'));
     }
+    
+    public function CancellationAndRefundPolicy(Request $request): View
+    {
+        $data = Cache::rememberForever('CancellationAndRefundPolicy', function () { // 1440/60 = 1 day
+            return LegalPage::where('page_type', 'CancellationAndRefundPolicy')->first();
+        });
+        return view('front.cancellation_and_refund_policy', compact('data'));
+    }
 }

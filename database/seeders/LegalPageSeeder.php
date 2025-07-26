@@ -37,6 +37,11 @@ class LegalPageSeeder extends Seeder
             'page_type' => 'CopyRight',
             'description' => '<p>Copy right</p>',
         ]);
+        
+        LegalPage::create([
+            'page_type' => 'CancellationAndRefundPolicy',
+            'description' => '<p>Cancellation And Refund Policy</p>',
+        ]);
     
     }
 }
