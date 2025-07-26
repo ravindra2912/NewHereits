@@ -22,9 +22,11 @@
 	<meta name="city" content="<?= $seo['city'] ?>">
 	<meta name="state" content="<?= $seo['state'] ?>">
 	<meta name="geo.region" content="IN-GJ">
-	<meta name="geo.placename" content="<?= $seo['city'] ?>">
 	<meta name="DC.title" content="<?= $seo['title'] ?>">
-	<meta name="geo.position" content="<?= $seo['position'] ?>">
+	<meta name="geo.position" content="{{ $seo['position'] }}">
+	<meta name="ICBM" content="{{ $seo['position'] }}">
+	<meta name="geo.region" content="IN-{{ strtoupper(substr($seo['state'], 0, 2)) }}">
+	<meta name="geo.placename" content="{{ $seo['city'] }}">
 
 	<!-- meta property="og:see_also" content="alternate url" -->
 

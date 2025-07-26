@@ -3,8 +3,8 @@
 'description' => $business->seo_description,
 'keywords' => $business->seo_keyword ,
 'image' => getImage($business->business_image) ,
-'city' => '',
-'state' => '',
+'city' => isset($business->city) && !empty($business->city->name)?$business->city->name:'',
+'state' => isset($business->state) && !empty($business->state->name)?$business->state->name:'',
 'position' => $business->latitude.':'.$business->longitude
 ]
 ])
@@ -12,6 +12,61 @@
 @section('title', $business->name)
 
 @push('style')
+
+<!-- Business Address Schema -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Hereits",
+    "image": "{{ $business->business_image != '' ? getImage($business->business_image) : asset('front/img/logo.png') }}",
+    "url": "{{ url()->current() }}",
+    "telephone": "+91-{{ $business->contact }}",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "{{ $business->address }}",
+      "addressLocality": "{{ isset($business->city) && !empty($business->city->name)?$business->city->name:'' }}",
+      "addressRegion": "{{ isset($business->state) && !empty($business->state->name)?$business->state->name:'' }}",
+      "postalCode": "{{ $seo['pincode'] ?? '000000' }}",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "{{ $business->latitude ?? '0.0' }}",
+      "longitude": "{{ $business->longitude ?? '0.0' }}"
+    },
+    "sameAs": [
+      "https://www.facebook.com/hereitsdotcom",
+      "https://www.instagram.com/hereitsdotcom"
+    ]
+  }
+</script>
+
+<!-- Breadcrumb for SEO-rich results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "{{ route('home')  }}"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "businesses",
+    "item": "{{ route('business') }}"
+  }
+  ,{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "{{ $business->name }}",
+    "item": "{{ url()->current() }}"
+  }
+  ]
+}
+</script>
 
 <style>
   .banner {
@@ -147,7 +202,7 @@
                   <i class="fas fa-star {{ $business->rating >= $i? 'text-warning':'text-muted' }}"></i>
                   @endfor
               </span>
-              <span class="text-light product-description"><i class="fas fa-map-marker-alt pr-1"></i> {{ $business->address }} </span>
+              <span class="text-light product-description"><i class="fas fa-map-marker-alt pr-1"></i> {{ $business->fulladdress }} </span>
               <!-- <p class="reviews mb-2">
               <span class="reviews-score px-2 py-1 rounded font-weight-600 text-light">{{ $business->rating }}</span>
               <span class="font-weight-600">{{ config('const.business_rating.'.round($business->rating)) }}</span>

@@ -141,7 +141,7 @@ class BusinessController extends Controller
 
             // dd($business->ReviewAndRating->toArray());
 
-            $business->address = $this->getBusinessAddress($business);
+            $business->fulladdress = $this->getBusinessAddress($business);
             $business->is_favorite = false;
             if (Auth::check()) {
                 $favorite = Favorite::where('business_id', $business->id)
