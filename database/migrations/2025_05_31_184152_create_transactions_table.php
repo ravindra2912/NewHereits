@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('payment_type', ['cash', 'online'])->default('online');
             $table->date('transaction_date')->nullable();
             $table->date('refund_date')->nullable();
-            $table->enum('status', ['pending', 'completed', 'failed', 'refunded'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'failed', 'refunded_requested', 'refunded'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
         });

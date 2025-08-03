@@ -24,18 +24,28 @@
   <div class="container-fluid">
     <div class="row">
       <div class=" text-center">
-        <input type="hidden" name="payment_session_id" value="{{ $payment_session_id }}" />
-        <input type="hidden" name="mode" value="{{ env('CASHFREE_MODE') }}" />
+        <input type="hidden" name="sitename" value="{{ config('const.site_setting.name') }}" />
+        <input type="hidden" name="sitelogo" value="{{ config('const.site_setting.logo') }}" />
+        <input type="hidden" name="KEY_ID" value="{{ env('RAZORPAY_ENV') == 'live'? env('RAZORPAY_LIVE_KEY'):env('RAZORPAY_TEST_KEY') }}" />
+        <input type="hidden" name="name" value="{{$data->name}}" />
+        <input type="hidden" name="email" value="{{$data->email}}" />
+        <input type="hidden" name="contacts" value="{{$data->contact}}" />
+        <input type="hidden" name="amount" value="{{ number_format((float)$data->total, 2, '.', '')}}" />
         <form id="paymentResponceForm" action="{{ route('business.payment.responce') }}" method="post" enctype="multipart/form-data" class="formaction" data-action="redirect" data-tost="false"> @csrf
           <input type="hidden" name="redirectUrl" value="{{$data->redirectUrl}}" />
           <input type="hidden" name="order" value="{{$data->orderid}}" />
           <input type="hidden" name="type" value="{{$data->type}}" />
+          <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id" value="" />
         </form>
         <p>Payment...</p>
-        <button class="btn btn-success mr-3 rezorpay-btn" id="renderBtn">Payment</button>
+        <button class="btn btn-success mr-3 rezorpay-btn">Payment</button>
         <a href="{{$data->redirectUrl}}" class="btn btn-danger">Cancel</a>
+
       </div>
+
+
     </div>
+
   </div>
 </section>
 
@@ -43,40 +53,9 @@
 </script>
 
 <script src="{{ asset('rezorpay/jquery.min.js') }}"></script>
-<!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="{{ asset('rezorpay/rezorpay.js') }}"></script> -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-
-<script>
-  const cashfree = Cashfree({
-    mode: document.querySelector('input[name="mode"]').value
-  });
-
-  document.getElementById("renderBtn").addEventListener("click", async () => {
-    const paymentSessionId = document.querySelector('input[name="payment_session_id"]').value;
-    const checkoutOptions = {
-      paymentSessionId: paymentSessionId,
-      redirectTarget: "_modal",
-    };
-
-    cashfree.checkout(checkoutOptions).then((result) => {
-      if (result.error) {
-        console.log("User closed popup or error occurred", result.error);
-        $('#paymentResponceForm').submit();
-      }
-      if (result.redirect) {
-        console.log("Redirection in progress");
-      }
-      if (result.paymentDetails) {
-        console.log("Payment completed:", result);
-        $('#paymentResponceForm').submit();
-      }
-    });
-  });
-
-  $('#renderBtn').click();
-</script>
+<script src="{{ asset('rezorpay/rezorpay.js') }}"></script>
 
 @endpush
 

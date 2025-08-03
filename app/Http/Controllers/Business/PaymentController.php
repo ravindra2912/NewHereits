@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Business;
 
+use App\Traits\CashFreePayment;
 use App\Models\City;
 use App\Models\Business;
 use App\Models\CityArea;
@@ -13,18 +14,21 @@ use App\Models\BusinessCredit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Bus;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
+    use CashFreePayment;
 
     public function Payment(Request $request, $type, $id)
     {
-        // dd($type, $id);
+        // dd($this->getRefund('credit-22'));
+        
         $data = (object)array();
         $business_id = '';
         $data->type = $type;
-        $data->orderid = $id;
+        $data->orderid = $type . '-' . $id;
         $success = false;
         if ($type == 'subscription') {
             $subscribData = Subscription::with('transaction')->find($id);
@@ -52,71 +56,31 @@ class PaymentController extends Controller
             $data->name = $details->name;
             $data->email = $details->owner->email;
             $data->contact = $details->contact;
-            return view('business.payment.payment', compact('data'));
+            $data->owner_id = $details->owner_id;
+
+            // cashfree create order
+
+            $payment_session_id = $this->createSessionId($data->orderid, $data->total, $data->email, $data->contact, $data->owner_id);
+            return view('business.payment.payment', compact('payment_session_id', 'data'));
         }
 
         exit('Something went wrong!');
         // return view('business.payment.payment');
     }
 
-
     public function paymentResponce(Request $request)
     {
-        $success = false;
+        $success = true;
         $message = 'Something Wrong!';
-        $redirect = '';
+        $redirect = $request->redirectUrl;
         $data = array();
-        DB::beginTransaction();
+
         try {
-            if (!empty($request->razorpay_payment_id)) {
-                if ($request->type == 'subscription') {
-                    $subscribData = Subscription::with('transaction')->find($request->order);
-                    if ($subscribData && $subscribData->status == 'pending_for_payment' && $subscribData->transaction->status == 'pending') {
-                        $subscribData->transaction()->update([
-                            'status' => 'completed',
-                            'payment_id' => $request->razorpay_payment_id,
-                        ]);
-
-                        // Update subscription
-                        $subscribData->update([
-                            'status' => 'payment_success',
-                        ]);
-
-                        Business::where('id', $subscribData->business_id)->update([
-                            'subscription_expiry_date' => $subscribData->end_date,
-                        ]);
-
-                        DB::commit();
-                        $redirect = $request->redirectUrl;
-                        $success = true;
-                        $message = 'Payment updated successfully!';
-                    }
-                } else if ($request->type == 'credit') {
-                    $creditDetail = BusinessCredit::with(['transaction'])->find($request->order);
-                    if ($creditDetail && $creditDetail->status == 'pending_for_payment' && $creditDetail->transaction->status == 'pending') {
-                        $creditDetail->transaction()->update([
-                            'status' => 'completed',
-                            'payment_id' => $request->razorpay_payment_id,
-                        ]);
-
-                        // Update credit
-                        $creditDetail->update([
-                            'status' => 'payment_success',
-                        ]);
-
-                        Business::where('id', $creditDetail->business_id)->increment('credit', $creditDetail->credit);
-
-                        DB::commit();
-                        $redirect = $request->redirectUrl;
-                        $success = true;
-                        $message = 'Payment updated successfully!';
-                    }
-                }
+            if (!empty($request->order)) {
+                $order_success = $this->checkPaymentStatus($request->order, true);
+                $message = $order_success ? 'success' : $message;
             }
         } catch (\Exception $e) {
-            DB::rollBack();
-            // Optionally: Log the error or return a response
-            // $message = 'Payment update failed.';
             $message = $e->getMessage();
         }
         return response()->json(['success' => $success, 'message' => $message, 'data' => $data, 'redirect' => $redirect]);
