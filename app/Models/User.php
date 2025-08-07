@@ -51,26 +51,31 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Business::class, 'business_id', 'id');
     }
-    
+
     public function getBusinesses()
     {
         return $this->hasMany(Business::class, 'owner_id', 'id');
     }
 
-     //+++++++++++++++ For api responce ================
-     public function apiObject(): array
-     {
-         $data = [
-             'id' => $this->id,
-             'first_name' => $this->first_name,
-             'last_name' => $this->last_name,
-             'profile' => getImage($this->profile),
-             'email' => $this->email,
-             'contact' => (int)$this->contact,
-             'dob' => $this->dob,
-             'gender' => $this->gender
-         ];
-         
-         return $data;
-     }
+    public function appointments()
+    {
+        return $this->hasMany(AppointmentBooking::class, 'user_id');
+    }
+
+    //+++++++++++++++ For api responce ================
+    public function apiObject(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'profile' => getImage($this->profile),
+            'email' => $this->email,
+            'contact' => (int)$this->contact,
+            'dob' => $this->dob,
+            'gender' => $this->gender
+        ];
+
+        return $data;
+    }
 }

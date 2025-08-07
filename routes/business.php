@@ -3,12 +3,13 @@
 use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Business\AuthController;
+use App\Http\Controllers\Business\PaymentController;
 use App\Http\Controllers\Business\SettingController;
 use App\Http\Controllers\Business\DashboarController;
 use App\Http\Controllers\Business\AppointmenterController;
+use App\Http\Controllers\Business\AppointmentUsersController;
 use App\Http\Controllers\Business\AppointmentBookingController;
 use App\Http\Controllers\Business\AppointmentDepartmentController;
-use App\Http\Controllers\Business\PaymentController;
 
 Route::name('business.')->group(function () {
     Route::middleware('web', 'guest')->group(function () {
@@ -36,6 +37,7 @@ Route::name('business.')->group(function () {
                 Route::post('bookings/get-appoinmenter-timing', 'getAppoinmenterTiming')->name('bookings.get.appointmrnter.timing');
             });
             Route::resource('department', AppointmentDepartmentController::class);
+            Route::resource('appointment-user', AppointmentUsersController::class);
 
             Route::resource('appointmenter', AppointmenterController::class);
             Route::controller(AppointmenterController::class)->group(function () {
@@ -43,6 +45,7 @@ Route::name('business.')->group(function () {
                 Route::post('appointmenter/timing/{id}', 'timingStore')->name('appointmenter.timing.store');
                 Route::post('appointmenter/Timingdestroy', 'TimingDestroy')->name('appointmenter.timing.destroy');
             });
+
         });
 
         Route::controller(SettingController::class)->group(function () {

@@ -90,6 +90,13 @@
           </ul>
         </li>
 
+        <li class="nav-item">
+          <a href="{{ route('business.appointment.appointment-user.index') }}" class="nav-link {{ request()->routeIs('business.appointment.appointment-user*') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-users"></i>
+            <p> Users </p>
+          </a>
+        </li>
+
         @endif
 
         <li class="nav-header">SITE SETTING</li>
