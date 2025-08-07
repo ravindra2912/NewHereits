@@ -11,7 +11,7 @@
       </button>
       <div class="dropdown-menu" role="menu">
         @foreach ($businesses as $business)
-        <a class="dropdown-item" href="{{ route('business.switchBusiness', $business->id) }}">
+        <a class="dropdown-item p-0 pr-1 overflow-hidden" href="{{ route('business.switchBusiness', $business->id) }}">
           <img src="{{ getImage($business->business_image) }}" alt="Logo" class="brand-image img-circle " style="height: 30px; width: 30px; object-fit: cover;">
           {{ $business->name }}
         </a>
