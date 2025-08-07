@@ -40,7 +40,7 @@ class AppointmentUsersController extends Controller
                 })
                 ->addColumn('convertRate', function ($row) {
                     $total = $row->completed_appointments + $row->uncompleted_appointments;
-                    return $total > 0 ? round(($row->completed_appointments / $total) * 100, 2) : '0' . '%';
+                    return $total > 0 ? round(($row->completed_appointments / $total) * 100, 2). '%' : '0%';
                 })
                 ->addColumn('action', function ($row) {
                     return ' <div class="text-center">
