@@ -39,8 +39,9 @@ class AppointmentUsersController extends Controller
                     return '<div class="text-center"><img src="' . getImage($row->profile) . '" class="table_img" /></div>';
                 })
                 ->addColumn('convertRate', function ($row) {
-
-                    return round(($row->completed_appointments / $row->uncompleted_appointments) * 100, 2) . '%';
+                    return $row->uncompleted_appointments > 0
+                        ? round(($row->completed_appointments / $row->uncompleted_appointments) * 100, 2) . '%'
+                        : '0%';
                 })
                 ->addColumn('action', function ($row) {
                     return ' <div class="text-center">
