@@ -635,61 +635,51 @@
 			}
 			const place = autocomplete.getPlace();
 
-			// console.log(place.address_components);
-			// return;
+			let area = '';
+			let city = '';
+			let stateShort = '';
 
-			var address = '';
-			var administrative_area_level_3 = '';
-			var administrative_area_level_1 = '';
-			var neighborhood = '';
-			var locality = '';
 			for (const component of place.address_components) {
-				// @ts-ignore remove once typings fixed
-				const componentType = component.types[0];
-				switch (componentType) {
-					case "neighborhood": {
-						neighborhood = component.long_name
-						break;
-					}
-					case "sublocality_level_1": {
-						neighborhood = component.long_name
-						break;
-					}
-					case "sublocality": {
-						neighborhood = component.long_name
-						break;
-					}
-					case "locality": {
-						locality = component.short_name;
-						break;
-					}
-					case "administrative_area_level_3": {
-						administrative_area_level_3 = component.short_name;
-						break;
-					}
-					case "administrative_area_level_1": {
-						administrative_area_level_1 = component.short_name;
-						break;
+				for (const type of component.types) {
+					switch (type) {
+						case "neighborhood":
+							if (area == '') {
+								area = component.long_name;
+							}
+							break;
+						case "sublocality_level_1":
+							if (area == '') {
+								area = component.long_name;
+							}
+							break;
+						case "sublocality":
+							if (area == '') {
+								area = component.long_name;
+							}
+							break;
+						case "locality": // City
+							city = component.long_name;
+							break;
+						case "administrative_area_level_1": // State short code
+							stateShort = component.short_name;
+							break;
 					}
 				}
 			}
 
-			// Check and assign area
-			if (neighborhood && neighborhood !== '') {
-				address = neighborhood;
-			}
-
-			// Append locality or administrative_area_level_3
-			if (locality && locality !== '') {
-				address += address === '' ? locality : ', ' + locality;
+			// Build final address
+			let address = '';
+			if (area) {
+				// Area exists → Area, City
+				address = `${area}, ${city}`;
 			} else {
-				address += address === '' ? administrative_area_level_3 : ', ' + administrative_area_level_3;
+				// No Area → City, StateShort
+				address = `${city}, ${stateShort}`;
 			}
 
-			// Append administrative_area_level_1 if locality equals administrative_area_level_3
-			if (neighborhood == '' && locality === administrative_area_level_3) {
-				address += address === '' ? administrative_area_level_1 : ', ' + administrative_area_level_1;
-			}
+			// console.log(address);
+			// console.log(place.address_components);
+			// return;
 
 			// ✅ Get Latitude and Longitude
 			if (place.geometry && place.geometry.location) {
