@@ -63,7 +63,7 @@
             <p> Professionals </p>
           </a>
         </li>
-        
+
 
         <li class="nav-item {{ request()->routeIs('business.appointment.bookings*') ? 'menu-open' : '' }}">
           <a href="#" class="nav-link {{ request()->routeIs('business.appointment.bookings*') ? 'active' : '' }}">
@@ -192,3 +192,20 @@
   </div>
   <!-- /.sidebar -->
 </aside>
+
+
+<!-- Mobile navigation ============================================= -->
+<div class="home-menu-icon-container">
+  <div class="home-menu-icon-container-2">
+    <div class="mobile-icon-section pt-1 px-4">
+      <a href="{{ route('business.dashboard') }}" class="{{ request()->routeIs('business.dashboard') ? 'active' : '' }}"><i class="fas fa-tachometer-alt"></i><span> Dashboard</span></a>
+      @if ($businessSettings->is_appointment_system)
+      <a href="{{ route('business.appointment.bookings.index') }}" class="{{ request()->routeIs('business.appointment.bookings*') ? 'active' : '' }}"><i class="fas fa-clipboard-list"></i><span> Appointments</span></a>
+      <a href="{{ route('business.appointment.appointmenter.index') }}" class="{{ request()->routeIs('business.appointment.appointmenter*') ? 'active' : '' }}"><i class="fas fa-user-tie"></i><span> Professionals</span></a>
+
+      @endif
+      <a href="{{ route('business.setting.business') }}" class="{{ request()->routeIs('business.setting.business') ? 'active' : '' }}"><i class="fas fa-building"></i><span> Profile</span></a>
+
+    </div>
+  </div>
+</div>

@@ -70,3 +70,53 @@ option:disabled {
 .alert a {
     text-decoration: none;
 }
+
+/* ============= mobile navigation ========================== */
+.home-menu-icon-container {
+	display: none;
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	z-index: 9999;
+	padding: 0px 5px;
+	padding-bottom: 3px;
+}
+
+.home-menu-icon-container-2 {
+	background: #fff;
+	border-top: 1px solid #f1f1f1;
+	box-shadow: 0px 0px 10px 1px rgb(0 113 204);
+	/* box-shadow: 6px 6px 20px rgb(0 113 204); */
+	border-radius: 10px;
+}
+
+.mobile-icon-section {
+	display: flex;
+	justify-content: space-between;
+}
+
+.home-menu-icon-container-2 a {
+	font-size: 9px;
+	color: #000;
+	padding: 3px 5px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+
+.home-menu-icon-container-2 .active {
+	/* box-shadow: 0px 0px 5px rgb(0 113 204); */
+	color: #0071cc;
+	/* border-radius: 10px; */
+}
+
+.home-menu-icon-container-2 a i {
+	font-size: 20px;
+}
+
+@media (max-width: 767px) {
+	.home-menu-icon-container {
+		display: block;
+	}
+}
