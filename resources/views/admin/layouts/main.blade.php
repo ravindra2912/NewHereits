@@ -106,6 +106,8 @@
 
 <script src="{{ asset('ajax/ajax.js') }}"></script>
 
+
+
   @stack('js')
 </body>
 

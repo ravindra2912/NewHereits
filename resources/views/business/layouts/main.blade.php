@@ -84,7 +84,7 @@
       @yield('content')
     </div>
 
-    
+
 
     <!-- Footer -->
     @include('business.layouts.footer')
@@ -98,7 +98,7 @@
     <!-- Bootstrap 4 -->
     <script src="{{ asset('admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{ asset('admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+    <!-- <script src="{{ asset('admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script> -->
     <!-- AdminLTE App -->
     <script src="{{ asset('admin/dist/js/adminlte.js') }}"></script>
 
@@ -106,6 +106,32 @@
     <script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js')}}"></script>
 
     <script src="{{ asset('ajax/ajax.js') }}"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Listen for AdminLTE fullscreen button
+        $(document).on('click', '[data-widget="fullscreen"]', function(e) {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            localStorage.setItem('fullscreen', 'true');
+          } else {
+            document.exitFullscreen();
+            localStorage.removeItem('fullscreen');
+          }
+        });
+
+        // Restore fullscreen — requires first user click after page load
+        if (localStorage.getItem('fullscreen') === 'true') {
+          const restoreHandler = () => {
+            if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen();
+            }
+            document.removeEventListener('click', restoreHandler);
+          };
+          document.addEventListener('click', restoreHandler);
+        }
+      });
+    </script>
 
     @stack('js')
 </body>
