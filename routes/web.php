@@ -1,7 +1,10 @@
 <?php
 
 use App\Models\Appointmenter;
+use App\Models\AppointmentBooking;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Mail\AppointmentConfirmationMail;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
@@ -11,12 +14,22 @@ use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\BusinessController;
 use App\Http\Controllers\Front\AppointmentController;
 
-Route::get('test', function(){
+Route::get('test-email', function () {
     // generateQRCode('sdsddsd');
-    updatePoster();
+    $appointment_details = AppointmentBooking::query()
+        ->select('id', 'token_number', 'business_id', 'appointmenter_id', 'user_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'note', 'status')
+        ->with([
+            'appontmenter:id,appointmenter_name,slug,is_appointment_book_with_time_slot',
+            'business:id,name,slug,address',
+            'user:id,first_name,email,notification_token'
+        ])
+        ->find(39);
+
+    Mail::to($appointment_details->user->email)->send(new AppointmentConfirmationMail($appointment_details));
+    echo 'success';
 });
 
-Route::get('test-map', function(){
+Route::get('test-map', function () {
     return view('testmap');
 });
 
@@ -93,7 +106,6 @@ Route::middleware(['web', 'front'])->group(function () {
         Route::get('booking/{id}', 'bookingDetails')->name('booking.details');
         Route::post('booking/cancel', 'bookingCancel')->name('booking.cancel');
         Route::post('booking/review', 'bookingReview')->name('booking.review');
-        
     });
 });
 
