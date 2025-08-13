@@ -7,6 +7,7 @@ return [
         "name" => "Hereits",
         //  "logo" => asset('admin/images/logo.png'),
         "logo" => env('APP_URL') . '/front/img/logo.png',
+        "logo-bg-black" => env('APP_URL') . '/front/img/logo-bg-black.jpg',
         "small_logo" => env('APP_URL') . '/admin/images/small_logo.png',
         "fevicon" => env('APP_URL') . '/front/img/fevicon-icon.png',
     ],
