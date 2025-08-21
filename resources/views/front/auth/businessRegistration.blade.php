@@ -186,7 +186,7 @@
 
                     <div class="col-12 form-group mt-3">
                         <div class="form-check text-2 custom-control custom-checkbox">
-                            <input id="agree" class="custom-control-input" type="checkbox" CHECKED required>
+                            <input id="agree" class="custom-control-input" type="checkbox" required>
                             <label class="custom-control-label" for="agree">I agree to the <a href="{{ route('termAndCondition') }}">Terms</a> and <a href="{{ route('privacyPolicy') }}">Privacy Policy</a>.</label>
                         </div>
                     </div>

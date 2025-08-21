@@ -14,23 +14,23 @@ use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\BusinessController;
 use App\Http\Controllers\Front\AppointmentController;
 
-Route::get('test-email', function () {
-    // generateQRCode('sdsddsd');
-    $appointment_details = AppointmentBooking::query()
-        ->select('id', 'token_number', 'business_id', 'appointmenter_id', 'user_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'note', 'status')
-        ->with([
-            'appontmenter:id,appointmenter_name,slug,is_appointment_book_with_time_slot',
-            'business:id,name,slug,address',
-            'user:id,first_name,email,notification_token'
-        ])
-        ->find(39);
+// Route::get('test-email', function () {
+//     // generateQRCode('sdsddsd');
+//     $appointment_details = AppointmentBooking::query()
+//         ->select('id', 'token_number', 'business_id', 'appointmenter_id', 'user_id', 'user_name', 'user_contact', 'slot_start_time', 'slot_end_time', 'booking_date', 'note', 'status')
+//         ->with([
+//             'appontmenter:id,appointmenter_name,slug,is_appointment_book_with_time_slot',
+//             'business:id,name,slug,address',
+//             'user:id,first_name,email,notification_token'
+//         ])
+//         ->find(39);
 
-    Mail::to($appointment_details->user->email)->send(new AppointmentConfirmationMail($appointment_details));
-    echo 'success';
-});
+//     Mail::to($appointment_details->user->email)->send(new AppointmentConfirmationMail($appointment_details));
+//     echo 'success';
+// });
 
-Route::get('test-map', function () {
-    return view('testmap');
+Route::get('landing_page', function () {
+    return view('front/landing_page');
 });
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
