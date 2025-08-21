@@ -207,7 +207,7 @@
 
 				<div class="col-sm-6 col-md-6 col-12">
 
-					<h4 class="text-7">HEREITS Platforms</h4>
+					<h4 class="text-7">HEREITS Platforms</h4> 
 
 					<div class="featured-box rounded style-3" style="padding-left: 57px;">
 						<div class="featured-box-icon text-success " style="height: 26px;font-size: 20px;"> <i class="fas fa-check"></i> </div>
