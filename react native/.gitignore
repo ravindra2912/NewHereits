@@ -96,6 +96,8 @@
 *.aab
 *.keystore
 *.jks
+
+# React Native Android build outputs
 /android/app/.cxx/
 
 # Xcode
