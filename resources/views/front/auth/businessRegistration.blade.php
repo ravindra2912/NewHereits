@@ -194,7 +194,7 @@
 
                 </div>
                 <div class="col-12 text-right">
-                    <button class="btn btn-primary btn_action" type="submit">
+                    <button class="btn btn-primary btn_action" data-toggle="modal" data-target="#vendor-policy-modal" type="button">
                         <span id="buttonText">Submit</span>
                         <span id="loader" class="d-none">Submiting ...</span>
                     </button>
@@ -210,6 +210,28 @@
 
         </div>
     </div>
+
+    <!-- vendor policy models -->
+    <div id="vendor-policy-modal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content border-0">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <h5 class="mb-0">Vendor Policy</h5>
+                        <p class="my-0">Please read and accept the vendor policy to proceed.</p>
+                    </div>
+                    <button type="button" class="close close-outside" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+                <div class="modal-body " style="height: 400px; overflow-y: auto;">
+                    {!! $VendorPolicy->description !!}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary float-right" id="accept-vendor-policy">Accept & Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 
@@ -247,6 +269,12 @@
     });
 </script>
 
+<script>
+    $('#accept-vendor-policy').on('click', function() {
+        $('#vendor-policy-modal').modal('hide');
+        $('#loginForm2').submit();
+    })
+</script>
 <script>
     let map_state = '';
     let map_city = '';

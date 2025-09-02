@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Business;
 use App\Models\CityArea;
+use App\Models\LegalPage;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -243,8 +244,11 @@ class AuthController extends Controller
 
     public function registerBusinessView(): View
     {
+        $VendorPolicy = Cache::rememberForever('VendorPolicy', function () {
+            return LegalPage::where('page_type', 'VendorPolicy')->first();
+        });
         $businessCat = getBusinessCategory();
-        return view('front.auth.businessRegistration', compact('businessCat'));
+        return view('front.auth.businessRegistration', compact('businessCat', 'VendorPolicy'));
     }
 
 

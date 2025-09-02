@@ -51,7 +51,6 @@ export default function WebViews() {
 
   return (
     <>
-      <StatusBar hidden={true} />
       <SafeAreaView style={styles.container}>
         {loading && (
           <View style={styles.splash}>
