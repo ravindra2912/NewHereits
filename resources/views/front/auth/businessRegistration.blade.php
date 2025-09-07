@@ -186,7 +186,7 @@
 
                     <div class="col-12 form-group mt-3">
                         <div class="form-check text-2 custom-control custom-checkbox">
-                            <input id="agree" class="custom-control-input" type="checkbox" required>
+                            <input id="agree" class="custom-control-input" checked type="checkbox" required>
                             <label class="custom-control-label" for="agree">I agree to the <a href="{{ route('termAndCondition') }}">Terms</a> and <a href="{{ route('privacyPolicy') }}">Privacy Policy</a>.</label>
                         </div>
                     </div>
@@ -194,7 +194,7 @@
 
                 </div>
                 <div class="col-12 text-right">
-                    <button class="btn btn-primary btn_action" data-toggle="modal" data-target="#vendor-policy-modal" type="button">
+                    <button class="btn btn-primary btn_action" id="submitBtn" data-toggle="modal" data-target="#vendor-policy-modal" type="button">
                         <span id="buttonText">Submit</span>
                         <span id="loader" class="d-none">Submiting ...</span>
                     </button>
@@ -270,6 +270,13 @@
 </script>
 
 <script>
+    const checkbox = document.getElementById("agree");
+    const button = document.getElementById("submitBtn");
+
+    checkbox.addEventListener("change", function () {
+      button.disabled = !this.checked; // Enable if checked, disable if unchecked
+    });
+    
     $('#accept-vendor-policy').on('click', function() {
         $('#vendor-policy-modal').modal('hide');
         $('#loginForm2').submit();
